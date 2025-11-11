@@ -3,9 +3,9 @@ description:
 globs: 
 alwaysApply: true
 ---
-# AI Rules for {app-name}
+# AI Rules for 10xPersonal finance
 
-{project-description}
+The ‘10xPersonal Finance’ project is to create a web application that will enable users to manage their personal finances in an informed manner. The application will focus on manual tracking of expenses, income and transfers between accounts, as well as a simple budgeting mechanism. The main idea is to provide a tool that collects information about the user's financial status in one place, thus helping them to plan and save better.
 
 ## Tech Stack
 
