@@ -64,7 +64,7 @@ returns trigger as $$
 begin
     -- create a profile for the new user
     -- the profile id matches the auth.users id (1-to-1 relationship)
-    insert into profiles (id)
+    insert into public.profiles (id)
     values (new.id);
     return new;
 end;
@@ -76,7 +76,7 @@ comment on function create_profile_for_new_user is 'Automatically creates a prof
 create trigger create_profile_on_signup
     after insert on auth.users
     for each row
-    execute function create_profile_for_new_user();
+    execute function public.create_profile_for_new_user();
 
 -- =============================================================================
 -- function: create_default_categories_for_user
@@ -87,7 +87,7 @@ create or replace function create_default_categories_for_user()
 returns trigger as $$
 begin
     -- insert default expense categories
-    insert into categories (user_id, name, type) values
+    insert into public.categories (user_id, name, type) values
         (new.id, 'Żywność', 'expense'),
         (new.id, 'Transport', 'expense'),
         (new.id, 'Mieszkanie', 'expense'),
@@ -111,7 +111,7 @@ comment on function create_default_categories_for_user is 'Automatically creates
 
 -- trigger: create default categories when a new profile is inserted
 create trigger create_default_categories_trigger
-    after insert on profiles
+    after insert on public.profiles
     for each row
-    execute function create_default_categories_for_user();
+    execute function public.create_default_categories_for_user();
 
