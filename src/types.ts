@@ -38,6 +38,14 @@ export interface AccountDTO extends Omit<Account, "user_id"> {
 }
 
 /**
+ * Form view model used by the client-side account form.
+ */
+export interface AccountFormViewModel {
+  name: string;
+  initial_balance: number;
+}
+
+/**
  * Create Account Command - Request payload for creating a new account
  * Only requires fields that the user must provide
  */
