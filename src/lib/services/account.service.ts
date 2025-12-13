@@ -139,7 +139,12 @@ export async function getAccounts(userId: string, supabase: SupabaseClient): Pro
   }
 
   // Create a map of account_id -> current_balance for quick lookup
-  const balanceMap = new Map((balances || []).map((b) => [b.account_id as string, b.current_balance as number]));
+  // Filter out entries with null account_id or current_balance to prevent null keys/values
+  const balanceMap = new Map(
+    (balances || [])
+      .filter((b) => b.account_id != null && b.current_balance != null)
+      .map((b) => [b.account_id, b.current_balance] as const)
+  );
 
   // Transform to AccountDTO format by:
   // 1. Mapping account data fields

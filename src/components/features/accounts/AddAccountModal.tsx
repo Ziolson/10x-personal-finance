@@ -11,7 +11,7 @@ export interface AddAccountModalProps {
   onSuccess: () => void;
 }
 
-export default function AddAccountModal({ isOpen, onOpenChange, onSubmit, onSuccess }: AddAccountModalProps) {
+export default function AddAccountModal({ isOpen, onOpenChange, onSubmit, onSuccess, onError }: AddAccountModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverErrors, setServerErrors] = useState<AccountFormServerErrors>({});
   const [generalError, setGeneralError] = useState<string | null>(null);

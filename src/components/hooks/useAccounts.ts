@@ -11,7 +11,21 @@ async function parseResponse<T>(response: Response): Promise<T> {
     return undefined as unknown as T;
   }
 
-  const payload = await response.json().catch(() => null);
+  let payload: unknown;
+
+  try {
+    payload = await response.json();
+  } catch (error) {
+    // JSON parsing failed
+    if (!response.ok) {
+      // For error responses, we can't parse the error details, but we have the status
+      const parseError = new Error(`Failed to parse error response: ${response.statusText}`);
+      Object.assign(parseError, { status: response.status });
+      throw parseError;
+    }
+    // For success responses, JSON parsing failure is a critical error
+    throw new Error(`Invalid JSON in successful response from ${response.url}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
 
   if (!response.ok) {
     const message = (payload as ApiErrorResponse)?.error?.message || response.statusText;
