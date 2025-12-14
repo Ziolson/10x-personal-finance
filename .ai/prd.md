@@ -20,6 +20,8 @@ Użytkownicy często borykają się z problemem braku kontroli nad swoimi finans
 - System musi zapewniać możliwość wylogowania się.
 - Musi istnieć funkcja resetowania zapomnianego hasła.
 - Dane każdego użytkownika muszą być odizolowane i niedostępne dla innych.
+- Użytkownik ma dostęp do podstawowych ustawień profilu (w MVP placeholder lub prosta edycja).
+- Użytkownik może przełączać motyw aplikacji (Jasny/Ciemny/System).
 
 ### 3.2. Zarządzanie Kontami
 - Użytkownik może dodawać konta, podając ich nazwę, saldo początkowe i walutę (w MVP domyślnie PLN).
@@ -53,6 +55,10 @@ Użytkownicy często borykają się z problemem braku kontroli nad swoimi finans
 - Wyświetla listę ostatnich transakcji.
 - Prezentuje listę wszystkich zdefiniowanych budżetów wraz z paskami postępu ich wykorzystania.
 
+### 3.7. Interfejs i Nawigacja (Global Layout)
+- Przycisk "Dodaj transakcję" jest widoczny w najbardziej eksponowanym miejscu (Góra paska bocznego na Desktop, FAB na Mobile).
+- Logo aplikacji jest interaktywnym linkiem prowadzącym do Pulpitu.
+
 ## 4. Granice produktu
 
 ### W zakresie MVP:
@@ -61,6 +67,7 @@ Użytkownicy często borykają się z problemem braku kontroli nad swoimi finans
 - Obsługa wyłącznie jednej waluty: PLN.
 - Podstawowy pulpit analityczny i historia transakcji.
 - Obsługa transferów między kontami użytkownika.
+- Obsługa trybu ciemnego i jasnego.
 
 ### Poza zakresem MVP:
 - Automatyczna integracja z systemami bankowymi.
@@ -68,6 +75,7 @@ Użytkownicy często borykają się z problemem braku kontroli nad swoimi finans
 - System powiadomień (np. o przekroczeniu budżetu).
 - Obsługa wielu walut i automatyczne przeliczanie kursów.
 - Dedykowany kreator onboardingowy dla nowych użytkowników.
+- Globalna paleta komend (Command Palette).
 
 ## 5. Historyjki użytkowników
 
@@ -95,7 +103,7 @@ Użytkownicy często borykają się z problemem braku kontroli nad swoimi finans
 - Tytuł: Wylogowanie użytkownika
 - Opis: Jako zalogowany użytkownik, chcę móc się wylogować z aplikacji, aby zabezpieczyć dostęp do moich danych.
 - Kryteria akceptacji:
-  1. W interfejsie aplikacji znajduje się widoczny przycisk "Wyloguj".
+  1. W interfejsie aplikacji znajduje się widoczny przycisk "Wyloguj" (w menu użytkownika).
   2. Po kliknięciu przycisku sesja użytkownika jest kończona i jest on przekierowywany na stronę logowania.
 
 - ID: US-004
@@ -222,6 +230,15 @@ Użytkownicy często borykają się z problemem braku kontroli nad swoimi finans
   5. Widoczna jest lista ostatnich kilku transakcji (niezależnie od typu).
   6. Widoczna jest lista wszystkich budżetów z graficznym wskaźnikiem postępu (np. progress bar) i kwotą wydaną/pozostałą.
   7. Budżet najbliższy przekroczenia jest wizualnie wyróżniony.
+
+### Ustawienia i Personalizacja
+
+- ID: US-017
+- Tytuł: Zmiana motywu aplikacji
+- Opis: Jako użytkownik, chcę móc zmienić motyw aplikacji na ciemny lub jasny, aby korzystanie z niej było komfortowe w różnych warunkach oświetleniowych.
+- Kryteria akceptacji:
+  1. W menu użytkownika dostępna jest opcja zmiany motywu.
+  2. Wybrany motyw jest zapamiętywany.
 
 ## 6. Metryki sukcesu
 

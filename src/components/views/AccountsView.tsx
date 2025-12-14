@@ -5,6 +5,7 @@ import AddAccountModal from "@/components/features/accounts/AddAccountModal";
 import EditAccountModal from "@/components/features/accounts/EditAccountModal";
 import AccountsList from "@/components/features/accounts/AccountsList";
 import SkeletonLoader from "@/components/features/accounts/SkeletonLoader";
+import { PageHeader } from "@/components/PageHeader";
 import useAccounts from "@/components/hooks/useAccounts";
 import { ToastProvider, useToast } from "@/components/ui/toast";
 import type { AccountDTO, AccountFormViewModel } from "@/types";
@@ -76,14 +77,10 @@ function AccountsViewContent() {
   };
 
   return (
-    <section className="space-y-6 px-4 py-6">
-      <header className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-neutral-500">Finanse</p>
-          <h1 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100">Twoje konta</h1>
-        </div>
+    <section className="space-y-6">
+      <PageHeader title="Twoje konta" description="Finanse">
         <Button onClick={() => setIsAddModalOpen(true)}>Dodaj konto</Button>
-      </header>
+      </PageHeader>
 
       {renderContent()}
 

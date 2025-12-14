@@ -1,0 +1,83 @@
+---
+import Layout from "./Layout.astro";
+import { Sidebar } from "@/components/layout/Sidebar.tsx";
+import { MobileHeader } from "@/components/layout/MobileHeader.tsx";
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav.tsx";
+import { GlobalModalsWrapper } from "@/components/layout/GlobalModalsWrapper.tsx";
+import { openAddTransactionModal } from "@/lib/stores/layoutStore";
+
+interface Props {
+  title?: string;
+}
+
+const { title = "10x Personal Finance" } = Astro.props;
+
+// Get current path for navigation highlighting
+const currentPath = new URL(Astro.request.url).pathname;
+
+// Get user data from context.locals (set by middleware)
+const user = Astro.locals.user;
+const userName = user?.email || "User";
+const avatarUrl = undefined; // Avatar URL can be added later from user profile
+
+// Handle logout - placeholder for future implementation
+const handleLogout = async () => {
+  // TODO: Implement actual logout logic with Supabase auth.signOut()
+};
+
+// Handle add transaction
+const handleAddTransaction = () => {
+  openAddTransactionModal();
+};
+
+// Handle toggle dark mode - placeholder for future implementation
+const handleToggleDarkMode = () => {
+  // TODO: Implement dark mode toggle logic (toggle html class, persist in localStorage)
+};
+---
+
+<Layout title={title}>
+  <div class="flex h-screen flex-col md:flex-row">
+    <!-- Desktop Sidebar (hidden on mobile) -->
+    <Sidebar
+      currentPath={currentPath}
+      userName={userName}
+      avatarUrl={avatarUrl}
+      onAddTransaction={handleAddTransaction}
+      onLogout={handleLogout}
+      onToggleDarkMode={handleToggleDarkMode}
+      client:load
+    />
+
+    <!-- Mobile Header (hidden on desktop) -->
+    <MobileHeader
+      userName={userName}
+      avatarUrl={avatarUrl}
+      onLogout={handleLogout}
+      onToggleDarkMode={handleToggleDarkMode}
+      client:load
+    />
+
+    <!-- Main Content Area -->
+    <main class="flex flex-1 flex-col overflow-hidden md:pt-0 pt-16 pb-20 md:pb-0">
+      <div class="flex-1 overflow-y-auto">
+        <div class="px-4 py-6 md:px-6 md:py-8">
+          <slot />
+        </div>
+      </div>
+    </main>
+
+    <!-- Mobile Bottom Navigation (hidden on desktop) -->
+    <MobileBottomNav currentPath={currentPath} onAddTransaction={handleAddTransaction} client:load />
+  </div>
+
+  <!-- Global Modals Container -->
+  <GlobalModalsWrapper client:load />
+</Layout>
+
+<style>
+  /* Ensure proper scrolling and layout */
+  :global(html, body) {
+    overflow: hidden;
+  }
+</style>

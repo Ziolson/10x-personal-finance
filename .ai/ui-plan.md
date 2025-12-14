@@ -47,7 +47,7 @@ Wszystkie widoki list (transakcji, kont itp.) zostały zaprojektowane tak, aby o
 -   **Ścieżka widoku**: `/`
 -   **Główny cel**: Zapewnienie szybkiego przeglądu ogólnej sytuacji finansowej użytkownika w wybranym miesiącu.
 -   **Kluczowe informacje do wyświetlenia**: Podsumowanie (przychody, wydatki, saldo), wykres kołowy wydatków wg kategorii, lista ostatnich transakcji, postęp wykorzystania budżetów.
--   **Kluczowe komponenty widoku**: `SummaryCards`, `ExpenseChart` (Recharts), `RecentTransactionsList`, `BudgetsProgressList`, `MonthNavigator` (przyciski do zmiany miesiąca), `EmptyState` (dla nowych użytkowników).
+-   **Kluczowe komponenty widoku**: `PageHeader`, `SummaryCards`, `ExpenseChart` (Recharts), `RecentTransactionsList`, `BudgetsProgressList`, `MonthNavigator` (przyciski do zmiany miesiąca), `EmptyState` (dla nowych użytkowników).
 -   **UX, dostępność i względy bezpieczeństwa**: Wyróżnienie wizualne budżetów bliskich przekroczenia limitu (np. zmiana koloru paska postępu). Wyraźne CTA w "stanie zerowym". Dane pobierane z dedykowanego endpointu `/api/dashboard`.
 
 ---
@@ -56,7 +56,7 @@ Wszystkie widoki list (transakcji, kont itp.) zostały zaprojektowane tak, aby o
 -   **Ścieżka widoku**: `/transactions`
 -   **Główny cel**: Umożliwienie przeglądania, analizowania i zarządzania wszystkimi transakcjami.
 -   **Kluczowe informacje do wyświetlenia**: Tabela/lista transakcji z kluczowymi danymi (data, typ, kwota, konto, kategoria, opis).
--   **Kluczowe komponenty widoku**: `TransactionsList`, `TransactionListItem`, `FiltersPanel` (otwierany w modalu/panelu bocznym), `Pagination` (hybrydowa), `EmptyState`.
+-   **Kluczowe komponenty widoku**: `PageHeader`, `TransactionsList`, `TransactionListItem`, `FiltersPanel` (otwierany w modalu/panelu bocznym), `Pagination` (hybrydowa), `EmptyState`.
 -   **UX, dostępność i względy bezpieczeństwa**: Domyślne sortowanie od najnowszej transakcji. Filtry są łatwo dostępne, ale nie zajmują miejsca na ekranie głównym. Na mobile paginacja typu "Załaduj więcej", na desktopie - numeryczna.
 
 ---
@@ -65,7 +65,7 @@ Wszystkie widoki list (transakcji, kont itp.) zostały zaprojektowane tak, aby o
 -   **Ścieżka widoku**: `/accounts`
 -   **Główny cel**: Zarządzanie kontami bankowymi użytkownika.
 -   **Kluczowe informacje do wyświetlenia**: Lista kont z ich nazwą i aktualnym saldem.
--   **Kluczowe komponenty widoku**: `AccountsList`, `AccountListItem`, `AddAccountModal`, `EditAccountModal`, `DeleteConfirmationDialog`, `EmptyState`.
+-   **Kluczowe komponenty widoku**: `PageHeader`, `AccountsList`, `AccountListItem`, `AddAccountModal`, `EditAccountModal`, `DeleteConfirmationDialog`, `EmptyState`.
 -   **UX, dostępność i względy bezpieczeństwa**: Akcje (edycja, usunięcie) dostępne przy każdym koncie. Usunięcie konta wymaga dodatkowego potwierdzenia ze względu na nieodwracalność operacji.
 
 ---
@@ -74,7 +74,7 @@ Wszystkie widoki list (transakcji, kont itp.) zostały zaprojektowane tak, aby o
 -   **Ścieżka widoku**: `/budgets`
 -   **Główny cel**: Zarządzanie miesięcznymi budżetami.
 -   **Kluczowe informacje do wyświetlenia**: Lista budżetów z nazwą, kwotą, przypisanymi kategoriami.
--   **Kluczowe komponenty widoku**: `BudgetsList`, `BudgetListItem`, `AddBudgetModal`, `EditBudgetModal`, `DeleteConfirmationDialog`, `EmptyState`.
+-   **Kluczowe komponenty widoku**: `PageHeader`, `BudgetsList`, `BudgetListItem`, `AddBudgetModal`, `EditBudgetModal`, `DeleteConfirmationDialog`, `EmptyState`.
 -   **UX, dostępność i względy bezpieczeństwa**: Formularz tworzenia/edycji budżetu uniemożliwia przypisanie kategorii już użytej w innym budżecie w tym samym miesiącu.
 
 ---
@@ -83,7 +83,7 @@ Wszystkie widoki list (transakcji, kont itp.) zostały zaprojektowane tak, aby o
 -   **Ścieżka widoku**: `/categories`
 -   **Główny cel**: Zarządzanie kategoriami przychodów i wydatków.
 -   **Kluczowe informacje do wyświetlenia**: Lista kategorii z podziałem na typ (przychód/wydatek).
--   **Kluczowe komponenty widoku**: `CategoriesList`, `CategoryListItem`, `AddCategoryModal`, `EditCategoryModal`, `DeleteConfirmationDialog`, `EmptyState`.
+-   **Kluczowe komponenty widoku**: `PageHeader`, `CategoriesList`, `CategoryListItem`, `AddCategoryModal`, `EditCategoryModal`, `DeleteConfirmationDialog`, `EmptyState`.
 -   **UX, dostępność i względy bezpieczeństwa**: Usunięcie kategorii jest możliwe tylko wtedy, gdy nie jest ona powiązana z żadną transakcją (logika walidowana przez API, UI powinno wyświetlić stosowny komunikat błędu).
 
 ## 3. Mapa podróży użytkownika
@@ -95,7 +95,7 @@ Przepływ użytkownika został zaprojektowany z myślą o prostocie i intuicyjno
 1.  **Rejestracja (`/register`)**: Użytkownik tworzy konto. Po sukcesie jest automatycznie logowany i przekierowywany na **Pulpit (`/`)**.
 2.  **Pulpit (`/`) - Stan zerowy**: Użytkownik widzi pusty pulpit z wezwaniem do działania (CTA), np. "Dodaj swoje pierwsze konto".
 3.  **Dodawanie konta**: Kliknięcie CTA otwiera **`AddAccountModal`**. Użytkownik wypełnia formularz (nazwa, saldo początkowe) i zapisuje. Modal się zamyka, a dane na pulpicie odświeżają.
-4.  **Nawigacja do dodania transakcji**: Użytkownik klika globalny przycisk "Dodaj transakcję", co otwiera **`AddTransactionModal`**.
+4.  **Nawigacja do dodania transakcji**: Użytkownik klika globalny przycisk "Dodaj transakcję" (wyróżniony na górze menu), co otwiera **`AddTransactionModal`**.
 5.  **Wypełnianie formularza transakcji**:
     -   Użytkownik wybiera typ transakcji (np. "Wydatek").
     -   Formularz dynamicznie dostosowuje pola: pojawiają się selektory dla konta i kategorii.
@@ -115,9 +115,14 @@ Przepływ użytkownika został zaprojektowany z myślą o prostocie i intuicyjno
 **Układ globalny:**
 
 -   Aplikacja wykorzystuje stały, globalny układ dla zalogowanych użytkowników.
--   **Na desktopie**: Pionowy pasek nawigacyjny po lewej stronie ekranu, zawierający linki do głównych widoków oraz przycisk wylogowania. Główna treść widoku zajmuje pozostałą część ekranu.
--   **Na mobile**: Dolny pasek nawigacyjny (tab bar) z ikonami dla kluczowych widoków, zapewniający łatwy dostęp kciukiem. Dodatkowe opcje (np. wylogowanie) mogą być dostępne w menu ukrytym pod ikoną "hamburgera" lub awatara użytkownika w nagłówku.
--   W centralnym miejscu interfejsu (np. w nagłówku lub jako "pływający przycisk akcji" - FAB) znajduje się przycisk **"Dodaj transakcję"**, który jest stale widoczny i dostępny z każdego widoku.
+-   **Na desktopie**: Pionowy pasek nawigacyjny po lewej stronie ekranu.
+    -   **Góra**: Klikalne Logo (powrót do `/`) oraz główny przycisk **"Dodaj transakcję"** (Primary Action) zgodny ze wzorcem "Compose".
+    -   **Środek**: Linki nawigacyjne.
+    -   **Dół**: Sekcja użytkownika. Zawiera Awatar, Imię/Email oraz **bezpośrednie przyciski akcji** (Zmiana motywu, Wyloguj), dostępne bez konieczności otwierania dodatkowego menu.
+-   **Na mobile**:
+    -   **Góra**: Prosty nagłówek z klikalnym logo i menu użytkownika (ukrywającym wylogowanie i zmianę motywu).
+    -   **Dół**: Pasek nawigacyjny (tab bar) z ikonami dla kluczowych widoków i przyciskiem FAB "Dodaj".
+-   W centralnym miejscu interfejsu (na górze paska bocznego na desktopie, jako FAB na mobile) znajduje się przycisk **"Dodaj transakcję"**, który jest stale widoczny i dostępny z każdego widoku.
 
 **Struktura nawigacji (płaska):**
 
@@ -133,6 +138,7 @@ Wszystkie linki nawigacyjne prowadzą bezpośrednio do odpowiednich widoków. Ni
 
 Poniżej znajduje się lista kluczowych, reużywalnych komponentów, które stanowią fundament interfejsu użytkownika aplikacji.
 
+-   **`PageHeader`**: Standaryzowany nagłówek dla każdego widoku, zawierający tytuł, opis i przyciski akcji specyficzne dla danego ekranu (np. "Dodaj konto").
 -   **`AddTransactionModal`**: Centralny komponent aplikacji. Modal zawierający dynamiczny formularz, który zmienia swoje pola w zależności od wybranego typu transakcji (wydatek, przychód, transfer). Będzie wykorzystywał logikę warunkowego renderowania pól.
 -   **`DeleteConfirmationDialog`**: Standardowy modal dialogowy używany przed każdą akcją destrukcyjną (usunięcie konta, kategorii, itp.), aby zapobiec przypadkowej utracie danych.
 -   **`EmptyState`**: Komponent wyświetlany w widokach list, gdy nie ma jeszcze żadnych danych. Zawiera grafikę, krótki tekst wyjaśniający oraz przycisk z wyraźnym wezwaniem do działania (CTA).
