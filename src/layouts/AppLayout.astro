@@ -29,11 +29,6 @@ const handleLogout = async () => {
 const handleAddTransaction = () => {
   openAddTransactionModal();
 };
-
-// Handle toggle dark mode - placeholder for future implementation
-const handleToggleDarkMode = () => {
-  // TODO: Implement dark mode toggle logic (toggle html class, persist in localStorage)
-};
 ---
 
 <Layout title={title}>
@@ -45,7 +40,6 @@ const handleToggleDarkMode = () => {
       avatarUrl={avatarUrl}
       onAddTransaction={handleAddTransaction}
       onLogout={handleLogout}
-      onToggleDarkMode={handleToggleDarkMode}
       client:load
     />
 
@@ -54,7 +48,6 @@ const handleToggleDarkMode = () => {
       userName={userName}
       avatarUrl={avatarUrl}
       onLogout={handleLogout}
-      onToggleDarkMode={handleToggleDarkMode}
       client:load
     />
 

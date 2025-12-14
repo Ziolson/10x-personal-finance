@@ -16,9 +16,28 @@ const { title = "10x Astro Starter" } = Astro.props;
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    
+    <!-- Theme initialization script - prevents FOUC (Flash of Unstyled Content) -->
+    <!-- This runs BEFORE any React hydration, ensuring smooth experience -->
+    <script is:inline>
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (theme === 'dark' || (theme === 'system' && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
   </head>
   <body>
     <slot />
+    
+    <!-- Initialize layout store (including theme) after DOM is ready -->
+    <script>
+      import { initTheme } from '@/lib/stores/layoutStore';
+      initTheme();
+    </script>
   </body>
 </html>
 

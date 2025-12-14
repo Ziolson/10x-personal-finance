@@ -17,8 +17,6 @@ interface UserMenuProps {
   avatarUrl?: string;
   /** Callback function when logout is clicked */
   onLogout: () => Promise<void>;
-  /** Callback function to toggle dark mode */
-  onToggleDarkMode?: () => void;
 }
 
 /**
@@ -31,7 +29,6 @@ export const UserMenu = React.memo(function UserMenu({
   userName = "User",
   avatarUrl,
   onLogout,
-  onToggleDarkMode,
 }: UserMenuProps) {
   const getInitials = (name: string) => {
     return name
@@ -65,11 +62,9 @@ export const UserMenu = React.memo(function UserMenu({
         <DropdownMenuSeparator className="mb-3" />
 
         {/* Theme Toggle */}
-        {onToggleDarkMode && (
-          <div className="mb-3">
-            <ThemeToggle onToggle={onToggleDarkMode} className="w-full" size="sm" showLabel />
-          </div>
-        )}
+        <div className="mb-3">
+          <ThemeToggle className="w-full" size="sm" showLabel />
+        </div>
 
         <DropdownMenuSeparator className="mb-3" />
 

@@ -9,8 +9,6 @@ interface MobileHeaderProps {
   avatarUrl?: string;
   /** Callback function when logout is clicked */
   onLogout: () => Promise<void>;
-  /** Callback function to toggle dark mode */
-  onToggleDarkMode?: () => void;
   /** Optional CSS class for wrapper */
   className?: string;
 }
@@ -25,7 +23,6 @@ export const MobileHeader = React.memo(function MobileHeader({
   userName = "User",
   avatarUrl,
   onLogout,
-  onToggleDarkMode,
   className,
 }: MobileHeaderProps) {
   return (
@@ -52,7 +49,7 @@ export const MobileHeader = React.memo(function MobileHeader({
       <div className="flex-1" />
 
       {/* User Menu Dropdown */}
-      <UserMenu userName={userName} avatarUrl={avatarUrl} onLogout={onLogout} onToggleDarkMode={onToggleDarkMode} />
+      <UserMenu userName={userName} avatarUrl={avatarUrl} onLogout={onLogout} />
     </header>
   );
 });

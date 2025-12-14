@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Home, TrendingUp, DollarSign, BarChart3, Tags, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -24,8 +24,6 @@ interface SidebarProps {
   onAddTransaction: () => void;
   /** Callback when logout button is clicked */
   onLogout: () => Promise<void>;
-  /** Callback to toggle dark mode */
-  onToggleDarkMode?: () => void;
   /** Optional CSS class for wrapper */
   className?: string;
 }
@@ -50,7 +48,6 @@ export const Sidebar = React.memo(function Sidebar({
   avatarUrl,
   onAddTransaction,
   onLogout,
-  onToggleDarkMode,
   className,
 }: SidebarProps) {
   const isActive = (href: string) => {
@@ -75,7 +72,6 @@ export const Sidebar = React.memo(function Sidebar({
         "hidden md:flex flex-col h-screen w-64 border-r border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950",
         className
       )}
-      role="complementary"
       aria-label="Main navigation"
     >
       {/* Header - Logo and Add Transaction Button */}
@@ -128,11 +124,9 @@ export const Sidebar = React.memo(function Sidebar({
       {/* Footer - User Profile Section */}
       <div className="border-t border-neutral-200 p-4 dark:border-neutral-800">
         {/* Theme Toggle Button - Always Visible */}
-        {onToggleDarkMode && (
-          <div className="mb-4">
-            <ThemeToggle onToggle={onToggleDarkMode} className="w-full" size="sm" showLabel />
-          </div>
-        )}
+        <div className="mb-4">
+          <ThemeToggle className="w-full" size="sm" showLabel />
+        </div>
 
         {/* User Profile */}
         <div className="mb-4 flex items-center gap-3">
