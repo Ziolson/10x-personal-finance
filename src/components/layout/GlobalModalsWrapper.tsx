@@ -24,9 +24,7 @@ export const GlobalModalsWrapper = React.memo(function GlobalModalsWrapper() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           {/* TODO: Replace with AddTransactionModal component when ready */}
           <div className="rounded-lg bg-white p-6 dark:bg-neutral-900">
-            <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-              Add Transaction
-            </h2>
+            <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">Add Transaction</h2>
             <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
               Modal content will be implemented here
             </p>

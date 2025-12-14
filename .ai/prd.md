@@ -7,6 +7,7 @@ Celem projektu "10xPersonal Finance" jest stworzenie aplikacji internetowej w we
 ## 2. Problem użytkownika
 
 Użytkownicy często borykają się z problemem braku kontroli nad swoimi finansami, co wynika z kilku czynników:
+
 - Posiadanie wielu kont bankowych utrudnia całościowe spojrzenie na sytuację finansową.
 - Łatwość dokonywania płatności bezgotówkowych (kartą, telefonem) sprawia, że użytkownicy nie są świadomi dokładnych kwot swoich wydatków i nie "czują" odpływu pieniędzy.
 - Brak jednego, scentralizowanego miejsca do agregacji danych o transakcjach prowadzi do trudności w analizie wydatków, planowaniu oszczędności i efektywnym zarządzaniu budżetem domowym.
@@ -15,6 +16,7 @@ Użytkownicy często borykają się z problemem braku kontroli nad swoimi finans
 ## 3. Wymagania funkcjonalne
 
 ### 3.1. Autentykacja i Zarządzanie Użytkownikiem
+
 - Użytkownicy muszą mieć możliwość założenia konta za pomocą adresu e-mail i hasła.
 - Użytkownicy muszą mieć możliwość zalogowania się do aplikacji.
 - System musi zapewniać możliwość wylogowania się.
@@ -24,15 +26,18 @@ Użytkownicy często borykają się z problemem braku kontroli nad swoimi finans
 - Użytkownik może przełączać motyw aplikacji (Jasny/Ciemny/System).
 
 ### 3.2. Zarządzanie Kontami
+
 - Użytkownik może dodawać konta, podając ich nazwę, saldo początkowe i walutę (w MVP domyślnie PLN).
 - Użytkownik może edytować nazwę i saldo początkowe istniejących kont.
 - Użytkownik może usuwać konta. Usunięcie konta powinno wiązać się z usunięciem powiązanych z nim transakcji.
 
 ### 3.3. Zarządzanie Kategoriami
+
 - Aplikacja dostarcza predefiniowaną listę kategorii dla wydatków i przychodów.
 - Użytkownik ma dedykowaną sekcję do zarządzania kategoriami (dodawanie, edycja, usuwanie).
 
 ### 3.4. Zarządzanie Transakcjami
+
 - Użytkownik może dodawać trzy typy transakcji: Wydatek, Przychód, Transfer.
 - Wprowadzanie transakcji odbywa się za pomocą jednego formularza, który dynamicznie dostosowuje pola w zależności od wybranego typu.
 - Każda transakcja musi zawierać kwotę i datę. Opcjonalnie można dodać opis.
@@ -42,12 +47,14 @@ Użytkownicy często borykają się z problemem braku kontroli nad swoimi finans
 - Lista transakcji jest filtrowalna (po dacie, koncie, kategorii).
 
 ### 3.5. Budżetowanie
+
 - Użytkownik może tworzyć miesięczne budżety.
 - Każdy budżet ma nazwę, kwotę i przypisane do niego kategorie wydatków.
 - Jedna kategoria może należeć tylko do jednego budżetu.
 - Użytkownik może edytować i usuwać istniejące budżety.
 
 ### 3.6. Pulpit (Dashboard)
+
 - Jest to główny ekran aplikacji widoczny po zalogowaniu.
 - Domyślnie wyświetla dane dla bieżącego miesiąca, z możliwością zmiany okresu.
 - Prezentuje podsumowanie sumy przychodów i wydatków.
@@ -56,12 +63,14 @@ Użytkownicy często borykają się z problemem braku kontroli nad swoimi finans
 - Prezentuje listę wszystkich zdefiniowanych budżetów wraz z paskami postępu ich wykorzystania.
 
 ### 3.7. Interfejs i Nawigacja (Global Layout)
+
 - Przycisk "Dodaj transakcję" jest widoczny w najbardziej eksponowanym miejscu (Góra paska bocznego na Desktop, FAB na Mobile).
 - Logo aplikacji jest interaktywnym linkiem prowadzącym do Pulpitu.
 
 ## 4. Granice produktu
 
 ### W zakresie MVP:
+
 - Pełny cykl autentykacji użytkownika.
 - Ręczne dodawanie i zarządzanie kontami, kategoriami, transakcjami i budżetami.
 - Obsługa wyłącznie jednej waluty: PLN.
@@ -70,6 +79,7 @@ Użytkownicy często borykają się z problemem braku kontroli nad swoimi finans
 - Obsługa trybu ciemnego i jasnego.
 
 ### Poza zakresem MVP:
+
 - Automatyczna integracja z systemami bankowymi.
 - Zaawansowane raporty, statystyki i wykresy.
 - System powiadomień (np. o przekroczeniu budżetu).
@@ -243,6 +253,7 @@ Użytkownicy często borykają się z problemem braku kontroli nad swoimi finans
 ## 6. Metryki sukcesu
 
 Kluczowe wskaźniki (KPIs), które pozwolą ocenić sukces wdrożenia wersji MVP, są następujące:
+
 - Adopcja kont: 80% zarejestrowanych użytkowników dodało co najmniej jedno konto bankowe w pierwszym tygodniu od rejestracji. (Mierzone przez analizę danych w bazie).
 - Angażowanie przez transakcje: 70% użytkowników dodało co najmniej 5 transakcji (wydatków lub przychodów) w ciągu pierwszego miesiąca. (Mierzone przez analizę danych).
 - Retencja użytkowników: 50% użytkowników korzysta z aplikacji regularnie (loguje się co najmniej 3 razy w tygodniu) przez co najmniej 3 miesiące. (Mierzone przez analitykę logowań i transakcji).

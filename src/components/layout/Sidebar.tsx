@@ -1,7 +1,9 @@
 import React, { useCallback } from "react";
-import { Home, TrendingUp, DollarSign, BarChart3, Tags, Plus, LogOut, Moon, Sun } from "lucide-react";
+import { Home, TrendingUp, DollarSign, BarChart3, Tags, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ThemeToggle } from "./ThemeToggle";
+import { LogoutButton } from "./LogoutButton";
 import { cn } from "@/lib/utils";
 
 interface NavigationItem {
@@ -51,20 +53,6 @@ export const Sidebar = React.memo(function Sidebar({
   onToggleDarkMode,
   className,
 }: SidebarProps) {
-  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
-
-  const handleLogout = useCallback(async () => {
-    setIsLoggingOut(true);
-    try {
-      await onLogout();
-      // TODO: Toast notification will be handled in logout implementation
-    } catch {
-      // TODO: Toast error notification will be handled in logout implementation
-    } finally {
-      setIsLoggingOut(false);
-    }
-  }, [onLogout]);
-
   const isActive = (href: string) => {
     if (href === "/") {
       return currentPath === "/";
@@ -103,12 +91,7 @@ export const Sidebar = React.memo(function Sidebar({
           <span className="font-semibold text-neutral-900 dark:text-neutral-100">Finance</span>
         </a>
 
-        <Button
-          onClick={onAddTransaction}
-          className="w-full gap-2"
-          size="default"
-          aria-label="Add new transaction"
-        >
+        <Button onClick={onAddTransaction} className="w-full gap-2" size="default" aria-label="Add new transaction">
           <Plus className="size-4" />
           <span>Dodaj transakcję</span>
         </Button>
@@ -144,43 +127,27 @@ export const Sidebar = React.memo(function Sidebar({
 
       {/* Footer - User Profile Section */}
       <div className="border-t border-neutral-200 p-4 dark:border-neutral-800">
-        <div className="mb-3 flex items-center gap-3">
+        {/* Theme Toggle Button - Always Visible */}
+        {onToggleDarkMode && (
+          <div className="mb-4">
+            <ThemeToggle onToggle={onToggleDarkMode} className="w-full" size="sm" showLabel />
+          </div>
+        )}
+
+        {/* User Profile */}
+        <div className="mb-4 flex items-center gap-3">
           <Avatar>
             {avatarUrl && <AvatarImage src={avatarUrl} alt={userName} />}
             <AvatarFallback>{getInitials(userName)}</AvatarFallback>
           </Avatar>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-              {userName}
-            </p>
+            <p className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-100">{userName}</p>
             <p className="truncate text-xs text-neutral-500 dark:text-neutral-400">{userName}</p>
           </div>
         </div>
 
-        {/* User Action Buttons */}
-        <div className="flex gap-2">
-          {onToggleDarkMode && (
-            <button
-              onClick={onToggleDarkMode}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-lg p-2 transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800"
-              aria-label="Toggle dark mode"
-              title="Toggle dark mode"
-            >
-              <Sun className="size-4 dark:hidden" />
-              <Moon className="hidden size-4 dark:block" />
-            </button>
-          )}
-
-          <button
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-lg p-2 transition-colors hover:bg-neutral-100 disabled:opacity-50 dark:hover:bg-neutral-800"
-            aria-label="Logout"
-            title="Logout"
-          >
-            <LogOut className="size-4" />
-          </button>
-        </div>
+        {/* Logout Button */}
+        <LogoutButton onLogout={onLogout} className="w-full" size="default" showLabel />
       </div>
     </aside>
   );

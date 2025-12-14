@@ -3,11 +3,13 @@
 ## 1. Typy ENUM
 
 ### transaction_type
+
 ```sql
 CREATE TYPE transaction_type AS ENUM ('expense', 'income', 'transfer');
 ```
 
 ### category_type
+
 ```sql
 CREATE TYPE category_type AS ENUM ('expense', 'income');
 ```
@@ -15,43 +17,49 @@ CREATE TYPE category_type AS ENUM ('expense', 'income');
 ## 2. Tabele
 
 ### profiles
+
 Główna tabela użytkowników aplikacji, połączona relacją 1-do-1 z `auth.users`.
 
-| Kolumna | Typ | Ograniczenia | Opis |
-|---------|-----|--------------|------|
-| id | UUID | PRIMARY KEY, REFERENCES auth.users(id) ON DELETE CASCADE | Identyfikator użytkownika |
-| created_at | TIMESTAMPTZ | NOT NULL, DEFAULT now() | Data utworzenia profilu |
-| updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT now() | Data ostatniej aktualizacji |
+| Kolumna    | Typ         | Ograniczenia                                             | Opis                        |
+| ---------- | ----------- | -------------------------------------------------------- | --------------------------- |
+| id         | UUID        | PRIMARY KEY, REFERENCES auth.users(id) ON DELETE CASCADE | Identyfikator użytkownika   |
+| created_at | TIMESTAMPTZ | NOT NULL, DEFAULT now()                                  | Data utworzenia profilu     |
+| updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT now()                                  | Data ostatniej aktualizacji |
 
 **Ograniczenia:**
+
 - PRIMARY KEY: `id`
 - FOREIGN KEY: `id` REFERENCES `auth.users(id)` ON DELETE CASCADE
 
 **Indeksy:**
+
 - PRIMARY KEY na `id` (automatyczny)
 
 ---
 
 ### accounts
+
 Konta bankowe użytkownika.
 
-| Kolumna | Typ | Ograniczenia | Opis |
-|---------|-----|--------------|------|
-| id | UUID | PRIMARY KEY, DEFAULT gen_random_uuid() | Identyfikator konta |
-| user_id | UUID | NOT NULL, REFERENCES profiles(id) ON DELETE CASCADE | Właściciel konta |
-| name | VARCHAR(255) | NOT NULL | Nazwa konta |
-| initial_balance | NUMERIC(10, 2) | NOT NULL, CHECK (initial_balance >= 0) | Saldo początkowe |
-| currency | VARCHAR(3) | NOT NULL, DEFAULT 'PLN' | Waluta konta (przygotowanie na przyszłość) |
-| created_at | TIMESTAMPTZ | NOT NULL, DEFAULT now() | Data utworzenia konta |
-| updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT now() | Data ostatniej aktualizacji |
+| Kolumna         | Typ            | Ograniczenia                                        | Opis                                       |
+| --------------- | -------------- | --------------------------------------------------- | ------------------------------------------ |
+| id              | UUID           | PRIMARY KEY, DEFAULT gen_random_uuid()              | Identyfikator konta                        |
+| user_id         | UUID           | NOT NULL, REFERENCES profiles(id) ON DELETE CASCADE | Właściciel konta                           |
+| name            | VARCHAR(255)   | NOT NULL                                            | Nazwa konta                                |
+| initial_balance | NUMERIC(10, 2) | NOT NULL, CHECK (initial_balance >= 0)              | Saldo początkowe                           |
+| currency        | VARCHAR(3)     | NOT NULL, DEFAULT 'PLN'                             | Waluta konta (przygotowanie na przyszłość) |
+| created_at      | TIMESTAMPTZ    | NOT NULL, DEFAULT now()                             | Data utworzenia konta                      |
+| updated_at      | TIMESTAMPTZ    | NOT NULL, DEFAULT now()                             | Data ostatniej aktualizacji                |
 
 **Ograniczenia:**
+
 - PRIMARY KEY: `id`
 - FOREIGN KEY: `user_id` REFERENCES `profiles(id)` ON DELETE CASCADE
 - UNIQUE: `(user_id, name)` - nazwy kont muszą być unikalne dla danego użytkownika
 - CHECK: `initial_balance >= 0`
 
 **Indeksy:**
+
 - PRIMARY KEY na `id` (automatyczny)
 - INDEX na `user_id`
 - UNIQUE INDEX na `(user_id, name)` (automatyczny)
@@ -59,20 +67,22 @@ Konta bankowe użytkownika.
 ---
 
 ### budgets
+
 Miesięczne budżety użytkownika.
 
-| Kolumna | Typ | Ograniczenia | Opis |
-|---------|-----|--------------|------|
-| id | UUID | PRIMARY KEY, DEFAULT gen_random_uuid() | Identyfikator budżetu |
-| user_id | UUID | NOT NULL, REFERENCES profiles(id) ON DELETE CASCADE | Właściciel budżetu |
-| name | VARCHAR(255) | NOT NULL | Nazwa budżetu |
-| amount | NUMERIC(10, 2) | NOT NULL, CHECK (amount > 0) | Kwota budżetu |
-| month | INTEGER | NOT NULL, CHECK (month >= 1 AND month <= 12) | Miesiąc budżetu (1-12) |
-| year | INTEGER | NOT NULL, CHECK (year >= 2000 AND year <= 2100) | Rok budżetu |
-| created_at | TIMESTAMPTZ | NOT NULL, DEFAULT now() | Data utworzenia budżetu |
-| updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT now() | Data ostatniej aktualizacji |
+| Kolumna    | Typ            | Ograniczenia                                        | Opis                        |
+| ---------- | -------------- | --------------------------------------------------- | --------------------------- |
+| id         | UUID           | PRIMARY KEY, DEFAULT gen_random_uuid()              | Identyfikator budżetu       |
+| user_id    | UUID           | NOT NULL, REFERENCES profiles(id) ON DELETE CASCADE | Właściciel budżetu          |
+| name       | VARCHAR(255)   | NOT NULL                                            | Nazwa budżetu               |
+| amount     | NUMERIC(10, 2) | NOT NULL, CHECK (amount > 0)                        | Kwota budżetu               |
+| month      | INTEGER        | NOT NULL, CHECK (month >= 1 AND month <= 12)        | Miesiąc budżetu (1-12)      |
+| year       | INTEGER        | NOT NULL, CHECK (year >= 2000 AND year <= 2100)     | Rok budżetu                 |
+| created_at | TIMESTAMPTZ    | NOT NULL, DEFAULT now()                             | Data utworzenia budżetu     |
+| updated_at | TIMESTAMPTZ    | NOT NULL, DEFAULT now()                             | Data ostatniej aktualizacji |
 
 **Ograniczenia:**
+
 - PRIMARY KEY: `id`
 - FOREIGN KEY: `user_id` REFERENCES `profiles(id)` ON DELETE CASCADE
 - UNIQUE: `(user_id, name, month, year)` - budżet o danej nazwie w danym miesiącu i roku dla użytkownika musi być unikalny
@@ -81,6 +91,7 @@ Miesięczne budżety użytkownika.
 - CHECK: `year >= 2000 AND year <= 2100`
 
 **Indeksy:**
+
 - PRIMARY KEY na `id` (automatyczny)
 - INDEX na `user_id`
 - INDEX na `(user_id, year, month)`
@@ -89,19 +100,21 @@ Miesięczne budżety użytkownika.
 ---
 
 ### categories
+
 Kategorie wydatków i przychodów.
 
-| Kolumna | Typ | Ograniczenia | Opis |
-|---------|-----|--------------|------|
-| id | UUID | PRIMARY KEY, DEFAULT gen_random_uuid() | Identyfikator kategorii |
-| user_id | UUID | NOT NULL, REFERENCES profiles(id) ON DELETE CASCADE | Właściciel kategorii |
-| name | VARCHAR(255) | NOT NULL | Nazwa kategorii |
-| type | category_type | NOT NULL | Typ kategorii (expense/income) |
-| budget_id | UUID | NULL, REFERENCES budgets(id) ON DELETE SET NULL | Powiązany budżet (opcjonalnie) |
-| created_at | TIMESTAMPTZ | NOT NULL, DEFAULT now() | Data utworzenia kategorii |
-| updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT now() | Data ostatniej aktualizacji |
+| Kolumna    | Typ           | Ograniczenia                                        | Opis                           |
+| ---------- | ------------- | --------------------------------------------------- | ------------------------------ |
+| id         | UUID          | PRIMARY KEY, DEFAULT gen_random_uuid()              | Identyfikator kategorii        |
+| user_id    | UUID          | NOT NULL, REFERENCES profiles(id) ON DELETE CASCADE | Właściciel kategorii           |
+| name       | VARCHAR(255)  | NOT NULL                                            | Nazwa kategorii                |
+| type       | category_type | NOT NULL                                            | Typ kategorii (expense/income) |
+| budget_id  | UUID          | NULL, REFERENCES budgets(id) ON DELETE SET NULL     | Powiązany budżet (opcjonalnie) |
+| created_at | TIMESTAMPTZ   | NOT NULL, DEFAULT now()                             | Data utworzenia kategorii      |
+| updated_at | TIMESTAMPTZ   | NOT NULL, DEFAULT now()                             | Data ostatniej aktualizacji    |
 
 **Ograniczenia:**
+
 - PRIMARY KEY: `id`
 - FOREIGN KEY: `user_id` REFERENCES `profiles(id)` ON DELETE CASCADE
 - FOREIGN KEY: `budget_id` REFERENCES `budgets(id)` ON DELETE SET NULL
@@ -109,6 +122,7 @@ Kategorie wydatków i przychodów.
 - CHECK: Kategoria może być przypisana tylko do jednego budżetu (wymuszane przez aplikację i RLS)
 
 **Indeksy:**
+
 - PRIMARY KEY na `id` (automatyczny)
 - INDEX na `user_id`
 - INDEX na `budget_id`
@@ -118,23 +132,25 @@ Kategorie wydatków i przychodów.
 ---
 
 ### transactions
+
 Centralna tabela dla wszystkich operacji finansowych (wydatki, przychody, transfery).
 
-| Kolumna | Typ | Ograniczenia | Opis |
-|---------|-----|--------------|------|
-| id | UUID | PRIMARY KEY, DEFAULT gen_random_uuid() | Identyfikator transakcji |
-| user_id | UUID | NOT NULL, REFERENCES profiles(id) ON DELETE CASCADE | Właściciel transakcji |
-| type | transaction_type | NOT NULL | Typ transakcji (expense/income/transfer) |
-| amount | NUMERIC(10, 2) | NOT NULL, CHECK (amount > 0) | Kwota transakcji |
-| date | DATE | NOT NULL | Data transakcji |
-| description | TEXT | NULL | Opis transakcji (opcjonalny) |
-| from_account_id | UUID | NULL, REFERENCES accounts(id) ON DELETE CASCADE | Konto źródłowe (wydatek/transfer) |
-| to_account_id | UUID | NULL, REFERENCES accounts(id) ON DELETE CASCADE | Konto docelowe (przychód/transfer) |
-| category_id | UUID | NULL, REFERENCES categories(id) ON DELETE RESTRICT | Kategoria (wydatek/przychód) |
-| created_at | TIMESTAMPTZ | NOT NULL, DEFAULT now() | Data utworzenia transakcji |
-| updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT now() | Data ostatniej aktualizacji |
+| Kolumna         | Typ              | Ograniczenia                                        | Opis                                     |
+| --------------- | ---------------- | --------------------------------------------------- | ---------------------------------------- |
+| id              | UUID             | PRIMARY KEY, DEFAULT gen_random_uuid()              | Identyfikator transakcji                 |
+| user_id         | UUID             | NOT NULL, REFERENCES profiles(id) ON DELETE CASCADE | Właściciel transakcji                    |
+| type            | transaction_type | NOT NULL                                            | Typ transakcji (expense/income/transfer) |
+| amount          | NUMERIC(10, 2)   | NOT NULL, CHECK (amount > 0)                        | Kwota transakcji                         |
+| date            | DATE             | NOT NULL                                            | Data transakcji                          |
+| description     | TEXT             | NULL                                                | Opis transakcji (opcjonalny)             |
+| from_account_id | UUID             | NULL, REFERENCES accounts(id) ON DELETE CASCADE     | Konto źródłowe (wydatek/transfer)        |
+| to_account_id   | UUID             | NULL, REFERENCES accounts(id) ON DELETE CASCADE     | Konto docelowe (przychód/transfer)       |
+| category_id     | UUID             | NULL, REFERENCES categories(id) ON DELETE RESTRICT  | Kategoria (wydatek/przychód)             |
+| created_at      | TIMESTAMPTZ      | NOT NULL, DEFAULT now()                             | Data utworzenia transakcji               |
+| updated_at      | TIMESTAMPTZ      | NOT NULL, DEFAULT now()                             | Data ostatniej aktualizacji              |
 
 **Ograniczenia:**
+
 - PRIMARY KEY: `id`
 - FOREIGN KEY: `user_id` REFERENCES `profiles(id)` ON DELETE CASCADE
 - FOREIGN KEY: `from_account_id` REFERENCES `accounts(id)` ON DELETE CASCADE
@@ -146,6 +162,7 @@ Centralna tabela dla wszystkich operacji finansowych (wydatki, przychody, transf
 - CHECK: Dla typu 'transfer': `from_account_id IS NOT NULL AND to_account_id IS NOT NULL AND category_id IS NULL AND from_account_id != to_account_id`
 
 **Indeksy:**
+
 - PRIMARY KEY na `id` (automatyczny)
 - INDEX na `user_id`
 - INDEX na `from_account_id`
@@ -159,54 +176,63 @@ Centralna tabela dla wszystkich operacji finansowych (wydatki, przychody, transf
 ## 3. Relacje między tabelami
 
 ### profiles ↔ auth.users
+
 - **Typ**: Jeden-do-jednego
 - **Opis**: Każdy profil aplikacji odpowiada jednemu użytkownikowi w systemie autentykacji Supabase
 - **Implementacja**: `profiles.id` jest jednocześnie PRIMARY KEY i FOREIGN KEY do `auth.users(id)`
 - **ON DELETE**: CASCADE - usunięcie użytkownika z auth.users usuwa profil i wszystkie powiązane dane
 
 ### profiles → accounts
+
 - **Typ**: Jeden-do-wielu
 - **Opis**: Użytkownik może mieć wiele kont bankowych
 - **Implementacja**: `accounts.user_id` REFERENCES `profiles(id)`
 - **ON DELETE**: CASCADE - usunięcie profilu usuwa wszystkie jego konta
 
 ### profiles → categories
+
 - **Typ**: Jeden-do-wielu
 - **Opis**: Użytkownik może mieć wiele kategorii
 - **Implementacja**: `categories.user_id` REFERENCES `profiles(id)`
 - **ON DELETE**: CASCADE - usunięcie profilu usuwa wszystkie jego kategorie
 
 ### profiles → budgets
+
 - **Typ**: Jeden-do-wielu
 - **Opis**: Użytkownik może mieć wiele budżetów
 - **Implementacja**: `budgets.user_id` REFERENCES `profiles(id)`
 - **ON DELETE**: CASCADE - usunięcie profilu usuwa wszystkie jego budżety
 
 ### profiles → transactions
+
 - **Typ**: Jeden-do-wielu
 - **Opis**: Użytkownik może mieć wiele transakcji
 - **Implementacja**: `transactions.user_id` REFERENCES `profiles(id)`
 - **ON DELETE**: CASCADE - usunięcie profilu usuwa wszystkie jego transakcje
 
 ### budgets → categories
+
 - **Typ**: Jeden-do-wielu
 - **Opis**: Budżet może mieć przypisane wiele kategorii, ale każda kategoria może należeć tylko do jednego budżetu
 - **Implementacja**: `categories.budget_id` REFERENCES `budgets(id)`
 - **ON DELETE**: SET NULL - usunięcie budżetu nie usuwa kategorii, tylko usuwa powiązanie
 
 ### accounts → transactions (from_account_id)
+
 - **Typ**: Jeden-do-wielu
 - **Opis**: Konto może być źródłem wielu transakcji (wydatki, transfery wychodzące)
 - **Implementacja**: `transactions.from_account_id` REFERENCES `accounts(id)`
 - **ON DELETE**: CASCADE - usunięcie konta usuwa wszystkie transakcje z niego wychodzące
 
 ### accounts → transactions (to_account_id)
+
 - **Typ**: Jeden-do-wielu
 - **Opis**: Konto może być celem wielu transakcji (przychody, transfery przychodzące)
 - **Implementacja**: `transactions.to_account_id` REFERENCES `accounts(id)`
 - **ON DELETE**: CASCADE - usunięcie konta usuwa wszystkie transakcje do niego przychodzące
 
 ### categories → transactions
+
 - **Typ**: Jeden-do-wielu
 - **Opis**: Kategoria może być przypisana do wielu transakcji
 - **Implementacja**: `transactions.category_id` REFERENCES `categories(id)`
@@ -217,9 +243,11 @@ Centralna tabela dla wszystkich operacji finansowych (wydatki, przychody, transf
 ## 4. Triggery i Funkcje
 
 ### Trigger: updated_at_timestamp
+
 **Cel**: Automatyczna aktualizacja kolumny `updated_at` przy każdej modyfikacji rekordu.
 
 **Funkcja**:
+
 ```sql
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -231,6 +259,7 @@ $$ LANGUAGE plpgsql;
 ```
 
 **Triggery** (dla każdej tabeli):
+
 ```sql
 CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE ON profiles
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
@@ -249,9 +278,11 @@ CREATE TRIGGER update_transactions_updated_at BEFORE UPDATE ON transactions
 ```
 
 ### Trigger: create_default_categories
+
 **Cel**: Automatyczne tworzenie domyślnego zestawu kategorii dla nowego użytkownika przy rejestracji.
 
 **Funkcja**:
+
 ```sql
 CREATE OR REPLACE FUNCTION create_default_categories_for_user()
 RETURNS TRIGGER AS $$
@@ -266,19 +297,20 @@ BEGIN
         (NEW.id, 'Ubrania', 'expense'),
         (NEW.id, 'Edukacja', 'expense'),
         (NEW.id, 'Inne wydatki', 'expense'),
-        
+
     -- Kategorie przychodów
         (NEW.id, 'Wynagrodzenie', 'income'),
         (NEW.id, 'Freelance', 'income'),
         (NEW.id, 'Inwestycje', 'income'),
         (NEW.id, 'Inne przychody', 'income');
-    
+
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 ```
 
 **Trigger**:
+
 ```sql
 CREATE TRIGGER create_default_categories_trigger
     AFTER INSERT ON profiles
@@ -287,9 +319,11 @@ CREATE TRIGGER create_default_categories_trigger
 ```
 
 ### Trigger: create_profile_for_user
+
 **Cel**: Automatyczne tworzenie profilu w tabeli `profiles` po utworzeniu użytkownika w `auth.users`.
 
 **Funkcja**:
+
 ```sql
 CREATE OR REPLACE FUNCTION create_profile_for_new_user()
 RETURNS TRIGGER AS $$
@@ -302,6 +336,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ```
 
 **Trigger**:
+
 ```sql
 CREATE TRIGGER create_profile_on_signup
     AFTER INSERT ON auth.users
@@ -314,6 +349,7 @@ CREATE TRIGGER create_profile_on_signup
 ## 5. Row Level Security (RLS) Policies
 
 ### Włączenie RLS dla wszystkich tabel
+
 ```sql
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE accounts ENABLE ROW LEVEL SECURITY;
@@ -325,6 +361,7 @@ ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
 ### Polityki dla tabeli `profiles`
 
 **SELECT**:
+
 ```sql
 CREATE POLICY "Users can view their own profile"
     ON profiles FOR SELECT
@@ -332,6 +369,7 @@ CREATE POLICY "Users can view their own profile"
 ```
 
 **INSERT**:
+
 ```sql
 CREATE POLICY "Users can insert their own profile"
     ON profiles FOR INSERT
@@ -339,6 +377,7 @@ CREATE POLICY "Users can insert their own profile"
 ```
 
 **UPDATE**:
+
 ```sql
 CREATE POLICY "Users can update their own profile"
     ON profiles FOR UPDATE
@@ -347,6 +386,7 @@ CREATE POLICY "Users can update their own profile"
 ```
 
 **DELETE**:
+
 ```sql
 CREATE POLICY "Users can delete their own profile"
     ON profiles FOR DELETE
@@ -356,6 +396,7 @@ CREATE POLICY "Users can delete their own profile"
 ### Polityki dla tabeli `accounts`
 
 **SELECT**:
+
 ```sql
 CREATE POLICY "Users can view their own accounts"
     ON accounts FOR SELECT
@@ -363,6 +404,7 @@ CREATE POLICY "Users can view their own accounts"
 ```
 
 **INSERT**:
+
 ```sql
 CREATE POLICY "Users can insert their own accounts"
     ON accounts FOR INSERT
@@ -370,6 +412,7 @@ CREATE POLICY "Users can insert their own accounts"
 ```
 
 **UPDATE**:
+
 ```sql
 CREATE POLICY "Users can update their own accounts"
     ON accounts FOR UPDATE
@@ -378,6 +421,7 @@ CREATE POLICY "Users can update their own accounts"
 ```
 
 **DELETE**:
+
 ```sql
 CREATE POLICY "Users can delete their own accounts"
     ON accounts FOR DELETE
@@ -387,6 +431,7 @@ CREATE POLICY "Users can delete their own accounts"
 ### Polityki dla tabeli `categories`
 
 **SELECT**:
+
 ```sql
 CREATE POLICY "Users can view their own categories"
     ON categories FOR SELECT
@@ -394,6 +439,7 @@ CREATE POLICY "Users can view their own categories"
 ```
 
 **INSERT**:
+
 ```sql
 CREATE POLICY "Users can insert their own categories"
     ON categories FOR INSERT
@@ -401,6 +447,7 @@ CREATE POLICY "Users can insert their own categories"
 ```
 
 **UPDATE**:
+
 ```sql
 CREATE POLICY "Users can update their own categories"
     ON categories FOR UPDATE
@@ -409,6 +456,7 @@ CREATE POLICY "Users can update their own categories"
 ```
 
 **DELETE**:
+
 ```sql
 CREATE POLICY "Users can delete their own categories"
     ON categories FOR DELETE
@@ -418,6 +466,7 @@ CREATE POLICY "Users can delete their own categories"
 ### Polityki dla tabeli `budgets`
 
 **SELECT**:
+
 ```sql
 CREATE POLICY "Users can view their own budgets"
     ON budgets FOR SELECT
@@ -425,6 +474,7 @@ CREATE POLICY "Users can view their own budgets"
 ```
 
 **INSERT**:
+
 ```sql
 CREATE POLICY "Users can insert their own budgets"
     ON budgets FOR INSERT
@@ -432,6 +482,7 @@ CREATE POLICY "Users can insert their own budgets"
 ```
 
 **UPDATE**:
+
 ```sql
 CREATE POLICY "Users can update their own budgets"
     ON budgets FOR UPDATE
@@ -440,6 +491,7 @@ CREATE POLICY "Users can update their own budgets"
 ```
 
 **DELETE**:
+
 ```sql
 CREATE POLICY "Users can delete their own budgets"
     ON budgets FOR DELETE
@@ -449,6 +501,7 @@ CREATE POLICY "Users can delete their own budgets"
 ### Polityki dla tabeli `transactions`
 
 **SELECT**:
+
 ```sql
 CREATE POLICY "Users can view their own transactions"
     ON transactions FOR SELECT
@@ -456,6 +509,7 @@ CREATE POLICY "Users can view their own transactions"
 ```
 
 **INSERT**:
+
 ```sql
 CREATE POLICY "Users can insert their own transactions"
     ON transactions FOR INSERT
@@ -463,6 +517,7 @@ CREATE POLICY "Users can insert their own transactions"
 ```
 
 **UPDATE**:
+
 ```sql
 CREATE POLICY "Users can update their own transactions"
     ON transactions FOR UPDATE
@@ -471,6 +526,7 @@ CREATE POLICY "Users can update their own transactions"
 ```
 
 **DELETE**:
+
 ```sql
 CREATE POLICY "Users can delete their own transactions"
     ON transactions FOR DELETE
@@ -482,18 +538,19 @@ CREATE POLICY "Users can delete their own transactions"
 ## 6. Widoki (Views)
 
 ### account_balances
+
 **Cel**: Dynamiczne obliczanie aktualnego salda każdego konta.
 
 ```sql
 CREATE OR REPLACE VIEW account_balances AS
-SELECT 
+SELECT
     a.id AS account_id,
     a.user_id,
     a.name AS account_name,
     a.initial_balance,
     a.currency,
     COALESCE(
-        a.initial_balance 
+        a.initial_balance
         + COALESCE(SUM(CASE WHEN t.to_account_id = a.id THEN t.amount ELSE 0 END), 0)
         - COALESCE(SUM(CASE WHEN t.from_account_id = a.id THEN t.amount ELSE 0 END), 0),
         a.initial_balance
@@ -504,11 +561,12 @@ GROUP BY a.id, a.user_id, a.name, a.initial_balance, a.currency;
 ```
 
 ### budget_progress
+
 **Cel**: Obliczanie postępu realizacji budżetów (suma wydatków vs kwota budżetu).
 
 ```sql
 CREATE OR REPLACE VIEW budget_progress AS
-SELECT 
+SELECT
     b.id AS budget_id,
     b.user_id,
     b.name AS budget_name,
@@ -517,13 +575,13 @@ SELECT
     b.year,
     COALESCE(SUM(t.amount), 0) AS spent_amount,
     b.amount - COALESCE(SUM(t.amount), 0) AS remaining_amount,
-    CASE 
+    CASE
         WHEN b.amount > 0 THEN (COALESCE(SUM(t.amount), 0) / b.amount * 100)
-        ELSE 0 
+        ELSE 0
     END AS percentage_used
 FROM budgets b
 LEFT JOIN categories c ON c.budget_id = b.id
-LEFT JOIN transactions t ON t.category_id = c.id 
+LEFT JOIN transactions t ON t.category_id = c.id
     AND t.type = 'expense'
     AND EXTRACT(YEAR FROM t.date) = b.year
     AND EXTRACT(MONTH FROM t.date) = b.month
@@ -535,6 +593,7 @@ GROUP BY b.id, b.user_id, b.name, b.amount, b.month, b.year;
 ## 7. Funkcje pomocnicze
 
 ### get_account_balance(account_id UUID, as_of_date DATE)
+
 **Cel**: Pobranie salda konta na określony dzień.
 
 ```sql
@@ -546,8 +605,8 @@ RETURNS NUMERIC(10, 2) AS $$
 DECLARE
     v_balance NUMERIC(10, 2);
 BEGIN
-    SELECT 
-        a.initial_balance 
+    SELECT
+        a.initial_balance
         + COALESCE(SUM(CASE WHEN t.to_account_id = a.id THEN t.amount ELSE 0 END), 0)
         - COALESCE(SUM(CASE WHEN t.from_account_id = a.id THEN t.amount ELSE 0 END), 0)
     INTO v_balance
@@ -556,7 +615,7 @@ BEGIN
         AND t.date <= p_as_of_date
     WHERE a.id = p_account_id
     GROUP BY a.id, a.initial_balance;
-    
+
     RETURN COALESCE(v_balance, 0);
 END;
 $$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
@@ -574,7 +633,7 @@ $$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
 
 3. **Opcjonalne klucze obce w transactions**: Pola `from_account_id`, `to_account_id` i `category_id` są opcjonalne (NULL), a ich wymagalność jest egzekwowana przez CHECK constraints w zależności od typu transakcji. To zapewnia elastyczność przy zachowaniu integralności danych.
 
-4. **ON DELETE CASCADE vs RESTRICT**: 
+4. **ON DELETE CASCADE vs RESTRICT**:
    - CASCADE dla relacji user → dane: Usunięcie użytkownika usuwa wszystkie jego dane
    - CASCADE dla relacji account → transactions: Usunięcie konta usuwa powiązane transakcje (zgodnie z PRD)
    - RESTRICT dla relacji category → transactions: Kategorii nie można usunąć, jeśli są z nią powiązane transakcje (ochrona danych historycznych)
@@ -597,6 +656,7 @@ $$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
 ### Normalizacja
 
 Schemat jest znormalizowany do 3NF (Third Normal Form):
+
 - Każda tabela ma jasno zdefiniowany klucz główny
 - Nie ma powtarzających się grup danych
 - Wszystkie atrybuty niebędące kluczami są w pełni zależne od klucza głównego
@@ -605,6 +665,7 @@ Schemat jest znormalizowany do 3NF (Third Normal Form):
 ### Wydajność
 
 Podstawowe indeksy zostały zaimplementowane od początku:
+
 - Indeksy na kluczach obcych (`user_id`, `account_id`, `category_id`, `budget_id`)
 - Indeksy na kolumnach używanych często w klauzuli WHERE i ORDER BY (np. `date`)
 - Złożone indeksy dla typowych zapytań (np. `(user_id, date DESC)`)
@@ -612,6 +673,7 @@ Podstawowe indeksy zostały zaimplementowane od początku:
 ### Skalowalność
 
 Schemat jest przygotowany na przyszły rozwój:
+
 - Kolumna `currency` w tabeli `accounts` (obsługa wielu walut)
 - Typ `NUMERIC(10, 2)` dla kwot pieniężnych (precyzja do 10 cyfr, 2 miejsca po przecinku)
 - Typ `TIMESTAMPTZ` dla znaczników czasu (obsługa stref czasowych)
@@ -623,4 +685,3 @@ Schemat jest przygotowany na przyszły rozwój:
 - Polityki RLS oparte na `auth.uid()` zapewniają pełną izolację danych
 - Funkcja `SECURITY DEFINER` dla triggerów systemowych (np. tworzenie profilu)
 - Kaskadowe usuwanie danych po usunięciu użytkownika (zgodność z RODO)
-

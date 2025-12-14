@@ -18,7 +18,10 @@ const accountFormSchema = z.object({
       return value;
     },
     z
-      .number({ invalid_type_error: "Saldo początkowe musi być liczbą", required_error: "Saldo początkowe jest wymagane" })
+      .number({
+        invalid_type_error: "Saldo początkowe musi być liczbą",
+        required_error: "Saldo początkowe jest wymagane",
+      })
       .min(0, "Saldo nie może być wartością ujemną")
   ),
 });
@@ -100,7 +103,9 @@ export default function AccountForm({
           {...register("initial_balance", { valueAsNumber: true })}
         />
         {(errors.initial_balance?.message || serverErrors?.initial_balance) && (
-          <p className="mt-1 text-xs text-destructive">{errors.initial_balance?.message ?? serverErrors?.initial_balance}</p>
+          <p className="mt-1 text-xs text-destructive">
+            {errors.initial_balance?.message ?? serverErrors?.initial_balance}
+          </p>
         )}
       </div>
 

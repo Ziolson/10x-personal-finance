@@ -12,7 +12,14 @@ export interface EditAccountModalProps {
   onError?: (message?: string | null) => void;
 }
 
-export default function EditAccountModal({ isOpen, account, onOpenChange, onSubmit, onSuccess, onError }: EditAccountModalProps) {
+export default function EditAccountModal({
+  isOpen,
+  account,
+  onOpenChange,
+  onSubmit,
+  onSuccess,
+  onError,
+}: EditAccountModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverErrors, setServerErrors] = useState<AccountFormServerErrors>({});
   const [generalError, setGeneralError] = useState<string | null>(null);
