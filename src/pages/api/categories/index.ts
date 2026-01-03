@@ -110,7 +110,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
       const categories = await getCategories(user.id, locals.supabase, validationResult.data);
 
       // Step 4: Return success response with 200 OK
-      return new Response(JSON.stringify({ data: categories } as { data: GetCategoriesResponse }), {
+      return new Response(JSON.stringify(categories), {
         status: 200,
         headers: { "Content-Type": "application/json" },
       });
