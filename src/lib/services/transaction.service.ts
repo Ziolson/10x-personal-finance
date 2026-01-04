@@ -12,13 +12,7 @@
  */
 
 import type { SupabaseClient } from "../../db/supabase.client";
-import type {
-  CreateTransactionCommand,
-  TransactionDTO,
-  UpdateTransactionCommand,
-  GetTransactionsQuery,
-  PaginatedResponse,
-} from "../../types";
+import type { CreateTransactionCommand, TransactionDTO, UpdateTransactionCommand, GetTransactionsQuery, PaginatedResponse } from "../../types";
 import { CreateTransactionSchema } from "../validators/transaction.validators";
 
 /**
@@ -37,11 +31,7 @@ import { CreateTransactionSchema } from "../validators/transaction.validators";
  * @returns Promise<PaginatedResponse<TransactionDTO>> Paginated list of transactions
  * @throws Error if database query fails
  */
-export async function getTransactions(
-  query: GetTransactionsQuery,
-  userId: string,
-  supabase: SupabaseClient
-): Promise<PaginatedResponse<TransactionDTO>> {
+export async function getTransactions(query: GetTransactionsQuery, userId: string, supabase: SupabaseClient): Promise<PaginatedResponse<TransactionDTO>> {
   const { page = 1, limit = 20, type, accountId, categoryId, startDate, endDate } = query;
 
   // Step 1: Calculate pagination values
@@ -51,10 +41,7 @@ export async function getTransactions(
     // Step 2: Build the query with filters
     let countQuery = supabase.from("transactions").select("*", { count: "exact", head: true }).eq("user_id", userId);
 
-    let dataQuery = supabase
-      .from("transactions")
-      .select("id, type, amount, date, description, from_account_id, to_account_id, category_id, created_at")
-      .eq("user_id", userId);
+    let dataQuery = supabase.from("transactions").select("id, type, amount, date, description, from_account_id, to_account_id, category_id, created_at").eq("user_id", userId);
 
     // Apply type filter
     if (type) {
@@ -89,6 +76,12 @@ export async function getTransactions(
     const { count, error: countError } = await countQuery;
 
     if (countError) {
+      // eslint-disable-next-line no-console
+      console.error("[TransactionService.getTransactions] Database error while counting:", {
+        userId,
+        query,
+        error: countError,
+      });
       throw new Error(`Database error while counting transactions: ${countError.message}`);
     }
 
@@ -101,6 +94,12 @@ export async function getTransactions(
       .range(offset, offset + limit - 1);
 
     if (dataError) {
+      // eslint-disable-next-line no-console
+      console.error("[TransactionService.getTransactions] Database error while fetching data:", {
+        userId,
+        query,
+        error: dataError,
+      });
       throw new Error(`Database error while fetching transactions: ${dataError.message}`);
     }
 
@@ -143,11 +142,7 @@ export async function getTransactions(
  * @returns Promise<TransactionDTO | null> The transaction, or null if not found
  * @throws Error if database query fails
  */
-export async function getTransactionById(
-  transactionId: string,
-  userId: string,
-  supabase: SupabaseClient
-): Promise<TransactionDTO | null> {
+export async function getTransactionById(transactionId: string, userId: string, supabase: SupabaseClient): Promise<TransactionDTO | null> {
   try {
     const { data: transaction, error } = await supabase
       .from("transactions")
@@ -157,6 +152,12 @@ export async function getTransactionById(
       .maybeSingle();
 
     if (error) {
+      // eslint-disable-next-line no-console
+      console.error("[TransactionService.getTransactionById] Database error:", {
+        transactionId,
+        userId,
+        error,
+      });
       throw new Error(`Database error while fetching transaction: ${error.message}`);
     }
 
@@ -195,11 +196,7 @@ export async function getTransactionById(
  * @returns Promise<TransactionDTO> The newly created transaction
  * @throws Error if validation fails or database operation fails
  */
-export async function createTransaction(
-  command: CreateTransactionCommand,
-  userId: string,
-  supabase: SupabaseClient
-): Promise<TransactionDTO> {
+export async function createTransaction(command: CreateTransactionCommand, userId: string, supabase: SupabaseClient): Promise<TransactionDTO> {
   try {
     // Step 1: Validate structure using Zod (ensures required fields for transaction type)
     const validatedCommand = CreateTransactionSchema.parse(command);
@@ -266,10 +263,21 @@ export async function createTransaction(
       .single();
 
     if (insertError) {
+      // eslint-disable-next-line no-console
+      console.error("[TransactionService.createTransaction] Database error during insert:", {
+        userId,
+        payload: insertPayload,
+        error: insertError,
+      });
       throw new Error(`Database error while creating transaction: ${insertError.message}`);
     }
 
     if (!newTransaction) {
+      // eslint-disable-next-line no-console
+      console.error("[TransactionService.createTransaction] No data returned after insert", {
+        userId,
+        payload: insertPayload,
+      });
       throw new Error("Failed to create transaction: no data returned");
     }
 
@@ -304,26 +312,27 @@ export async function createTransaction(
  * @returns Promise<TransactionDTO> The updated transaction
  * @throws Error if transaction not found or database operation fails
  */
-export async function updateTransaction(
-  transactionId: string,
-  userId: string,
-  command: UpdateTransactionCommand,
-  supabase: SupabaseClient
-): Promise<TransactionDTO> {
+export async function updateTransaction(transactionId: string, userId: string, command: UpdateTransactionCommand, supabase: SupabaseClient): Promise<TransactionDTO> {
   try {
     // Step 1: Check if transaction exists and belongs to user
-    const { data: existingTransaction, error: checkError } = await supabase
-      .from("transactions")
-      .select("id, type")
-      .eq("id", transactionId)
-      .eq("user_id", userId)
-      .maybeSingle();
+    const { data: existingTransaction, error: checkError } = await supabase.from("transactions").select("id, type").eq("id", transactionId).eq("user_id", userId).maybeSingle();
 
     if (checkError) {
+      // eslint-disable-next-line no-console
+      console.error("[TransactionService.updateTransaction] Database error during existence check:", {
+        transactionId,
+        userId,
+        error: checkError,
+      });
       throw new Error(`Database error while checking transaction: ${checkError.message}`);
     }
 
     if (!existingTransaction) {
+      // eslint-disable-next-line no-console
+      console.warn("[TransactionService.updateTransaction] Transaction not found or unauthorized", {
+        transactionId,
+        userId,
+      });
       throw new Error("NOT_FOUND");
     }
 
@@ -348,10 +357,23 @@ export async function updateTransaction(
       .single();
 
     if (updateError) {
+      // eslint-disable-next-line no-console
+      console.error("[TransactionService.updateTransaction] Database error during update:", {
+        transactionId,
+        userId,
+        payload: updatePayload,
+        error: updateError,
+      });
       throw new Error(`Database error while updating transaction: ${updateError.message}`);
     }
 
     if (!updatedTransaction) {
+      // eslint-disable-next-line no-console
+      console.error("[TransactionService.updateTransaction] No data returned after update", {
+        transactionId,
+        userId,
+        payload: updatePayload,
+      });
       throw new Error("Failed to update transaction: no data returned");
     }
 
@@ -388,19 +410,17 @@ export async function updateTransaction(
  *       If the transaction doesn't exist or doesn't belong to the user, the delete silently
  *       succeeds (Supabase behavior). Frontend validation should verify the result.
  */
-export async function deleteTransaction(
-  transactionId: string,
-  userId: string,
-  supabase: SupabaseClient
-): Promise<void> {
+export async function deleteTransaction(transactionId: string, userId: string, supabase: SupabaseClient): Promise<void> {
   try {
-    const { error: deleteError } = await supabase
-      .from("transactions")
-      .delete()
-      .eq("id", transactionId)
-      .eq("user_id", userId);
+    const { error: deleteError } = await supabase.from("transactions").delete().eq("id", transactionId).eq("user_id", userId);
 
     if (deleteError) {
+      // eslint-disable-next-line no-console
+      console.error("[TransactionService.deleteTransaction] Database error during delete:", {
+        transactionId,
+        userId,
+        error: deleteError,
+      });
       throw new Error(`Database error while deleting transaction: ${deleteError.message}`);
     }
   } catch (error) {

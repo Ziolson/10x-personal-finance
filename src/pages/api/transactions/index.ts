@@ -109,6 +109,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
         message: err.message,
       }));
 
+      // eslint-disable-next-line no-console
+      console.warn("[API /api/transactions] Validation failed:", {
+        body,
+        errors: validationErrors,
+      });
+
       return new Response(
         JSON.stringify({
           error: {

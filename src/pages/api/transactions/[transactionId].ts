@@ -126,6 +126,13 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
         message: err.message,
       }));
 
+      // eslint-disable-next-line no-console
+      console.warn(`[API /api/transactions/${transactionId}] Validation failed:`, {
+        transactionId,
+        body,
+        errors: validationErrors,
+      });
+
       return new Response(
         JSON.stringify({
           error: {
