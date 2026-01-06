@@ -419,11 +419,18 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
 
     const categoryId = paramValidation.data.categoryId;
 
-    // Step 3: Verify category exists before deletion
+    // Step 3: Delete (service now handles existence check via RETURNING)
     try {
-      const categoryExists = await getCategoryById(categoryId, user.id, locals.supabase);
+      await deleteCategory(categoryId, user.id, locals.supabase);
 
-      if (!categoryExists) {
+      // Step 4: Return success response with 204 No Content
+      return new Response(null, {
+        status: 204,
+      });
+    } catch (serviceError) {
+      const errorMessage = serviceError instanceof Error ? serviceError.message : "Unknown error";
+
+      if (errorMessage === "NOT_FOUND") {
         return new Response(
           JSON.stringify({
             error: {
@@ -437,17 +444,6 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
           }
         );
       }
-
-      // Step 4: Call service to delete category
-      await deleteCategory(categoryId, user.id, locals.supabase);
-
-      // Step 5: Return success response with 204 No Content
-      return new Response(null, {
-        status: 204,
-        headers: { "Content-Type": "application/json" },
-      });
-    } catch (serviceError) {
-      const errorMessage = serviceError instanceof Error ? serviceError.message : "Unknown error";
 
       // Handle RESTRICT constraint violation (category has transactions)
       if (errorMessage === "CATEGORY_HAS_TRANSACTIONS") {

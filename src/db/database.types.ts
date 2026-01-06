@@ -286,6 +286,8 @@ export interface Database {
           spent_amount: number | null;
           user_id: string | null;
           year: number | null;
+          created_at: string | null;
+          category_ids: string[] | null;
         };
         Relationships: [
           {

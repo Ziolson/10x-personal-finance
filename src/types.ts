@@ -194,6 +194,9 @@ export interface GetTransactionsQuery {
  */
 export interface BudgetDTO extends Omit<Budget, "user_id" | "updated_at"> {
   categories: string[]; // Array of category IDs
+  spent_amount?: number;
+  remaining_amount?: number;
+  percentage_used?: number;
 }
 
 /**

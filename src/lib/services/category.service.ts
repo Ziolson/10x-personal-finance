@@ -24,16 +24,9 @@ import type { CreateCategoryCommand, CategoryDTO, UpdateCategoryCommand, GetCate
  * const categories = await getCategories(userId, supabase);
  * const expenseCategories = await getCategories(userId, supabase, { type: 'expense' });
  */
-export async function getCategories(
-  userId: string,
-  supabase: SupabaseClient,
-  query?: GetCategoriesQuery
-): Promise<CategoryDTO[]> {
+export async function getCategories(userId: string, supabase: SupabaseClient, query?: GetCategoriesQuery): Promise<CategoryDTO[]> {
   // Step 1: Build query to fetch user's categories
-  let queryBuilder = supabase
-    .from("categories")
-    .select("id, name, type, budget_id, created_at, updated_at")
-    .eq("user_id", userId);
+  let queryBuilder = supabase.from("categories").select("id, name, type, budget_id, created_at, updated_at").eq("user_id", userId);
 
   // Step 2: Apply optional type filter
   if (query?.type) {
@@ -73,18 +66,9 @@ export async function getCategories(
  * @returns Promise<CategoryDTO> The newly created category
  * @throws Error if category name already exists or database operation fails
  */
-export async function createCategory(
-  command: CreateCategoryCommand,
-  userId: string,
-  supabase: SupabaseClient
-): Promise<CategoryDTO> {
+export async function createCategory(command: CreateCategoryCommand, userId: string, supabase: SupabaseClient): Promise<CategoryDTO> {
   // Step 1: Check if category with this name already exists for the user
-  const { data: existingCategory, error: checkError } = await supabase
-    .from("categories")
-    .select("id")
-    .eq("user_id", userId)
-    .eq("name", command.name)
-    .maybeSingle();
+  const { data: existingCategory, error: checkError } = await supabase.from("categories").select("id").eq("user_id", userId).eq("name", command.name).maybeSingle();
 
   if (checkError) {
     throw new Error(`Database error while checking for existing category: ${checkError.message}`);
@@ -138,11 +122,7 @@ export async function createCategory(
  * @returns Promise<CategoryDTO | null> The category, or null if not found
  * @throws Error if database query fails
  */
-export async function getCategoryById(
-  categoryId: string,
-  userId: string,
-  supabase: SupabaseClient
-): Promise<CategoryDTO | null> {
+export async function getCategoryById(categoryId: string, userId: string, supabase: SupabaseClient): Promise<CategoryDTO | null> {
   // Step 1: Fetch the category by ID and user_id (authorization check)
   const { data: category, error } = await supabase
     .from("categories")
@@ -183,19 +163,9 @@ export async function getCategoryById(
  * @returns Promise<CategoryDTO> The updated category
  * @throws Error if category not found or if duplicate name is detected
  */
-export async function updateCategory(
-  categoryId: string,
-  userId: string,
-  data: UpdateCategoryCommand,
-  supabase: SupabaseClient
-): Promise<CategoryDTO> {
+export async function updateCategory(categoryId: string, userId: string, data: UpdateCategoryCommand, supabase: SupabaseClient): Promise<CategoryDTO> {
   // Step 1: Verify category exists and belongs to user
-  const { data: existingCategory, error: checkError } = await supabase
-    .from("categories")
-    .select("id, name")
-    .eq("id", categoryId)
-    .eq("user_id", userId)
-    .maybeSingle();
+  const { data: existingCategory, error: checkError } = await supabase.from("categories").select("id, name").eq("id", categoryId).eq("user_id", userId).maybeSingle();
 
   if (checkError) {
     throw new Error(`Database error while checking category: ${checkError.message}`);
@@ -229,13 +199,7 @@ export async function updateCategory(
   if (data.name !== undefined) updatePayload.name = data.name;
   if (data.budget_id !== undefined) updatePayload.budget_id = data.budget_id;
 
-  const { data: updatedCategory, error: updateError } = await supabase
-    .from("categories")
-    .update(updatePayload)
-    .eq("id", categoryId)
-    .eq("user_id", userId)
-    .select()
-    .single();
+  const { data: updatedCategory, error: updateError } = await supabase.from("categories").update(updatePayload).eq("id", categoryId).eq("user_id", userId).select().single();
 
   if (updateError) {
     throw new Error(`Database error while updating category: ${updateError.message}`);
@@ -267,17 +231,19 @@ export async function updateCategory(
  * @param categoryId - The category ID to delete (UUID)
  * @param userId - The authenticated user's ID (ensures authorization)
  * @param supabase - Supabase client instance
- * @throws Error if database operation fails (including RESTRICT constraint violations)
+ * @throws Error if category not found or database operation fails (including RESTRICT constraint violations)
  */
 export async function deleteCategory(categoryId: string, userId: string, supabase: SupabaseClient): Promise<void> {
-  // Step 1: Delete the category (DELETE query with authorization check)
-  const { error: deleteError } = await supabase.from("categories").delete().eq("id", categoryId).eq("user_id", userId);
+  const { data, error: deleteError } = await supabase.from("categories").delete().eq("id", categoryId).eq("user_id", userId).select("id");
 
   if (deleteError) {
-    // Check if error is due to foreign key constraint (transactions referencing this category)
     if (deleteError.message.includes("violates foreign key constraint")) {
       throw new Error("CATEGORY_HAS_TRANSACTIONS");
     }
     throw new Error(`Database error while deleting category: ${deleteError.message}`);
+  }
+
+  if (!data || data.length === 0) {
+    throw new Error("NOT_FOUND");
   }
 }

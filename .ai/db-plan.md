@@ -573,19 +573,26 @@ SELECT
     b.amount AS budget_amount,
     b.month,
     b.year,
+    b.created_at,
     COALESCE(SUM(t.amount), 0) AS spent_amount,
     b.amount - COALESCE(SUM(t.amount), 0) AS remaining_amount,
     CASE
         WHEN b.amount > 0 THEN (COALESCE(SUM(t.amount), 0) / b.amount * 100)
         ELSE 0
-    END AS percentage_used
+    END AS percentage_used,
+    COALESCE(
+        (SELECT array_agg(c.id)
+         FROM categories c
+         WHERE c.budget_id = b.id),
+        '{}'::uuid[]
+    ) AS category_ids
 FROM budgets b
 LEFT JOIN categories c ON c.budget_id = b.id
 LEFT JOIN transactions t ON t.category_id = c.id
     AND t.type = 'expense'
     AND EXTRACT(YEAR FROM t.date) = b.year
     AND EXTRACT(MONTH FROM t.date) = b.month
-GROUP BY b.id, b.user_id, b.name, b.amount, b.month, b.year;
+GROUP BY b.id, b.user_id, b.name, b.amount, b.month, b.year, b.created_at;
 ```
 
 ---
