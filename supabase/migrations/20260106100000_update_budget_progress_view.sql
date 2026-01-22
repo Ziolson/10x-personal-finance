@@ -31,3 +31,5 @@ LEFT JOIN transactions t ON t.category_id = c.id
     AND EXTRACT(YEAR FROM t.date) = b.year
     AND EXTRACT(MONTH FROM t.date) = b.month
 GROUP BY b.id, b.user_id, b.name, b.amount, b.month, b.year, b.created_at;
+
+comment on view budget_progress is 'Budget progress tracking: shows spent amount, remaining amount, and percentage used';

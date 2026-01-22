@@ -9,8 +9,8 @@ export const onRequest = defineMiddleware((context, next) => {
   // For now, use a mock user ID for testing purposes
   // This allows testing the API with curl/Postman without authentication
   context.locals.user = {
-    id: "0772c42f-e30f-499b-a35e-b3e988bed1c1", // Mock UUID for testing
-    email: "ziolson92@gmail.com",
+    id: "0026af4b-ae2d-43bb-a184-32fc9c8eaec8", // Mock UUID for testing
+    email: "test@example.com",
   };
 
   return next();
