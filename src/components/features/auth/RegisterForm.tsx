@@ -39,15 +39,27 @@ export default function RegisterForm() {
     setError(null);
 
     try {
-      // Mock API call
-      console.log("Register attempt with:", values);
-      // TODO: Implement actual Supabase registration
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: values.email,
+          password: values.password,
+        }),
+      });
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const data = await response.json();
 
-      // Handle success (e.g., show message or redirect)
+      if (!response.ok) {
+        throw new Error(data.error || "Nie udało się zarejestrować");
+      }
+
+      // Successful registration & auto-login - redirect to dashboard
+      window.location.href = "/";
     } catch (err) {
-      setError("Wystąpił błąd podczas rejestracji. Spróbuj ponownie.");
+      setError(err instanceof Error ? err.message : "Wystąpił błąd podczas rejestracji. Spróbuj ponownie.");
     } finally {
       setIsLoading(false);
     }

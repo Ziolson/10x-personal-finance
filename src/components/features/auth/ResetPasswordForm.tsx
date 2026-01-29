@@ -37,15 +37,28 @@ export default function ResetPasswordForm() {
     setMessage(null);
 
     try {
-      // Mock API call
-      console.log("Reset password attempt with:", values);
-      // TODO: Implement actual Supabase update user
+      const response = await fetch("/api/auth/reset-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password: values.password }),
+      });
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const data = await response.json();
 
-      setMessage("Twoje hasło zostało zresetowane pomyślnie. Możesz teraz zalogować się używając nowego hasła.");
+      if (!response.ok) {
+        throw new Error(data.error || "Nie udało się zresetować hasła");
+      }
+
+      setMessage("Twoje hasło zostało zresetowane pomyślnie. Za chwilę nastąpi przekierowanie...");
+
+      // Optional: Redirect to login after a delay
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 2000);
     } catch (err) {
-      setError("Wystąpił błąd. Spróbuj ponownie.");
+      setError(err instanceof Error ? err.message : "Wystąpił błąd. Spróbuj ponownie.");
     } finally {
       setIsLoading(false);
     }

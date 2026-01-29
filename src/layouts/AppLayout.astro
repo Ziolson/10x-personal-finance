@@ -20,11 +20,6 @@ const user = Astro.locals.user;
 const userName = user?.email || "User";
 const avatarUrl = undefined; // Avatar URL can be added later from user profile
 
-// Handle logout - placeholder for future implementation
-const handleLogout = async () => {
-  // TODO: Implement actual logout logic with Supabase auth.signOut()
-};
-
 // Handle add transaction
 const handleAddTransaction = () => {
   openAddTransactionModal();
@@ -39,7 +34,6 @@ const handleAddTransaction = () => {
       userName={userName}
       avatarUrl={avatarUrl}
       onAddTransaction={handleAddTransaction}
-      onLogout={handleLogout}
       client:load
     />
 
@@ -47,7 +41,6 @@ const handleAddTransaction = () => {
     <MobileHeader
       userName={userName}
       avatarUrl={avatarUrl}
-      onLogout={handleLogout}
       client:load
     />
 

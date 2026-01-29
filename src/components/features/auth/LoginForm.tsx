@@ -34,18 +34,24 @@ export default function LoginForm() {
     setError(null);
 
     try {
-      // Mock API call for now
-      console.log("Login attempt with:", values);
-      // TODO: Implement actual Supabase login
-      // const { error } = await supabase.auth.signInWithPassword({ ... })
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
 
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate delay
+      const data = await response.json();
 
-      // Redirect handled by client-side logic or Supabase auth state change listener usually,
-      // but here we might just reload or redirect manually if needed.
-      // window.location.href = "/dashboard";
+      if (!response.ok) {
+        throw new Error(data.error || "Nie udało się zalogować");
+      }
+
+      // Successful login - redirect to dashboard
+      window.location.href = "/";
     } catch (err) {
-      setError("Wystąpił błąd podczas logowania. Spróbuj ponownie.");
+      setError(err instanceof Error ? err.message : "Wystąpił błąd podczas logowania. Spróbuj ponownie.");
     } finally {
       setIsLoading(false);
     }

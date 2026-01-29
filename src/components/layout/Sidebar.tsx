@@ -22,8 +22,8 @@ interface SidebarProps {
   avatarUrl?: string;
   /** Callback when "Add Transaction" button is clicked */
   onAddTransaction: () => void;
-  /** Callback when logout button is clicked */
-  onLogout: () => Promise<void>;
+  /** Callback when logout is clicked */
+  onLogout?: () => Promise<void>;
   /** Optional CSS class for wrapper */
   className?: string;
 }

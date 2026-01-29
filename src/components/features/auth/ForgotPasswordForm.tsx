@@ -30,15 +30,23 @@ export default function ForgotPasswordForm() {
     setMessage(null);
 
     try {
-      // Mock API call
-      console.log("Forgot password attempt with:", values);
-      // TODO: Implement actual Supabase reset password
+      const response = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Wystąpił błąd");
+      }
 
       setMessage("Sprawdź swoją skrzynkę mailową, aby znaleźć link resetujący hasło.");
     } catch (err) {
-      setError("Wystąpił błąd. Spróbuj ponownie.");
+      setError(err instanceof Error ? err.message : "Wystąpił błąd. Spróbuj ponownie.");
     } finally {
       setIsLoading(false);
     }

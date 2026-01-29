@@ -8,7 +8,7 @@ interface MobileHeaderProps {
   /** User's avatar URL */
   avatarUrl?: string;
   /** Callback function when logout is clicked */
-  onLogout: () => Promise<void>;
+  onLogout?: () => Promise<void>;
   /** Optional CSS class for wrapper */
   className?: string;
 }
