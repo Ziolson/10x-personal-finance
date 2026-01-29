@@ -1,0 +1,48 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+}
+
+const { title = "10x Personal Finance" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+
+    <script is:inline>
+      (function () {
+        const theme = localStorage.getItem("theme") || "system";
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+        if (theme === "dark" || (theme === "system" && prefersDark)) {
+          document.documentElement.classList.add("dark");
+        }
+      })();
+    </script>
+  </head>
+  <body class="bg-background min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+      <div class="mb-8 text-center">
+        <h1 class="text-3xl font-bold tracking-tight text-foreground">10x Personal Finance</h1>
+      </div>
+
+      <div class="bg-card text-card-foreground border shadow-sm rounded-lg p-6">
+        <slot />
+      </div>
+    </div>
+
+    <!-- Initialize layout store (including theme) -->
+    <script>
+      import { initTheme } from "@/lib/stores/layoutStore";
+      initTheme();
+    </script>
+  </body>
+</html>

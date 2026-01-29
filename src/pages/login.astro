@@ -1,0 +1,14 @@
+---
+import AuthLayout from "../layouts/AuthLayout.astro";
+import LoginForm from "../components/features/auth/LoginForm";
+---
+
+<AuthLayout title="Logowanie | 10x Personal Finance">
+  <div class="space-y-6">
+    <div class="space-y-2 text-center">
+      <h2 class="text-2xl font-bold tracking-tight">Witaj ponownie</h2>
+      <p class="text-sm text-muted-foreground">Wprowadź swój email, aby się zalogować</p>
+    </div>
+    <LoginForm client:load />
+  </div>
+</AuthLayout>
