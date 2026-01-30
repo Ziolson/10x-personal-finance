@@ -22,11 +22,7 @@ interface ThemeToggleProps {
  * <ThemeToggle size="sm" showLabel />
  * ```
  */
-export const ThemeToggle = React.memo(function ThemeToggle({
-  className,
-  size = "default",
-  showLabel = false,
-}: ThemeToggleProps) {
+export const ThemeToggle = React.memo(function ThemeToggle({ className, size = "default", showLabel = false }: ThemeToggleProps) {
   const resolvedTheme = useStore($resolvedTheme);
 
   return (

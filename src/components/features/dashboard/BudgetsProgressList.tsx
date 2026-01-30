@@ -15,9 +15,7 @@ export function BudgetsProgressList({ budgets }: BudgetsProgressListProps) {
       <CardHeader className="flex flex-row items-center justify-between">
         <div className="space-y-1">
           <CardTitle>Budżety</CardTitle>
-          <CardDescription>
-            Status Twoich budżetów w tym miesiącu.
-          </CardDescription>
+          <CardDescription>Status Twoich budżetów w tym miesiącu.</CardDescription>
         </div>
         <Button variant="ghost" size="sm" className="hidden sm:flex" asChild>
           <a href="/budgets">

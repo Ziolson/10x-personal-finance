@@ -20,13 +20,7 @@ interface DeleteCategoryDialogProps {
   isDeleting: boolean;
 }
 
-export default function DeleteCategoryDialog({
-  open,
-  onOpenChange,
-  category,
-  onConfirm,
-  isDeleting,
-}: DeleteCategoryDialogProps) {
+export default function DeleteCategoryDialog({ open, onOpenChange, category, onConfirm, isDeleting }: DeleteCategoryDialogProps) {
   if (!category) return null;
 
   return (
@@ -35,8 +29,7 @@ export default function DeleteCategoryDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Czy na pewno chcesz usunąć tę kategorię?</AlertDialogTitle>
           <AlertDialogDescription>
-            Kategoria <strong>{category.name}</strong> zostanie trwale usunięta.
-            Tej operacji nie można cofnąć.
+            Kategoria <strong>{category.name}</strong> zostanie trwale usunięta. Tej operacji nie można cofnąć.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -57,4 +50,3 @@ export default function DeleteCategoryDialog({
     </AlertDialog>
   );
 }
-

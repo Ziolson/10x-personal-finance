@@ -3,14 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { CreateBudgetSchema } from "@/lib/validators/budgets.validators";
 import type { CategoryDTO, BudgetDTO } from "@/types";
@@ -30,15 +23,7 @@ interface BudgetFormProps {
   currentBudgetCategoryIds?: string[];
 }
 
-export default function BudgetForm({
-  defaultValues,
-  onSubmit,
-  isSubmitting,
-  mode,
-  availableCategories,
-  usedCategoryIds,
-  currentBudgetCategoryIds = [],
-}: BudgetFormProps) {
+export default function BudgetForm({ defaultValues, onSubmit, isSubmitting, mode, availableCategories, usedCategoryIds, currentBudgetCategoryIds = [] }: BudgetFormProps) {
   const form = useForm<BudgetFormValues>({
     resolver: zodResolver(BudgetFormSchema),
     defaultValues: {
@@ -50,19 +35,14 @@ export default function BudgetForm({
 
   // Filter categories: exclude those used by OTHER budgets but allow current budget's categories
   const selectableCategories = useMemo(() => {
-    return availableCategories.filter(
-      (cat) =>
-        !usedCategoryIds.includes(cat.id) || currentBudgetCategoryIds.includes(cat.id)
-    );
+    return availableCategories.filter((cat) => !usedCategoryIds.includes(cat.id) || currentBudgetCategoryIds.includes(cat.id));
   }, [availableCategories, usedCategoryIds, currentBudgetCategoryIds]);
 
   const selectedCategoryIds = form.watch("category_ids") || [];
 
   const toggleCategory = (categoryId: string) => {
     const current = form.getValues("category_ids") || [];
-    const newValue = current.includes(categoryId)
-      ? current.filter((id) => id !== categoryId)
-      : [...current, categoryId];
+    const newValue = current.includes(categoryId) ? current.filter((id) => id !== categoryId) : [...current, categoryId];
     form.setValue("category_ids", newValue);
   };
 
@@ -90,13 +70,7 @@ export default function BudgetForm({
             <FormItem>
               <FormLabel>Kwota (PLN)</FormLabel>
               <FormControl>
-                <Input
-                  type="number"
-                  step="0.01"
-                  placeholder="0.00"
-                  {...field}
-                  onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                />
+                <Input type="number" step="0.01" placeholder="0.00" {...field} onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -111,9 +85,7 @@ export default function BudgetForm({
               <FormLabel>Kategorie</FormLabel>
               <div className="space-y-2">
                 {selectableCategories.length === 0 ? (
-                  <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                    Wszystkie kategorie są już przypisane do innych budżetów w tym miesiącu.
-                  </p>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400">Wszystkie kategorie są już przypisane do innych budżetów w tym miesiącu.</p>
                 ) : (
                   <div className="grid grid-cols-2 gap-2">
                     {selectableCategories.map((category) => {

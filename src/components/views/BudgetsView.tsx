@@ -21,8 +21,7 @@ function BudgetsViewContent() {
   const month = currentDate.getMonth() + 1; // getMonth() returns 0-11
   const year = currentDate.getFullYear();
 
-  const { budgets, isLoading, isError, error, refetch, createBudget, updateBudget, deleteBudget } =
-    useBudgets({ month, year });
+  const { budgets, isLoading, isError, error, refetch, createBudget, updateBudget, deleteBudget } = useBudgets({ month, year });
 
   const { categories, fetchCategories } = useCategories();
   const toast = useToast();
@@ -99,13 +98,7 @@ function BudgetsViewContent() {
 
       <MonthNavigator currentDate={currentDate} onDateChange={setCurrentDate} />
 
-      <BudgetsList
-        budgets={budgets}
-        categories={categories}
-        isLoading={isLoading}
-        onEdit={setEditingBudget}
-        onDelete={setDeletingBudget}
-      />
+      <BudgetsList budgets={budgets} categories={categories} isLoading={isLoading} onEdit={setEditingBudget} onDelete={setDeletingBudget} />
 
       <AddBudgetModal
         open={isAddModalOpen}

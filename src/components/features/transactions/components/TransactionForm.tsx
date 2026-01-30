@@ -6,97 +6,82 @@ import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { AccountDTO, CategoryDTO } from "@/types";
 import type { TransactionFormValues } from "../types";
 
-const transactionSchema = z.object({
-  type: z.enum(["expense", "income", "transfer"]),
-  amount: z.coerce.number().min(0.01, "Kwota musi być większa od 0"),
-  date: z.date({ required_error: "Data jest wymagana" }),
-  description: z.string().optional(),
-  from_account_id: z.string().optional(),
-  to_account_id: z.string().optional(),
-  category_id: z.string().optional(),
-}).superRefine((data, ctx) => {
-  if (data.type === "expense") {
-    if (!data.from_account_id) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Konto źródłowe jest wymagane",
-        path: ["from_account_id"],
-      });
+const transactionSchema = z
+  .object({
+    type: z.enum(["expense", "income", "transfer"]),
+    amount: z.coerce.number().min(0.01, "Kwota musi być większa od 0"),
+    date: z.date({ required_error: "Data jest wymagana" }),
+    description: z.string().optional(),
+    from_account_id: z.string().optional(),
+    to_account_id: z.string().optional(),
+    category_id: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.type === "expense") {
+      if (!data.from_account_id) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Konto źródłowe jest wymagane",
+          path: ["from_account_id"],
+        });
+      }
+      if (!data.category_id) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Kategoria jest wymagana",
+          path: ["category_id"],
+        });
+      }
     }
-    if (!data.category_id) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Kategoria jest wymagana",
-        path: ["category_id"],
-      });
-    }
-  }
 
-  if (data.type === "income") {
-    if (!data.to_account_id) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Konto docelowe jest wymagane",
-        path: ["to_account_id"],
-      });
+    if (data.type === "income") {
+      if (!data.to_account_id) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Konto docelowe jest wymagane",
+          path: ["to_account_id"],
+        });
+      }
+      if (!data.category_id) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Kategoria jest wymagana",
+          path: ["category_id"],
+        });
+      }
     }
-    if (!data.category_id) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Kategoria jest wymagana",
-        path: ["category_id"],
-      });
-    }
-  }
 
-  if (data.type === "transfer") {
-    if (!data.from_account_id) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Konto źródłowe jest wymagane",
-        path: ["from_account_id"],
-      });
+    if (data.type === "transfer") {
+      if (!data.from_account_id) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Konto źródłowe jest wymagane",
+          path: ["from_account_id"],
+        });
+      }
+      if (!data.to_account_id) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Konto docelowe jest wymagane",
+          path: ["to_account_id"],
+        });
+      }
+      if (data.from_account_id && data.to_account_id && data.from_account_id === data.to_account_id) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Konto docelowe musi być inne niż źródłowe",
+          path: ["to_account_id"],
+        });
+      }
     }
-    if (!data.to_account_id) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Konto docelowe jest wymagane",
-        path: ["to_account_id"],
-      });
-    }
-    if (data.from_account_id && data.to_account_id && data.from_account_id === data.to_account_id) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Konto docelowe musi być inne niż źródłowe",
-        path: ["to_account_id"],
-      });
-    }
-  }
-});
+  });
 
 interface TransactionFormProps {
   defaultValues?: Partial<TransactionFormValues>;
@@ -106,13 +91,7 @@ interface TransactionFormProps {
   isLoading: boolean;
 }
 
-export default function TransactionForm({
-  defaultValues,
-  accounts,
-  categories,
-  onSubmit,
-  isLoading,
-}: TransactionFormProps) {
+export default function TransactionForm({ defaultValues, accounts, categories, onSubmit, isLoading }: TransactionFormProps) {
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionSchema),
     defaultValues: {
@@ -179,32 +158,14 @@ export default function TransactionForm({
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "dd.MM.yyyy")
-                        ) : (
-                          <span>Wybierz datę</span>
-                        )}
+                      <Button variant={"outline"} className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
+                        {field.value ? format(field.value, "dd.MM.yyyy") : <span>Wybierz datę</span>}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date("1900-01-01")
-                      }
-                      initialFocus
-                    />
+                    <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => date > new Date() || date < new Date("1900-01-01")} initialFocus />
                   </PopoverContent>
                 </Popover>
                 <FormMessage />
@@ -296,12 +257,12 @@ export default function TransactionForm({
                   </FormControl>
                   <SelectContent>
                     {categories
-                      .filter(c => c.type === type) // Filter categories by transaction type
+                      .filter((c) => c.type === type) // Filter categories by transaction type
                       .map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -317,4 +278,3 @@ export default function TransactionForm({
     </Form>
   );
 }
-

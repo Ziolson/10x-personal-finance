@@ -23,11 +23,7 @@ export const GetCategoriesQuerySchema = z.object({
  * - budget_id: optional UUID or null
  */
 export const CreateCategorySchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, { message: "Category name is required" })
-    .max(100, { message: "Category name must be at most 100 characters" }),
+  name: z.string().trim().min(1, { message: "Category name is required" }).max(100, { message: "Category name must be at most 100 characters" }),
   type: z.enum(["income", "expense"], {
     errorMap: () => ({ message: "Type must be either 'income' or 'expense'" }),
   }),
@@ -44,12 +40,7 @@ export const CreateCategorySchema = z.object({
  */
 export const UpdateCategorySchema = z
   .object({
-    name: z
-      .string()
-      .trim()
-      .min(1, { message: "Category name is required" })
-      .max(100, { message: "Category name must be at most 100 characters" })
-      .optional(),
+    name: z.string().trim().min(1, { message: "Category name is required" }).max(100, { message: "Category name must be at most 100 characters" }).optional(),
     budget_id: z.string().uuid().nullable().optional(),
   })
   .refine((data) => data.name !== undefined || data.budget_id !== undefined, {

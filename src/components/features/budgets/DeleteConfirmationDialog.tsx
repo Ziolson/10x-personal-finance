@@ -19,13 +19,7 @@ interface DeleteConfirmationDialogProps {
   isDeleting: boolean;
 }
 
-export default function DeleteConfirmationDialog({
-  isOpen,
-  onOpenChange,
-  onConfirm,
-  budget,
-  isDeleting,
-}: DeleteConfirmationDialogProps) {
+export default function DeleteConfirmationDialog({ isOpen, onOpenChange, onConfirm, budget, isDeleting }: DeleteConfirmationDialogProps) {
   if (!budget) {
     return null;
   }
@@ -36,17 +30,12 @@ export default function DeleteConfirmationDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Czy na pewno chcesz usunąć ten budżet?</AlertDialogTitle>
           <AlertDialogDescription>
-            Budżet "<strong>{budget.name}</strong>" zostanie trwale usunięty.
-            Ta operacja jest nieodwracalna.
+            Budżet "<strong>{budget.name}</strong>" zostanie trwale usunięty. Ta operacja jest nieodwracalna.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isDeleting}>Anuluj</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={onConfirm}
-            disabled={isDeleting}
-            className="bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
-          >
+          <AlertDialogAction onClick={onConfirm} disabled={isDeleting} className="bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700">
             {isDeleting ? "Usuwanie..." : "Usuń"}
           </AlertDialogAction>
         </AlertDialogFooter>

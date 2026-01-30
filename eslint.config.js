@@ -56,11 +56,4 @@ const reactConfig = tseslint.config({
   },
 });
 
-export default tseslint.config(
-  includeIgnoreFile(gitignorePath),
-  baseConfig,
-  jsxA11yConfig,
-  reactConfig,
-  eslintPluginAstro.configs["flat/recommended"],
-  eslintPluginPrettier
-);
+export default tseslint.config(includeIgnoreFile(gitignorePath), baseConfig, jsxA11yConfig, reactConfig, eslintPluginAstro.configs["flat/recommended"], eslintPluginPrettier);

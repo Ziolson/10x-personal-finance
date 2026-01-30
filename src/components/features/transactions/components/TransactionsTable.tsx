@@ -1,21 +1,8 @@
 import { format } from "date-fns";
 import { MoreHorizontal, ArrowRight, ArrowRightLeft, TrendingUp, TrendingDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { TransactionDTO, AccountDTO, CategoryDTO } from "@/types";
 import { cn } from "@/lib/utils";
 
@@ -27,13 +14,7 @@ interface TransactionsTableProps {
   onDelete: (transaction: TransactionDTO) => void;
 }
 
-export default function TransactionsTable({
-  transactions,
-  accounts,
-  categories,
-  onEdit,
-  onDelete,
-}: TransactionsTableProps) {
+export default function TransactionsTable({ transactions, accounts, categories, onEdit, onDelete }: TransactionsTableProps) {
   const getAccountName = (id?: string | null) => {
     if (!id) return "-";
     return accounts.find((a) => a.id === id)?.name || "Nieznane konto";
@@ -73,46 +54,38 @@ export default function TransactionsTable({
         <TableBody>
           {transactions.map((transaction) => (
             <TableRow key={transaction.id}>
-              <TableCell className="font-medium">
-                {format(new Date(transaction.date), "dd.MM.yyyy")}
-              </TableCell>
+              <TableCell className="font-medium">{format(new Date(transaction.date), "dd.MM.yyyy")}</TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
                   {getTransactionIcon(transaction.type)}
-                  <span className="capitalize">{transaction.type === 'expense' ? 'Wydatek' : transaction.type === 'income' ? 'Przychód' : 'Transfer'}</span>
+                  <span className="capitalize">{transaction.type === "expense" ? "Wydatek" : transaction.type === "income" ? "Przychód" : "Transfer"}</span>
                 </div>
               </TableCell>
               <TableCell>
                 <div className="flex flex-col">
                   <span className="font-medium">{transaction.description || "-"}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {transaction.type === "transfer" 
-                      ? "Transfer środków" 
-                      : getCategoryName(transaction.category_id)}
-                  </span>
+                  <span className="text-xs text-muted-foreground">{transaction.type === "transfer" ? "Transfer środków" : getCategoryName(transaction.category_id)}</span>
                 </div>
               </TableCell>
               <TableCell>
                 <div className="flex flex-col text-sm">
-                   {transaction.type === "expense" && (
-                     <span>{getAccountName(transaction.from_account_id)}</span>
-                   )}
-                   {transaction.type === "income" && (
-                     <span>{getAccountName(transaction.to_account_id)}</span>
-                   )}
-                   {transaction.type === "transfer" && (
-                     <div className="flex items-center gap-1">
-                       <span>{getAccountName(transaction.from_account_id)}</span>
-                       <ArrowRight className="h-3 w-3" />
-                       <span>{getAccountName(transaction.to_account_id)}</span>
-                     </div>
-                   )}
+                  {transaction.type === "expense" && <span>{getAccountName(transaction.from_account_id)}</span>}
+                  {transaction.type === "income" && <span>{getAccountName(transaction.to_account_id)}</span>}
+                  {transaction.type === "transfer" && (
+                    <div className="flex items-center gap-1">
+                      <span>{getAccountName(transaction.from_account_id)}</span>
+                      <ArrowRight className="h-3 w-3" />
+                      <span>{getAccountName(transaction.to_account_id)}</span>
+                    </div>
+                  )}
                 </div>
               </TableCell>
-              <TableCell className={cn("text-right font-bold", {
-                "text-green-600": transaction.type === "income",
-                "text-red-600": transaction.type === "expense",
-              })}>
+              <TableCell
+                className={cn("text-right font-bold", {
+                  "text-green-600": transaction.type === "income",
+                  "text-red-600": transaction.type === "expense",
+                })}
+              >
                 {new Intl.NumberFormat("pl-PL", {
                   style: "currency",
                   currency: "PLN", // Assuming PLN for now as per simple DTO
@@ -128,13 +101,8 @@ export default function TransactionsTable({
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Akcje</DropdownMenuLabel>
-                    <DropdownMenuItem onClick={() => onEdit(transaction)}>
-                      Edytuj
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={() => onDelete(transaction)}
-                      className="text-red-600 focus:text-red-600"
-                    >
+                    <DropdownMenuItem onClick={() => onEdit(transaction)}>Edytuj</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onDelete(transaction)} className="text-red-600 focus:text-red-600">
                       Usuń
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -147,4 +115,3 @@ export default function TransactionsTable({
     </div>
   );
 }
-

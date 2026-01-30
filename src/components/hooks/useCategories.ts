@@ -1,9 +1,5 @@
 import { useState, useCallback } from "react";
-import type { 
-  CategoryDTO, 
-  CreateCategoryCommand, 
-  UpdateCategoryCommand 
-} from "@/types";
+import type { CategoryDTO, CreateCategoryCommand, UpdateCategoryCommand } from "@/types";
 
 interface UseCategoriesResult {
   categories: CategoryDTO[];
@@ -71,9 +67,7 @@ export function useCategories(): UseCategoriesResult {
     }
 
     const updatedCategory = await response.json();
-    setCategories((prev) =>
-      prev.map((cat) => (cat.id === id ? updatedCategory : cat))
-    );
+    setCategories((prev) => prev.map((cat) => (cat.id === id ? updatedCategory : cat)));
     return updatedCategory;
   };
 
@@ -105,4 +99,3 @@ export function useCategories(): UseCategoriesResult {
     deleteCategory,
   };
 }
-

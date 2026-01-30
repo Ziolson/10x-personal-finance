@@ -42,14 +42,7 @@ const navigationItems: NavigationItem[] = [
  * Vertical navigation bar displayed on desktop screens.
  * Includes logo/home link, navigation menu, and user profile section at the bottom.
  */
-export const Sidebar = React.memo(function Sidebar({
-  currentPath,
-  userName = "User",
-  avatarUrl,
-  onAddTransaction,
-  onLogout,
-  className,
-}: SidebarProps) {
+export const Sidebar = React.memo(function Sidebar({ currentPath, userName = "User", avatarUrl, onAddTransaction, onLogout, className }: SidebarProps) {
   const isActive = (href: string) => {
     if (href === "/") {
       return currentPath === "/";
@@ -68,19 +61,12 @@ export const Sidebar = React.memo(function Sidebar({
 
   return (
     <aside
-      className={cn(
-        "hidden md:flex flex-col h-screen w-64 border-r border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950",
-        className
-      )}
+      className={cn("hidden md:flex flex-col h-screen w-64 border-r border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950", className)}
       aria-label="Main navigation"
     >
       {/* Header - Logo and Add Transaction Button */}
       <div className="flex flex-col gap-4 border-b border-neutral-200 p-4 dark:border-neutral-800">
-        <a
-          href="/"
-          className="flex items-center gap-2 rounded-lg p-2 transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-900"
-          aria-label="Go to home"
-        >
+        <a href="/" className="flex items-center gap-2 rounded-lg p-2 transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-900" aria-label="Go to home">
           <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-white">
             <span className="text-lg font-bold">10x</span>
           </div>
@@ -102,18 +88,14 @@ export const Sidebar = React.memo(function Sidebar({
                 href={item.href}
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
-                  isActive(item.href)
-                    ? "bg-primary/10 text-primary dark:bg-primary/20"
-                    : "text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                  isActive(item.href) ? "bg-primary/10 text-primary dark:bg-primary/20" : "text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
                 )}
                 aria-current={isActive(item.href) ? "page" : undefined}
               >
                 {item.icon}
                 <span className="font-medium">{item.name}</span>
                 {item.badge && (
-                  <span className="ml-auto inline-flex items-center justify-center rounded-full bg-primary px-2 py-0.5 text-xs font-semibold text-white">
-                    {item.badge}
-                  </span>
+                  <span className="ml-auto inline-flex items-center justify-center rounded-full bg-primary px-2 py-0.5 text-xs font-semibold text-white">{item.badge}</span>
                 )}
               </a>
             </li>

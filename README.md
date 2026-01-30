@@ -35,6 +35,7 @@ The project is built with a modern, robust, and scalable tech stack:
 | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Frontend** | ![Astro](https://img.shields.io/badge/Astro-5-FF5D01?logo=astro) ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react) ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript) ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?logo=tailwind-css) ![Shadcn/UI](https://img.shields.io/badge/shadcn/ui-latest-black?logo=v) |
 | **Backend**  | ![Supabase](https://img.shields.io/badge/Supabase-latest-3ECF8E?logo=supabase)                                                                                                                                                                                                                                                                                                    |
+| **Testing**  | ![Vitest](https://img.shields.io/badge/Vitest-latest-729B1B?logo=vitest) ![Playwright](https://img.shields.io/badge/Playwright-latest-45BA4B?logo=playwright) ![RTL](https://img.shields.io/badge/Testing%20Library-latest-E33332?logo=testing-library)                                                                                                                           |
 | **CI/CD**    | ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-latest-2088FF?logo=github-actions)                                                                                                                                                                                                                                                                                  |
 
 ## Getting Started Locally
@@ -96,7 +97,41 @@ The following scripts are available in the `package.json`:
 | `npm run astro`    | Runs Astro CLI commands directly.                   |
 | `npm run lint`     | Lints the codebase for potential errors.            |
 | `npm run lint:fix` | Lints and automatically fixes fixable issues.       |
+| `npm run lint:fix` | Lints and automatically fixes fixable issues.       |
 | `npm run format`   | Formats the code using Prettier.                    |
+| `npm run test`     | Runs unit and integration tests using Vitest.       |
+| `npm run test:e2e` | Runs end-to-end tests using Playwright.             |
+
+## Testing
+
+The project uses a comprehensive testing strategy involving Unit, Integration, and End-to-End (E2E) tests.
+
+### Unit & Integration Tests (Vitest)
+
+Unit tests are located alongside the source files (e.g., `src/lib/example.test.ts`). They focus on verifying individual functions, components, and API endpoints.
+
+```bash
+# Run all unit tests
+npm run test
+
+# Run tests in UI mode
+npm run test:ui
+
+# Check code coverage
+npm run test:coverage
+```
+
+### End-to-End Tests (Playwright)
+
+E2E tests simulate real user scenarios in the browser. They are located in the `e2e/` directory.
+
+```bash
+# Run E2E tests (headless)
+npm run test:e2e
+
+# Run E2E tests with UI runner
+npm run test:e2e:ui
+```
 
 ## Project Scope
 

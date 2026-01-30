@@ -29,20 +29,10 @@ const handleAddTransaction = () => {
 <Layout title={title}>
   <div class="flex h-screen flex-col md:flex-row">
     <!-- Desktop Sidebar (hidden on mobile) -->
-    <Sidebar
-      currentPath={currentPath}
-      userName={userName}
-      avatarUrl={avatarUrl}
-      onAddTransaction={handleAddTransaction}
-      client:load
-    />
+    <Sidebar currentPath={currentPath} userName={userName} avatarUrl={avatarUrl} onAddTransaction={handleAddTransaction} client:load />
 
     <!-- Mobile Header (hidden on desktop) -->
-    <MobileHeader
-      userName={userName}
-      avatarUrl={avatarUrl}
-      client:load
-    />
+    <MobileHeader userName={userName} avatarUrl={avatarUrl} client:load />
 
     <!-- Main Content Area -->
     <main class="flex flex-1 flex-col overflow-hidden md:pt-0 pt-16 pb-20 md:pb-0">

@@ -1,14 +1,17 @@
 # Plan implementacji widoku Kategorie
 
 ## 1. Przegląd
+
 Widok "Kategorie" (`CategoriesView`) służy do zarządzania kategoriami finansowymi użytkownika. Umożliwia przeglądanie listy kategorii z podziałem na przychody i wydatki, dodawanie nowych kategorii, edycję nazw istniejących oraz ich usuwanie (z uwzględnieniem walidacji powiązań z transakcjami). Jest to kluczowy element słownika danych aplikacji.
 
 ## 2. Routing widoku
+
 - **Ścieżka:** `/categories`
 - **Plik Astro:** `src/pages/categories.astro`
 - **Główny komponent React:** `src/components/views/CategoriesView.tsx`
 
 ## 3. Struktura komponentów
+
 Drzewo komponentów dla tego widoku:
 
 ```text
@@ -34,6 +37,7 @@ src/pages/categories.astro
 ## 4. Szczegóły komponentów
 
 ### 1. `CategoriesView`
+
 - **Opis:** Główny kontener widoku. Zarządza pobieraniem danych (poprzez hook `useCategories`), stanem aktywnych modali (dodawanie, edycja, usuwanie) oraz renderuje układ strony.
 - **Główne elementy:** `div` (layout), `PageHeader`, `Tabs` (Shadcn), Modale.
 - **Obsługiwane zdarzenia:**
@@ -43,6 +47,7 @@ src/pages/categories.astro
 - **Typy:** Brak propsów (komponent top-level).
 
 ### 2. `CategoriesList`
+
 - **Opis:** Komponent prezentacyjny wyświetlający listę kategorii.
 - **Główne elementy:** `ul`/`div` (lista), mapowanie po tablicy kategorii.
 - **Propsy:**
@@ -52,6 +57,7 @@ src/pages/categories.astro
   - `onDelete: (category: Category) => void`
 
 ### 3. `CategoryListItem`
+
 - **Opis:** Pojedynczy wiersz/karta kategorii.
 - **Główne elementy:** Nazwa kategorii, ikona (opcjonalnie), menu akcji (`DropdownMenu` z Shadcn).
 - **Obsługiwane interakcje:** Kliknięcie "Edytuj" lub "Usuń" w menu.
@@ -61,6 +67,7 @@ src/pages/categories.astro
   - `onDelete: (category: Category) => void`
 
 ### 4. `CategoryForm`
+
 - **Opis:** Reużywalny formularz oparty na `react-hook-form` i `zodResolver`. Używany zarówno do dodawania, jak i edycji.
 - **Główne elementy:**
   - Pole tekstowe: `name` (Nazwa kategorii).
@@ -76,6 +83,7 @@ src/pages/categories.astro
   - `mode: 'create' | 'edit'`
 
 ### 5. `AddCategoryModal` / `EditCategoryModal`
+
 - **Opis:** Wrappery na `Dialog` z Shadcn zawierające `CategoryForm`.
 - **Propsy:**
   - `open: boolean`
@@ -84,6 +92,7 @@ src/pages/categories.astro
   - `initialData?`: (dla edycji) obiekt kategorii.
 
 ### 6. `DeleteCategoryDialog`
+
 - **Opis:** Modal potwierdzenia usunięcia. Wyświetla ostrzeżenie.
 - **Specyfika:** Musi obsługiwać błąd API 409 (Conflict), jeśli kategoria jest używana, i wyświetlić odpowiedni komunikat (np. "Nie można usunąć kategorii powiązanej z transakcjami").
 - **Propsy:**
@@ -99,12 +108,12 @@ Należy wykorzystać typy zdefiniowane w `src/types.ts` oraz `src/db/database.ty
 
 ```typescript
 // Istniejące typy (przybliżenie na podstawie kontekstu)
-import type { Database } from '@/db/database.types';
+import type { Database } from "@/db/database.types";
 
 export type Category = {
   id: string;
   name: string;
-  type: 'income' | 'expense';
+  type: "income" | "expense";
   budget_id: string | null;
   created_at: string;
   updated_at: string;
@@ -113,7 +122,7 @@ export type Category = {
 // DTO dla formularzy (zgodne z Zod schema)
 export type CreateCategoryInput = {
   name: string;
-  type: 'income' | 'expense';
+  type: "income" | "expense";
   budget_id?: string | null;
 };
 
@@ -134,6 +143,7 @@ Zalecane utworzenie custom hooka `useCategories` w `src/components/features/hook
 4.  **Odświeżaniem:** Funkcja `refreshCategories` (ponowne pobranie po mutacji).
 
 W samym komponencie `CategoriesView` stan UI:
+
 - `isAddModalOpen` (boolean)
 - `editingCategory` (Category | null) -> obecność obiektu otwiera modal edycji.
 - `deletingCategory` (Category | null) -> obecność obiektu otwiera dialog usuwania.
@@ -142,10 +152,10 @@ W samym komponencie `CategoriesView` stan UI:
 
 Należy wykorzystać `src/lib/services/category.service.ts` lub wywoływać endpointy API Next.js/Astro bezpośrednio.
 
--   **GET** `/api/categories`: Pobiera wszystkie kategorie. Front-end filtruje je na "income" i "expense" do odpowiednich zakładek (lub API przyjmuje parametr `?type=`, ale pobranie wszystkich naraz jest wydajniejsze przy małej skali).
--   **POST** `/api/categories`: Payload `{ name, type }`. Odpowiedź 201 + utworzony obiekt.
--   **PUT** `/api/categories/[categoryId]`: Payload `{ name }`. Odpowiedź 200 + zaktualizowany obiekt.
--   **DELETE** `/api/categories/[categoryId]`: Brak payloadu. Odpowiedź 204 (sukces) lub 409 (błąd - kategoria w użyciu).
+- **GET** `/api/categories`: Pobiera wszystkie kategorie. Front-end filtruje je na "income" i "expense" do odpowiednich zakładek (lub API przyjmuje parametr `?type=`, ale pobranie wszystkich naraz jest wydajniejsze przy małej skali).
+- **POST** `/api/categories`: Payload `{ name, type }`. Odpowiedź 201 + utworzony obiekt.
+- **PUT** `/api/categories/[categoryId]`: Payload `{ name }`. Odpowiedź 200 + zaktualizowany obiekt.
+- **DELETE** `/api/categories/[categoryId]`: Brak payloadu. Odpowiedź 204 (sukces) lub 409 (błąd - kategoria w użyciu).
 
 ## 8. Interakcje użytkownika
 
@@ -167,19 +177,19 @@ Należy wykorzystać `src/lib/services/category.service.ts` lub wywoływać endp
 
 ## 9. Warunki i walidacja
 
--   **Frontend (Formularz):**
-    -   `name`: wymagane, min. 3 znaki.
-    -   `type`: wymagane, enum ['income', 'expense'].
--   **Backend (API - do obsłużenia błędów na froncie):**
-    -   Unikalność nazwy (opcjonalnie, jeśli backend to sprawdza -> obsługa błędu 409 lub 400).
-    -   Constraint przy usuwaniu (Foreign Key check).
+- **Frontend (Formularz):**
+  - `name`: wymagane, min. 3 znaki.
+  - `type`: wymagane, enum ['income', 'expense'].
+- **Backend (API - do obsłużenia błędów na froncie):**
+  - Unikalność nazwy (opcjonalnie, jeśli backend to sprawdza -> obsługa błędu 409 lub 400).
+  - Constraint przy usuwaniu (Foreign Key check).
 
 ## 10. Obsługa błędów
 
--   **Błąd pobierania listy:** Wyświetlenie komunikatu o błędzie w miejscu listy (np. w komponencie `EmptyState` lub dedykowanym `ErrorState`). Przycisk "Spróbuj ponownie".
--   **Błąd walidacji formularza:** Inline pod polami input (obsługiwane przez `react-hook-form` + Shadcn `FormMessage`).
--   **Błąd serwera (500) przy mutacji:** Toast z informacją "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później".
--   **Konflikt (409) przy usuwaniu:** Specjalny Toast lub Alert w modalu informujący o przyczynie (powiązane transakcje).
+- **Błąd pobierania listy:** Wyświetlenie komunikatu o błędzie w miejscu listy (np. w komponencie `EmptyState` lub dedykowanym `ErrorState`). Przycisk "Spróbuj ponownie".
+- **Błąd walidacji formularza:** Inline pod polami input (obsługiwane przez `react-hook-form` + Shadcn `FormMessage`).
+- **Błąd serwera (500) przy mutacji:** Toast z informacją "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później".
+- **Konflikt (409) przy usuwaniu:** Specjalny Toast lub Alert w modalu informujący o przyczynie (powiązane transakcje).
 
 ## 11. Kroki implementacji
 

@@ -3,14 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CreateCategorySchema } from "@/lib/validators/categories.validators";
@@ -24,12 +17,7 @@ interface CategoryFormProps {
   mode: "create" | "edit";
 }
 
-export default function CategoryForm({
-  defaultValues,
-  onSubmit,
-  isSubmitting,
-  mode,
-}: CategoryFormProps) {
+export default function CategoryForm({ defaultValues, onSubmit, isSubmitting, mode }: CategoryFormProps) {
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(CreateCategorySchema),
     defaultValues: {
@@ -63,12 +51,7 @@ export default function CategoryForm({
             <FormItem className="space-y-3">
               <FormLabel>Typ transakcji</FormLabel>
               <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                  disabled={mode === "edit"}
-                >
+                <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1" disabled={mode === "edit"}>
                   <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
                       <RadioGroupItem value="expense" />
@@ -98,4 +81,3 @@ export default function CategoryForm({
     </Form>
   );
 }
-

@@ -9,13 +9,7 @@ export interface DeleteConfirmationDialogProps {
   isDeleting: boolean;
 }
 
-export default function DeleteConfirmationDialog({
-  isOpen,
-  onOpenChange,
-  onConfirm,
-  account,
-  isDeleting,
-}: DeleteConfirmationDialogProps) {
+export default function DeleteConfirmationDialog({ isOpen, onOpenChange, onConfirm, account, isDeleting }: DeleteConfirmationDialogProps) {
   if (!isOpen || !account) {
     return null;
   }

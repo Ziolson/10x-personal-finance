@@ -10,20 +10,12 @@ interface CategoriesListProps {
   onDelete: (category: CategoryDTO) => void;
 }
 
-export default function CategoriesList({
-  categories,
-  isLoading,
-  onEdit,
-  onDelete,
-}: CategoriesListProps) {
+export default function CategoriesList({ categories, isLoading, onEdit, onDelete }: CategoriesListProps) {
   if (isLoading) {
     return (
       <div className="space-y-3">
         {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="flex items-center justify-between rounded-lg border border-neutral-200 p-3 dark:border-neutral-700"
-          >
+          <div key={i} className="flex items-center justify-between rounded-lg border border-neutral-200 p-3 dark:border-neutral-700">
             <div className="flex items-center gap-3">
               <Skeleton className="h-8 w-8 rounded-full" />
               <Skeleton className="h-4 w-32" />
@@ -43,14 +35,9 @@ export default function CategoriesList({
     <ul className="space-y-3">
       {categories.map((category) => (
         <li key={category.id}>
-          <CategoryListItem
-            category={category}
-            onEdit={onEdit}
-            onDelete={onDelete}
-          />
+          <CategoryListItem category={category} onEdit={onEdit} onDelete={onDelete} />
         </li>
       ))}
     </ul>
   );
 }
-

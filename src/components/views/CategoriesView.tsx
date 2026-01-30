@@ -12,8 +12,7 @@ import DeleteCategoryDialog from "@/components/features/categories/DeleteCategor
 import type { CategoryDTO, CreateCategoryCommand, CategoryType } from "@/types";
 
 function CategoriesViewContent() {
-  const { categories, isLoading, isError, error, fetchCategories, addCategory, updateCategory, deleteCategory } =
-    useCategories();
+  const { categories, isLoading, isError, error, fetchCategories, addCategory, updateCategory, deleteCategory } = useCategories();
 
   const toast = useToast();
   const [activeTab, setActiveTab] = useState<CategoryType>("expense");
@@ -113,36 +112,16 @@ function CategoriesViewContent() {
           <TabsTrigger value="income">Przychody</TabsTrigger>
         </TabsList>
         <TabsContent value="expense" className="mt-6">
-          <CategoriesList
-            categories={expenseCategories}
-            isLoading={isLoading}
-            onEdit={setEditingCategory}
-            onDelete={setDeletingCategory}
-          />
+          <CategoriesList categories={expenseCategories} isLoading={isLoading} onEdit={setEditingCategory} onDelete={setDeletingCategory} />
         </TabsContent>
         <TabsContent value="income" className="mt-6">
-          <CategoriesList
-            categories={incomeCategories}
-            isLoading={isLoading}
-            onEdit={setEditingCategory}
-            onDelete={setDeletingCategory}
-          />
+          <CategoriesList categories={incomeCategories} isLoading={isLoading} onEdit={setEditingCategory} onDelete={setDeletingCategory} />
         </TabsContent>
       </Tabs>
 
-      <AddCategoryModal
-        open={isAddModalOpen}
-        onOpenChange={setIsAddModalOpen}
-        onSubmit={handleAddCategory}
-        defaultType={activeTab}
-      />
+      <AddCategoryModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} onSubmit={handleAddCategory} defaultType={activeTab} />
 
-      <EditCategoryModal
-        open={!!editingCategory}
-        onOpenChange={(open) => !open && setEditingCategory(null)}
-        category={editingCategory}
-        onSubmit={handleEditCategory}
-      />
+      <EditCategoryModal open={!!editingCategory} onOpenChange={(open) => !open && setEditingCategory(null)} category={editingCategory} onSubmit={handleEditCategory} />
 
       <DeleteCategoryDialog
         open={!!deletingCategory}

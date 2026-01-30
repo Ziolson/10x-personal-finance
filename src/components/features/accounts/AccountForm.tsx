@@ -36,13 +36,7 @@ export interface AccountFormProps {
   generalError?: string | null;
 }
 
-export default function AccountForm({
-  onSubmit,
-  initialData,
-  isSubmitting,
-  serverErrors,
-  generalError,
-}: AccountFormProps) {
+export default function AccountForm({ onSubmit, initialData, isSubmitting, serverErrors, generalError }: AccountFormProps) {
   const {
     register,
     handleSubmit,
@@ -82,9 +76,7 @@ export default function AccountForm({
           aria-invalid={errors.name || serverErrors?.name ? "true" : "false"}
           {...register("name")}
         />
-        {(errors.name?.message || serverErrors?.name) && (
-          <p className="mt-1 text-xs text-destructive">{errors.name?.message ?? serverErrors?.name}</p>
-        )}
+        {(errors.name?.message || serverErrors?.name) && <p className="mt-1 text-xs text-destructive">{errors.name?.message ?? serverErrors?.name}</p>}
       </div>
 
       <div>
@@ -103,9 +95,7 @@ export default function AccountForm({
           {...register("initial_balance", { valueAsNumber: true })}
         />
         {(errors.initial_balance?.message || serverErrors?.initial_balance) && (
-          <p className="mt-1 text-xs text-destructive">
-            {errors.initial_balance?.message ?? serverErrors?.initial_balance}
-          </p>
+          <p className="mt-1 text-xs text-destructive">{errors.initial_balance?.message ?? serverErrors?.initial_balance}</p>
         )}
       </div>
 

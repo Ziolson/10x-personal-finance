@@ -1,10 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import type { 
-  BudgetDTO, 
-  CreateBudgetCommand, 
-  UpdateBudgetCommand,
-  ApiErrorResponse 
-} from "@/types";
+import type { BudgetDTO, CreateBudgetCommand, UpdateBudgetCommand, ApiErrorResponse } from "@/types";
 
 async function parseResponse<T>(response: Response): Promise<T> {
   if (response.status === 204) {
@@ -24,9 +19,7 @@ async function parseResponse<T>(response: Response): Promise<T> {
       throw parseError;
     }
     // For success responses, JSON parsing failure is a critical error
-    throw new Error(
-      `Invalid JSON in successful response from ${response.url}: ${error instanceof Error ? error.message : "Unknown error"}`
-    );
+    throw new Error(`Invalid JSON in successful response from ${response.url}: ${error instanceof Error ? error.message : "Unknown error"}`);
   }
 
   if (!response.ok) {

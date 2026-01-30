@@ -1,11 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { format } from "date-fns";
@@ -40,21 +34,21 @@ export default function AddTransactionDialog({ onAdd }: AddTransactionDialogProp
         ...values,
         date: format(values.date, "yyyy-MM-dd"),
       } as any; // Type casting simplified here, logic handled in hook/backend
-      
+
       // But we should be precise for runtime correctness
-      if (values.type === 'expense') {
+      if (values.type === "expense") {
         // cleanup unused fields if any
         delete command.to_account_id;
-      } else if (values.type === 'income') {
+      } else if (values.type === "income") {
         delete command.from_account_id;
-      } else if (values.type === 'transfer') {
+      } else if (values.type === "transfer") {
         delete command.category_id;
       }
 
       await onAdd(command as CreateTransactionCommand);
       setOpen(false);
     } catch (error) {
-      // Error handling is usually done in the parent or hook, 
+      // Error handling is usually done in the parent or hook,
       // but we could show toast here if needed.
       console.error(error);
     } finally {
@@ -74,14 +68,8 @@ export default function AddTransactionDialog({ onAdd }: AddTransactionDialogProp
         <DialogHeader>
           <DialogTitle>Dodaj nową transakcję</DialogTitle>
         </DialogHeader>
-        <TransactionForm
-          accounts={accounts || []}
-          categories={categories}
-          onSubmit={handleSubmit}
-          isLoading={isLoading}
-        />
+        <TransactionForm accounts={accounts || []} categories={categories} onSubmit={handleSubmit} isLoading={isLoading} />
       </DialogContent>
     </Dialog>
   );
 }
-

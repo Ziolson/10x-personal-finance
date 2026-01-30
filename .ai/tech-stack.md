@@ -12,6 +12,13 @@
 
 - **Supabase**: Platforma Backend-as-a-Service (BaaS) zarządzająca bazą danych, autentykacją użytkowników i API projektu.
 
+## Testowanie
+
+- **Vitest**: Szybki framework do testów jednostkowych i integracyjnych, kompatybilny z Vite.
+- **React Testing Library**: Biblioteka do testowania komponentów React w sposób zbliżony do użycia przez użytkownika.
+- **Playwright**: Narzędzie do automatyzacji przeglądarki i testów End-to-End (E2E).
+- **MSW (Mock Service Worker)**: Biblioteka do mockowania API na poziomie sieci.
+
 ## CI/CD i Hosting
 
 - **GitHub Actions**: Narzędzie do automatyzacji procesów budowania, testowania i wdrażania aplikacji (CI/CD).

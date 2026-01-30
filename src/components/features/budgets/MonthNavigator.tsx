@@ -7,10 +7,7 @@ interface MonthNavigatorProps {
   onDateChange: (date: Date) => void;
 }
 
-const MONTH_NAMES = [
-  "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec",
-  "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"
-];
+const MONTH_NAMES = ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"];
 
 export default function MonthNavigator({ currentDate, onDateChange }: MonthNavigatorProps) {
   const handlePrevious = () => {
@@ -30,27 +27,17 @@ export default function MonthNavigator({ currentDate, onDateChange }: MonthNavig
 
   return (
     <div className="flex items-center justify-center gap-4">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={handlePrevious}
-        aria-label="Poprzedni miesiąc"
-      >
+      <Button variant="outline" size="sm" onClick={handlePrevious} aria-label="Poprzedni miesiąc">
         <ChevronLeft className="h-4 w-4" />
       </Button>
-      
+
       <div className="min-w-[180px] text-center">
         <span className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
           {monthName} {year}
         </span>
       </div>
 
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={handleNext}
-        aria-label="Następny miesiąc"
-      >
+      <Button variant="outline" size="sm" onClick={handleNext} aria-label="Następny miesiąc">
         <ChevronRight className="h-4 w-4" />
       </Button>
     </div>

@@ -31,11 +31,7 @@ const navigationItems: NavItem[] = [
  * Bottom navigation bar displayed on mobile devices (md:hidden).
  * Sticky positioning at bottom with icon-based navigation items and FAB button.
  */
-export const MobileBottomNav = React.memo(function MobileBottomNav({
-  currentPath,
-  onAddTransaction,
-  className,
-}: MobileBottomNavProps) {
+export const MobileBottomNav = React.memo(function MobileBottomNav({ currentPath, onAddTransaction, className }: MobileBottomNavProps) {
   const isActive = (href: string) => {
     if (href === "/") {
       return currentPath === "/";
@@ -60,9 +56,7 @@ export const MobileBottomNav = React.memo(function MobileBottomNav({
             href={item.href}
             className={cn(
               "flex flex-col items-center justify-center gap-1 rounded-lg p-2 transition-all",
-              isActive(item.href)
-                ? "text-primary"
-                : "text-neutral-600 dark:text-neutral-400"
+              isActive(item.href) ? "text-primary" : "text-neutral-600 dark:text-neutral-400"
             )}
             aria-current={isActive(item.href) ? "page" : undefined}
             title={item.name}

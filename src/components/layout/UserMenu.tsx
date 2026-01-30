@@ -1,12 +1,6 @@
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "./ThemeToggle";
 import { LogoutButton } from "./LogoutButton";
 
@@ -25,11 +19,7 @@ interface UserMenuProps {
  * Dropdown menu containing user profile options, theme toggle, and logout.
  * Used in MobileHeader and can be integrated with Sidebar for consistent UX.
  */
-export const UserMenu = React.memo(function UserMenu({
-  userName = "User",
-  avatarUrl,
-  onLogout,
-}: UserMenuProps) {
+export const UserMenu = React.memo(function UserMenu({ userName = "User", avatarUrl, onLogout }: UserMenuProps) {
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -42,10 +32,7 @@ export const UserMenu = React.memo(function UserMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button
-          className="flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800"
-          aria-label="Open user menu"
-        >
+        <button className="flex items-center gap-2 rounded-lg p-1.5 transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800" aria-label="Open user menu">
           <Avatar className="size-8">
             {avatarUrl && <AvatarImage src={avatarUrl} alt={userName} />}
             <AvatarFallback>{getInitials(userName)}</AvatarFallback>

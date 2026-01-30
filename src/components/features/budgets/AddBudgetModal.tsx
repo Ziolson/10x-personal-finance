@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import BudgetForm from "./BudgetForm";
 import type { CreateBudgetCommand, CategoryDTO, BudgetDTO } from "@/types";
 
@@ -19,15 +13,7 @@ interface AddBudgetModalProps {
   existingBudgets: BudgetDTO[];
 }
 
-export default function AddBudgetModal({
-  open,
-  onOpenChange,
-  onSubmit,
-  month,
-  year,
-  availableCategories,
-  existingBudgets,
-}: AddBudgetModalProps) {
+export default function AddBudgetModal({ open, onOpenChange, onSubmit, month, year, availableCategories, existingBudgets }: AddBudgetModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Calculate used category IDs from existing budgets (excluding this budget since it's new)
@@ -52,17 +38,9 @@ export default function AddBudgetModal({
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Dodaj nowy budżet</DialogTitle>
-          <DialogDescription>
-            Utwórz budżet dla wybranych kategorii w bieżącym miesiącu.
-          </DialogDescription>
+          <DialogDescription>Utwórz budżet dla wybranych kategorii w bieżącym miesiącu.</DialogDescription>
         </DialogHeader>
-        <BudgetForm
-          mode="create"
-          onSubmit={handleSubmit}
-          isSubmitting={isSubmitting}
-          availableCategories={availableCategories}
-          usedCategoryIds={usedCategoryIds}
-        />
+        <BudgetForm mode="create" onSubmit={handleSubmit} isSubmitting={isSubmitting} availableCategories={availableCategories} usedCategoryIds={usedCategoryIds} />
       </DialogContent>
     </Dialog>
   );

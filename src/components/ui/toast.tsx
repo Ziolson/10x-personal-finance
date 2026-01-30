@@ -27,10 +27,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
   const notify = useMemo(() => {
     const addToast = (title: string, variant: ToastVariant) => {
-      const id =
-        typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
-          ? crypto.randomUUID()
-          : `${variant}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      const id = typeof crypto !== "undefined" && typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${variant}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
       setToasts((current) => [...current, { id, title, variant }]);
       setTimeout(() => removeToast(id), 4200);
     };

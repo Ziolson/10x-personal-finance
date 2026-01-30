@@ -1,10 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { format } from "date-fns";
 import TransactionForm from "./TransactionForm";
 import useAccounts from "@/components/hooks/useAccounts";
@@ -19,12 +14,7 @@ interface EditTransactionDialogProps {
   onEdit: (id: string, command: UpdateTransactionCommand) => Promise<void>;
 }
 
-export default function EditTransactionDialog({
-  transaction,
-  open,
-  onOpenChange,
-  onEdit,
-}: EditTransactionDialogProps) {
+export default function EditTransactionDialog({ transaction, open, onOpenChange, onEdit }: EditTransactionDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { accounts, refetch: fetchAccounts } = useAccounts();
   const { categories, fetchCategories } = useCategories();
@@ -38,7 +28,7 @@ export default function EditTransactionDialog({
 
   const handleSubmit = async (values: TransactionFormValues) => {
     if (!transaction) return;
-    
+
     setIsLoading(true);
     try {
       const command: UpdateTransactionCommand = {
@@ -47,7 +37,7 @@ export default function EditTransactionDialog({
         date: format(values.date, "yyyy-MM-dd"),
         description: values.description,
         // Send null if field is empty/undefined for partial updates or switching types
-        from_account_id: values.from_account_id || null, 
+        from_account_id: values.from_account_id || null,
         to_account_id: values.to_account_id || null,
         category_id: values.category_id || null,
       };
@@ -79,15 +69,8 @@ export default function EditTransactionDialog({
         <DialogHeader>
           <DialogTitle>Edytuj transakcję</DialogTitle>
         </DialogHeader>
-        <TransactionForm
-          defaultValues={defaultValues}
-          accounts={accounts || []}
-          categories={categories}
-          onSubmit={handleSubmit}
-          isLoading={isLoading}
-        />
+        <TransactionForm defaultValues={defaultValues} accounts={accounts || []} categories={categories} onSubmit={handleSubmit} isLoading={isLoading} />
       </DialogContent>
     </Dialog>
   );
 }
-

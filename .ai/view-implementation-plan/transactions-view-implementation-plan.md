@@ -1,9 +1,11 @@
 # Plan implementacji widoku Transakcje
 
 ## 1. Przegląd
+
 Widok "Historia Transakcji" jest centralnym miejscem do przeglądania i zarządzania wszystkimi operacjami finansowymi użytkownika. Umożliwia wyświetlanie listy transakcji w formie tabeli (desktop) lub kart (mobile), filtrowanie danych, oraz wykonywanie operacji CRUD (tworzenie, edycja, usuwanie) na transakcjach typu: Wydatek, Przychód, Transfer.
 
 ## 2. Routing widoku
+
 - **Ścieżka:** `/transactions`
 - **Plik Astro:** `src/pages/transactions.astro`
 - **Główny komponent React:** `src/components/features/transactions/TransactionsView.tsx`
@@ -31,6 +33,7 @@ src/pages/transactions.astro (Layout aplikacji)
 ## 4. Szczegóły komponentów
 
 ### TransactionsView
+
 - **Opis:** Główny kontener zarządzający stanem widoku, pobieraniem danych i koordynacją modali.
 - **Główne elementy:** Wrapper `div`, wywołania hooków logicznych.
 - **Odpowiedzialność:**
@@ -39,6 +42,7 @@ src/pages/transactions.astro (Layout aplikacji)
   - Przekazywanie danych do komponentów podrzędnych.
 
 ### TransactionForm
+
 - **Opis:** Złożony formularz obsługujący trzy typy transakcji. Pola zmieniają się dynamicznie w zależności od wybranego typu.
 - **Główne elementy:**
   - `Form` (shadcn/react-hook-form).
@@ -59,6 +63,7 @@ src/pages/transactions.astro (Layout aplikacji)
   - `categories: CategoryDTO[]`
 
 ### TransactionsFilters
+
 - **Opis:** Pasek narzędziowy nad listą transakcji.
 - **Elementy:**
   - `Select` dla filtrowania po Koncie.
@@ -71,6 +76,7 @@ src/pages/transactions.astro (Layout aplikacji)
   - `onFilterChange: (filters: TransactionFiltersState) => void`
 
 ### TransactionsList
+
 - **Opis:** Komponent prezentacyjny, który decyduje, czy wyświetlić tabelę, listę mobilną, stan ładowania czy pusty stan.
 - **Propsy:**
   - `transactions: TransactionDTO[]`
@@ -85,10 +91,12 @@ src/pages/transactions.astro (Layout aplikacji)
 Wymagane zdefiniowanie typów w `src/types.ts` lub lokalnie w komponencie, jeśli są specyficzne dla widoku (ale zalecane reużywanie z `types.ts`).
 
 ### TransactionFiltersState
+
 Stan filtrów w aplikacji frontendowej.
+
 ```typescript
 interface TransactionFiltersState {
-  type?: 'expense' | 'income' | 'transfer';
+  type?: "expense" | "income" | "transfer";
   accountId?: string;
   categoryId?: string;
   dateRange?: {
@@ -99,10 +107,12 @@ interface TransactionFiltersState {
 ```
 
 ### TransactionFormValues
+
 Typ dla formularza (rozszerza logikę DTO o typy formularzowe, np. Date).
+
 ```typescript
 interface TransactionFormValues {
-  type: 'expense' | 'income' | 'transfer';
+  type: "expense" | "income" | "transfer";
   amount: number; // lub string w trakcie edycji, parsowany przy submit
   date: Date;
   description?: string;
@@ -115,15 +125,18 @@ interface TransactionFormValues {
 ## 6. Zarządzanie stanem
 
 ### Custom Hook: `useTransactions`
+
 Hook odpowiedzialny za komunikację z API transakcji.
 
 **Stan:**
+
 - `transactions`: Tablica `TransactionDTO`.
 - `pagination`: Obiekt `PaginationInfo` (currentPage, totalPages, totalItems).
 - `filters`: Obiekt `TransactionFiltersState`.
 - `status`: 'idle' | 'loading' | 'success' | 'error'.
 
 **Akcje:**
+
 - `fetchTransactions(params)`: Pobiera dane z `GET /api/transactions`. Konwertuje `TransactionFiltersState` na parametry URL (np. `dateRange` na `startDate` i `endDate`).
 - `addTransaction(command)`: Wywołuje `POST`.
 - `updateTransaction(id, command)`: Wywołuje `PUT`.
@@ -132,12 +145,14 @@ Hook odpowiedzialny za komunikację z API transakcji.
 - `setPage(page)`: Zmienia stronę.
 
 ### Hooki pomocnicze
+
 - `useAccounts`: Do pobrania listy kont (dla formularza i filtrów).
 - `useCategories`: Do pobrania listy kategorii (dla formularza i filtrów).
 
 ## 7. Integracja API
 
 ### GET /api/transactions
+
 - **Query params:**
   - `page`, `limit`
   - `type`
@@ -146,13 +161,16 @@ Hook odpowiedzialny za komunikację z API transakcji.
 - **Response:** `PaginatedResponse<TransactionDTO>`
 
 ### POST /api/transactions
+
 - **Body:** `CreateTransactionCommand` (Unia dyskryminowana).
 - **Wymagania:** Odpowiednie pola dla danego `type`.
 
 ### PUT /api/transactions/[id]
+
 - **Body:** `UpdateTransactionCommand` (Partial).
 
 ### DELETE /api/transactions/[id]
+
 - **Body:** brak.
 
 ## 8. Interakcje użytkownika
@@ -225,4 +243,3 @@ Hook odpowiedzialny za komunikację z API transakcji.
 6. **Stworzenie strony Astro:**
    - `src/pages/transactions.astro`.
    - Import i osadzenie `TransactionsView` z dyrektywą `client:load`.
-

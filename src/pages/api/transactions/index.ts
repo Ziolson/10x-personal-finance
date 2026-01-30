@@ -145,10 +145,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       const errorMessage = serviceError instanceof Error ? serviceError.message : "Unknown error";
 
       // Check for specific business logic errors
-      if (
-        errorMessage.includes("INVALID_TRANSFER") ||
-        errorMessage.includes("Cannot transfer to the same account")
-      ) {
+      if (errorMessage.includes("INVALID_TRANSFER") || errorMessage.includes("Cannot transfer to the same account")) {
         return new Response(
           JSON.stringify({
             error: {
@@ -365,4 +362,3 @@ export const GET: APIRoute = async ({ request, locals }) => {
     );
   }
 };
-

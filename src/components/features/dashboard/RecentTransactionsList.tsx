@@ -15,9 +15,7 @@ export function RecentTransactionsList({ transactions }: RecentTransactionsListP
       <CardHeader className="flex flex-row items-center justify-between">
         <div className="space-y-1">
           <CardTitle>Ostatnie transakcje</CardTitle>
-          <CardDescription>
-            Twoich 5 ostatnich operacji finansowych.
-          </CardDescription>
+          <CardDescription>Twoich 5 ostatnich operacji finansowych.</CardDescription>
         </div>
         <Button variant="ghost" size="sm" className="hidden sm:flex" asChild>
           <a href="/transactions">

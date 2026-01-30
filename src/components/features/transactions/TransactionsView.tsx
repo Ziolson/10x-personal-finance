@@ -11,17 +11,7 @@ import type { TransactionDTO } from "@/types";
 
 function TransactionsViewContent() {
   const notify = useToast();
-  const {
-    transactions,
-    pagination,
-    filters,
-    status,
-    setFilters,
-    setPage,
-    addTransaction,
-    updateTransaction,
-    deleteTransaction,
-  } = useTransactions();
+  const { transactions, pagination, filters, status, setFilters, setPage, addTransaction, updateTransaction, deleteTransaction } = useTransactions();
 
   const [editingTransaction, setEditingTransaction] = useState<TransactionDTO | null>(null);
   const [deletingTransaction, setDeletingTransaction] = useState<TransactionDTO | null>(null);
@@ -56,33 +46,22 @@ function TransactionsViewContent() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <PageHeader 
-          title="Historia transakcji" 
-          description="Przeglądaj i zarządzaj swoimi wydatkami i przychodami."
-        />
+        <PageHeader title="Historia transakcji" description="Przeglądaj i zarządzaj swoimi wydatkami i przychodami." />
         <AddTransactionDialog onAdd={handleAdd} />
       </div>
 
-      <TransactionsFilters 
-        filters={filters} 
-        onFilterChange={setFilters} 
-      />
+      <TransactionsFilters filters={filters} onFilterChange={setFilters} />
 
-      <TransactionsList 
+      <TransactionsList
         transactions={transactions}
-        isLoading={status === 'loading'}
+        isLoading={status === "loading"}
         pagination={pagination}
         onPageChange={setPage}
         onEdit={setEditingTransaction}
         onDelete={setDeletingTransaction}
       />
 
-      <EditTransactionDialog
-        transaction={editingTransaction}
-        open={!!editingTransaction}
-        onOpenChange={(open) => !open && setEditingTransaction(null)}
-        onEdit={handleEdit}
-      />
+      <EditTransactionDialog transaction={editingTransaction} open={!!editingTransaction} onOpenChange={(open) => !open && setEditingTransaction(null)} onEdit={handleEdit} />
 
       <DeleteTransactionDialog
         transaction={deletingTransaction}
@@ -101,4 +80,3 @@ export default function TransactionsView() {
     </ToastProvider>
   );
 }
-

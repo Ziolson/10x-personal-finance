@@ -10,11 +10,7 @@ import type { APIRoute } from "astro";
 
 import { GetBudgetsQuerySchema, CreateBudgetSchema } from "../../../lib/validators/budgets.validators";
 import { getBudgets, createBudget } from "../../../lib/services/budget.service";
-import type {
-  CreateBudgetCommand,
-  ApiErrorResponse,
-  ValidationErrorResponse,
-} from "../../../types";
+import type { CreateBudgetCommand, ApiErrorResponse, ValidationErrorResponse } from "../../../types";
 
 export const prerender = false;
 
@@ -60,7 +56,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
     // Step 2: Parse and validate query parameters
     const monthStr = url.searchParams.get("month");
     const yearStr = url.searchParams.get("year");
-    
+
     // Construct query object only with provided params
     const queryParams: Record<string, unknown> = {};
     if (monthStr) queryParams.month = monthStr;

@@ -17,12 +17,7 @@ interface DeleteTransactionDialogProps {
   onDelete: (id: string) => Promise<void>;
 }
 
-export default function DeleteTransactionDialog({
-  transaction,
-  open,
-  onOpenChange,
-  onDelete,
-}: DeleteTransactionDialogProps) {
+export default function DeleteTransactionDialog({ transaction, open, onOpenChange, onDelete }: DeleteTransactionDialogProps) {
   if (!transaction) return null;
 
   const handleDelete = async () => {
@@ -35,9 +30,7 @@ export default function DeleteTransactionDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Czy na pewno chcesz usunąć tę transakcję?</AlertDialogTitle>
-          <AlertDialogDescription>
-            Tej operacji nie można cofnąć. Transakcja zostanie trwale usunięta z Twojej historii.
-          </AlertDialogDescription>
+          <AlertDialogDescription>Tej operacji nie można cofnąć. Transakcja zostanie trwale usunięta z Twojej historii.</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Anuluj</AlertDialogCancel>
@@ -49,4 +42,3 @@ export default function DeleteTransactionDialog({
     </AlertDialog>
   );
 }
-

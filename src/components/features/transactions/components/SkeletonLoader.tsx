@@ -10,7 +10,7 @@ export default function SkeletonLoader() {
         <Skeleton className="h-4 w-40" />
         <Skeleton className="h-4 w-24 ml-auto" />
       </div>
-      
+
       {/* Rows */}
       {[...Array(5)].map((_, index) => (
         <div key={index} className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 py-4 border-b">
@@ -25,4 +25,3 @@ export default function SkeletonLoader() {
     </div>
   );
 }
-

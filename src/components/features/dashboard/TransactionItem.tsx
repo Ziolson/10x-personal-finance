@@ -36,28 +36,15 @@ export function TransactionItem({ transaction, categoryName }: TransactionItemPr
   return (
     <div className="flex items-center justify-between py-3">
       <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted/50">
-          {getIcon()}
-        </div>
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted/50">{getIcon()}</div>
         <div className="space-y-1">
-          <p className="text-sm font-medium leading-none">
-            {description || categoryName || "Transakcja"}
-          </p>
+          <p className="text-sm font-medium leading-none">{description || categoryName || "Transakcja"}</p>
           <p className="text-xs text-muted-foreground">
             {formattedDate} {categoryName && `• ${categoryName}`}
           </p>
         </div>
       </div>
-      <div
-        className={cn(
-          "text-sm font-medium",
-          type === "expense"
-            ? "text-red-600 dark:text-red-500"
-            : type === "income"
-            ? "text-green-600 dark:text-green-500"
-            : ""
-        )}
-      >
+      <div className={cn("text-sm font-medium", type === "expense" ? "text-red-600 dark:text-red-500" : type === "income" ? "text-green-600 dark:text-green-500" : "")}>
         {type === "expense" ? "-" : type === "income" ? "+" : ""}
         {formattedAmount}
       </div>

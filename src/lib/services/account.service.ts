@@ -19,18 +19,9 @@ import type { CreateAccountCommand, AccountDTO, UpdateAccountCommand } from "../
  * @returns The newly created account with current balance
  * @throws Error if account name already exists or database operation fails
  */
-export async function createAccount(
-  command: CreateAccountCommand,
-  userId: string,
-  supabase: SupabaseClient
-): Promise<AccountDTO> {
+export async function createAccount(command: CreateAccountCommand, userId: string, supabase: SupabaseClient): Promise<AccountDTO> {
   // Step 1: Check if account with this name already exists for the user
-  const { data: existingAccount, error: checkError } = await supabase
-    .from("accounts")
-    .select("id")
-    .eq("user_id", userId)
-    .eq("name", command.name)
-    .maybeSingle();
+  const { data: existingAccount, error: checkError } = await supabase.from("accounts").select("id").eq("user_id", userId).eq("name", command.name).maybeSingle();
 
   if (checkError) {
     throw new Error(`Database error while checking for existing account: ${checkError.message}`);
@@ -61,11 +52,7 @@ export async function createAccount(
   }
 
   // Step 3: Fetch current balance from account_balances view
-  const { data: balanceData, error: balanceError } = await supabase
-    .from("account_balances")
-    .select("current_balance")
-    .eq("account_id", newAccount.id)
-    .maybeSingle();
+  const { data: balanceData, error: balanceError } = await supabase.from("account_balances").select("current_balance").eq("account_id", newAccount.id).maybeSingle();
 
   if (balanceError) {
     // Log error but don't fail - use initial_balance as fallback
@@ -126,10 +113,7 @@ export async function getAccounts(userId: string, supabase: SupabaseClient): Pro
   }
 
   // Step 2: Fetch current balances from the account_balances view
-  const { data: balances, error: balancesError } = await supabase
-    .from("account_balances")
-    .select("account_id, current_balance")
-    .eq("user_id", userId);
+  const { data: balances, error: balancesError } = await supabase.from("account_balances").select("account_id, current_balance").eq("user_id", userId);
 
   if (balancesError) {
     // If balance view is unavailable, use initial_balance as fallback
@@ -140,11 +124,7 @@ export async function getAccounts(userId: string, supabase: SupabaseClient): Pro
 
   // Create a map of account_id -> current_balance for quick lookup
   // Filter out entries with null account_id or current_balance to prevent null keys/values
-  const balanceMap = new Map(
-    (balances || [])
-      .filter((b) => b.account_id != null && b.current_balance != null)
-      .map((b) => [b.account_id, b.current_balance] as const)
-  );
+  const balanceMap = new Map((balances || []).filter((b) => b.account_id != null && b.current_balance != null).map((b) => [b.account_id, b.current_balance] as const));
 
   // Transform to AccountDTO format by:
   // 1. Mapping account data fields
@@ -175,11 +155,7 @@ export async function getAccounts(userId: string, supabase: SupabaseClient): Pro
  * @returns Promise<AccountDTO | null> The account with current balance, or null if not found
  * @throws Error if database query fails
  */
-export async function getAccountById(
-  accountId: string,
-  userId: string,
-  supabase: SupabaseClient
-): Promise<AccountDTO | null> {
+export async function getAccountById(accountId: string, userId: string, supabase: SupabaseClient): Promise<AccountDTO | null> {
   // Step 1: Fetch the account by ID and user_id (authorization check)
   const { data: account, error: accountError } = await supabase
     .from("accounts")
@@ -198,11 +174,7 @@ export async function getAccountById(
   }
 
   // Step 2: Fetch current balance from account_balances view
-  const { data: balanceData, error: balanceError } = await supabase
-    .from("account_balances")
-    .select("current_balance")
-    .eq("account_id", accountId)
-    .maybeSingle();
+  const { data: balanceData, error: balanceError } = await supabase.from("account_balances").select("current_balance").eq("account_id", accountId).maybeSingle();
 
   if (balanceError) {
     // Log error but don't fail - use initial_balance as fallback
@@ -239,19 +211,9 @@ export async function getAccountById(
  * @returns Promise<AccountDTO> The updated account with current balance
  * @throws Error if account not found, or if a duplicate name is detected
  */
-export async function updateAccount(
-  accountId: string,
-  userId: string,
-  data: UpdateAccountCommand,
-  supabase: SupabaseClient
-): Promise<AccountDTO> {
+export async function updateAccount(accountId: string, userId: string, data: UpdateAccountCommand, supabase: SupabaseClient): Promise<AccountDTO> {
   // Step 1: Check if account exists and belongs to user
-  const { data: existingAccount, error: checkError } = await supabase
-    .from("accounts")
-    .select("id")
-    .eq("id", accountId)
-    .eq("user_id", userId)
-    .maybeSingle();
+  const { data: existingAccount, error: checkError } = await supabase.from("accounts").select("id").eq("id", accountId).eq("user_id", userId).maybeSingle();
 
   if (checkError) {
     throw new Error(`Database error while checking account: ${checkError.message}`);
@@ -263,13 +225,7 @@ export async function updateAccount(
 
   // Step 2: If updating name, check for duplicates
   if (data.name !== undefined) {
-    const { data: duplicateAccount, error: dupError } = await supabase
-      .from("accounts")
-      .select("id")
-      .eq("user_id", userId)
-      .eq("name", data.name)
-      .neq("id", accountId)
-      .maybeSingle();
+    const { data: duplicateAccount, error: dupError } = await supabase.from("accounts").select("id").eq("user_id", userId).eq("name", data.name).neq("id", accountId).maybeSingle();
 
     if (dupError) {
       throw new Error(`Database error while checking for duplicate name: ${dupError.message}`);
@@ -285,13 +241,7 @@ export async function updateAccount(
   if (data.name !== undefined) updatePayload.name = data.name;
   if (data.initial_balance !== undefined) updatePayload.initial_balance = data.initial_balance;
 
-  const { data: updatedAccount, error: updateError } = await supabase
-    .from("accounts")
-    .update(updatePayload)
-    .eq("id", accountId)
-    .eq("user_id", userId)
-    .select()
-    .single();
+  const { data: updatedAccount, error: updateError } = await supabase.from("accounts").update(updatePayload).eq("id", accountId).eq("user_id", userId).select().single();
 
   if (updateError) {
     throw new Error(`Database error while updating account: ${updateError.message}`);
@@ -302,11 +252,7 @@ export async function updateAccount(
   }
 
   // Step 4: Fetch current balance from account_balances view
-  const { data: balanceData, error: balanceError } = await supabase
-    .from("account_balances")
-    .select("current_balance")
-    .eq("account_id", accountId)
-    .maybeSingle();
+  const { data: balanceData, error: balanceError } = await supabase.from("account_balances").select("current_balance").eq("account_id", accountId).maybeSingle();
 
   if (balanceError) {
     // eslint-disable-next-line no-console

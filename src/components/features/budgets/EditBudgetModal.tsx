@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import BudgetForm from "./BudgetForm";
 import type { UpdateBudgetCommand, CategoryDTO, BudgetDTO } from "@/types";
 
@@ -18,14 +12,7 @@ interface EditBudgetModalProps {
   existingBudgets: BudgetDTO[];
 }
 
-export default function EditBudgetModal({
-  open,
-  onOpenChange,
-  onSubmit,
-  budget,
-  availableCategories,
-  existingBudgets,
-}: EditBudgetModalProps) {
+export default function EditBudgetModal({ open, onOpenChange, onSubmit, budget, availableCategories, existingBudgets }: EditBudgetModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!budget) {
@@ -33,9 +20,7 @@ export default function EditBudgetModal({
   }
 
   // Calculate used category IDs from OTHER budgets (exclude current budget)
-  const usedCategoryIds = existingBudgets
-    .filter((b) => b.id !== budget.id)
-    .flatMap((b) => b.categories);
+  const usedCategoryIds = existingBudgets.filter((b) => b.id !== budget.id).flatMap((b) => b.categories);
 
   const handleSubmit = async (data: Omit<UpdateBudgetCommand, "month" | "year">) => {
     setIsSubmitting(true);
@@ -52,9 +37,7 @@ export default function EditBudgetModal({
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Edytuj budżet</DialogTitle>
-          <DialogDescription>
-            Zaktualizuj informacje o budżecie lub przypisane kategorie.
-          </DialogDescription>
+          <DialogDescription>Zaktualizuj informacje o budżecie lub przypisane kategorie.</DialogDescription>
         </DialogHeader>
         <BudgetForm
           mode="edit"
