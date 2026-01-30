@@ -3,7 +3,7 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ToastProvider, useToast } from "@/components/ui/toast";
-import { PageHeader } from "@/components/PageHeader";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { useCategories } from "@/components/hooks/useCategories";
 import CategoriesList from "@/components/features/categories/CategoriesList";
 import AddCategoryModal from "@/components/features/categories/AddCategoryModal";

@@ -5,7 +5,7 @@ import AddAccountModal from "@/components/features/accounts/AddAccountModal";
 import EditAccountModal from "@/components/features/accounts/EditAccountModal";
 import AccountsList from "@/components/features/accounts/AccountsList";
 import SkeletonLoader from "@/components/features/accounts/SkeletonLoader";
-import { PageHeader } from "@/components/PageHeader";
+import { PageHeader } from "@/components/ui/PageHeader";
 import useAccounts from "@/components/hooks/useAccounts";
 import { ToastProvider, useToast } from "@/components/ui/toast";
 import type { AccountDTO, AccountFormViewModel } from "@/types";

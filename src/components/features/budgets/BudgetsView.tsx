@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ToastProvider, useToast } from "@/components/ui/toast";
-import { PageHeader } from "@/components/PageHeader";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { useBudgets } from "@/components/hooks/useBudgets";
 import { useCategories } from "@/components/hooks/useCategories";
 import BudgetsList from "@/components/features/budgets/BudgetsList";

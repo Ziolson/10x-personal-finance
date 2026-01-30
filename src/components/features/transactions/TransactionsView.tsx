@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ToastProvider, useToast } from "@/components/ui/toast";
 import { useTransactions } from "./hooks/useTransactions";
-import { PageHeader } from "@/components/PageHeader";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { TransactionsFilters } from "./TransactionsFilters";
 import TransactionsList from "./components/TransactionsList";
 import AddTransactionDialog from "./components/AddTransactionDialog";

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PageHeader } from "@/components/PageHeader";
+import { PageHeader } from "@/components/ui/PageHeader";
 import MonthNavigator from "@/components/features/budgets/MonthNavigator";
 // Import atomic components
 import { SummaryCards } from "./SummaryCards";
