@@ -1,30 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { format } from "date-fns";
 import TransactionForm from "./TransactionForm";
-import useAccounts from "@/components/hooks/useAccounts";
-import { useCategories } from "@/components/hooks/useCategories";
-import type { CreateTransactionCommand } from "@/types";
+import type { CreateTransactionCommand, AccountDTO, CategoryDTO } from "@/types";
 import type { TransactionFormValues } from "../types";
 
 interface AddTransactionDialogProps {
   onAdd: (command: CreateTransactionCommand) => Promise<void>;
+  accounts: AccountDTO[];
+  categories: CategoryDTO[];
 }
 
-export default function AddTransactionDialog({ onAdd }: AddTransactionDialogProps) {
+export default function AddTransactionDialog({ onAdd, accounts, categories }: AddTransactionDialogProps) {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { accounts, refetch: fetchAccounts } = useAccounts();
-  const { categories, fetchCategories } = useCategories();
-
-  useEffect(() => {
-    if (open) {
-      fetchAccounts();
-      fetchCategories();
-    }
-  }, [open, fetchAccounts, fetchCategories]);
 
   const handleSubmit = async (values: TransactionFormValues) => {
     setIsLoading(true);
@@ -68,7 +59,7 @@ export default function AddTransactionDialog({ onAdd }: AddTransactionDialogProp
         <DialogHeader>
           <DialogTitle>Dodaj nową transakcję</DialogTitle>
         </DialogHeader>
-        <TransactionForm accounts={accounts || []} categories={categories} onSubmit={handleSubmit} isLoading={isLoading} />
+        <TransactionForm accounts={accounts} categories={categories} onSubmit={handleSubmit} isLoading={isLoading} />
       </DialogContent>
     </Dialog>
   );
