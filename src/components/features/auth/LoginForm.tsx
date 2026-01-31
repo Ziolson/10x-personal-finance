@@ -5,6 +5,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 // import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // Assuming Alert component exists or will be added, if not use simple div for now or Toast
 // import { Icons } from "@/components/icons"; // Assuming generic icons or lucide-react direct usage
 
@@ -86,7 +87,7 @@ export default function LoginForm() {
                   </a>
                 </div>
                 <FormControl>
-                  <Input type="password" placeholder="••••••••" {...field} />
+                  <PasswordInput placeholder="••••••••" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
