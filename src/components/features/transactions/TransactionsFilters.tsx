@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { format } from "date-fns";
 import { CalendarIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -6,23 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import useAccounts from "@/components/hooks/useAccounts";
-import { useCategories } from "@/components/hooks/useCategories";
+import type { AccountDTO, CategoryDTO } from "@/types";
 import type { TransactionFiltersState } from "../types";
 
 interface TransactionsFiltersProps {
   filters: TransactionFiltersState;
   onFilterChange: (filters: TransactionFiltersState) => void;
+  accounts: AccountDTO[];
+  categories: CategoryDTO[];
 }
 
-export function TransactionsFilters({ filters, onFilterChange }: TransactionsFiltersProps) {
-  const { accounts } = useAccounts();
-  const { categories, fetchCategories } = useCategories();
-
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
-
+export function TransactionsFilters({ filters, onFilterChange, accounts, categories }: TransactionsFiltersProps) {
   const handleTypeChange = (value: string) => {
     onFilterChange({
       ...filters,
@@ -68,7 +61,7 @@ export function TransactionsFilters({ filters, onFilterChange }: TransactionsFil
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Wszystkie konta</SelectItem>
-          {accounts?.map((account) => (
+          {accounts.map((account) => (
             <SelectItem key={account.id} value={account.id}>
               {account.name}
             </SelectItem>

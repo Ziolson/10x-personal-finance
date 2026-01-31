@@ -1,8 +1,5 @@
-import { useEffect } from "react";
-import useAccounts from "@/components/hooks/useAccounts";
-import { useCategories } from "@/components/hooks/useCategories";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import type { TransactionDTO, PaginationInfo } from "@/types";
+import type { TransactionDTO, PaginationInfo, AccountDTO, CategoryDTO } from "@/types";
 import TransactionsTable from "./TransactionsTable";
 import TransactionsMobileList from "./TransactionsMobileList";
 import SkeletonLoader from "./SkeletonLoader";
@@ -15,18 +12,11 @@ interface TransactionsListProps {
   onPageChange: (page: number) => void;
   onEdit: (transaction: TransactionDTO) => void;
   onDelete: (transaction: TransactionDTO) => void;
+  accounts: AccountDTO[];
+  categories: CategoryDTO[];
 }
 
-export default function TransactionsList({ transactions, isLoading, pagination, onPageChange, onEdit, onDelete }: TransactionsListProps) {
-  // Fetch lookups
-  const { accounts, refetch: fetchAccounts } = useAccounts();
-  const { categories, fetchCategories } = useCategories();
-
-  useEffect(() => {
-    fetchAccounts();
-    fetchCategories();
-  }, [fetchAccounts, fetchCategories]);
-
+export default function TransactionsList({ transactions, isLoading, pagination, onPageChange, onEdit, onDelete, accounts, categories }: TransactionsListProps) {
   if (isLoading) {
     return <SkeletonLoader />;
   }
@@ -46,12 +36,12 @@ export default function TransactionsList({ transactions, isLoading, pagination, 
     <div className="space-y-4">
       {/* Desktop View */}
       <div className="hidden md:block">
-        <TransactionsTable transactions={transactions} accounts={accounts || []} categories={categories} onEdit={onEdit} onDelete={onDelete} />
+        <TransactionsTable transactions={transactions} accounts={accounts} categories={categories} onEdit={onEdit} onDelete={onDelete} />
       </div>
 
       {/* Mobile View */}
       <div className="md:hidden">
-        <TransactionsMobileList transactions={transactions} accounts={accounts || []} categories={categories} onEdit={onEdit} onDelete={onDelete} />
+        <TransactionsMobileList transactions={transactions} accounts={accounts} categories={categories} onEdit={onEdit} onDelete={onDelete} />
       </div>
 
       {/* Pagination */}

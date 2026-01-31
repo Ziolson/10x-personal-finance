@@ -1,10 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { format } from "date-fns";
 import TransactionForm from "./TransactionForm";
-import useAccounts from "@/components/hooks/useAccounts";
-import { useCategories } from "@/components/hooks/useCategories";
-import type { TransactionDTO, UpdateTransactionCommand } from "@/types";
+import type { TransactionDTO, UpdateTransactionCommand, AccountDTO, CategoryDTO } from "@/types";
 import type { TransactionFormValues } from "../types";
 
 interface EditTransactionDialogProps {
@@ -12,19 +10,12 @@ interface EditTransactionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onEdit: (id: string, command: UpdateTransactionCommand) => Promise<void>;
+  accounts: AccountDTO[];
+  categories: CategoryDTO[];
 }
 
-export default function EditTransactionDialog({ transaction, open, onOpenChange, onEdit }: EditTransactionDialogProps) {
+export default function EditTransactionDialog({ transaction, open, onOpenChange, onEdit, accounts, categories }: EditTransactionDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const { accounts, refetch: fetchAccounts } = useAccounts();
-  const { categories, fetchCategories } = useCategories();
-
-  useEffect(() => {
-    if (open) {
-      fetchAccounts();
-      fetchCategories();
-    }
-  }, [open, fetchAccounts, fetchCategories]);
 
   const handleSubmit = async (values: TransactionFormValues) => {
     if (!transaction) return;
@@ -69,7 +60,7 @@ export default function EditTransactionDialog({ transaction, open, onOpenChange,
         <DialogHeader>
           <DialogTitle>Edytuj transakcję</DialogTitle>
         </DialogHeader>
-        <TransactionForm defaultValues={defaultValues} accounts={accounts || []} categories={categories} onSubmit={handleSubmit} isLoading={isLoading} />
+        <TransactionForm defaultValues={defaultValues} accounts={accounts} categories={categories} onSubmit={handleSubmit} isLoading={isLoading} />
       </DialogContent>
     </Dialog>
   );
