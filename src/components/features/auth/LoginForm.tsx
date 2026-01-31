@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -21,6 +21,29 @@ const formSchema = z.object({
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [rateLimitCountdown, setRateLimitCountdown] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (rateLimitCountdown === null) return;
+
+    if (rateLimitCountdown <= 0) {
+      setRateLimitCountdown(null);
+      setError(null);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setRateLimitCountdown((prev) => (prev !== null ? prev - 1 : null));
+      setError((prev) => {
+        if (prev && prev.startsWith("Zbyt wiele prób")) {
+          return `Zbyt wiele prób logowania. Spróbuj ponownie za ${rateLimitCountdown - 1}s.`;
+        }
+        return prev;
+      });
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [rateLimitCountdown]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -42,6 +65,14 @@ export default function LoginForm() {
         },
         body: JSON.stringify(values),
       });
+
+      if (response.status === 429) {
+        const retryAfter = response.headers.get("Retry-After");
+        const seconds = retryAfter ? parseInt(retryAfter, 10) : 60;
+        setRateLimitCountdown(seconds);
+        setError(`Zbyt wiele prób logowania. Spróbuj ponownie za ${seconds}s.`);
+        return;
+      }
 
       const data = await response.json();
 
@@ -96,9 +127,9 @@ export default function LoginForm() {
 
           {error && <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">{error}</div>}
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button type="submit" className="w-full" disabled={isLoading || rateLimitCountdown !== null}>
             {isLoading && <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />}
-            Zaloguj się
+            {rateLimitCountdown !== null ? `Poczekaj ${rateLimitCountdown}s` : "Zaloguj się"}
           </Button>
         </form>
       </Form>
