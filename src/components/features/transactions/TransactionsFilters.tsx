@@ -51,7 +51,7 @@ export function TransactionsFilters({ filters, onFilterChange }: TransactionsFil
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-center md:flex-wrap mb-6">
       <Select value={filters.type || "all"} onValueChange={handleTypeChange}>
-        <SelectTrigger className="w-full md:w-[150px]">
+        <SelectTrigger className="w-full md:w-[150px]" data-testid="filter-type">
           <SelectValue placeholder="Typ" />
         </SelectTrigger>
         <SelectContent>
@@ -63,7 +63,7 @@ export function TransactionsFilters({ filters, onFilterChange }: TransactionsFil
       </Select>
 
       <Select value={filters.accountId || "all"} onValueChange={handleAccountChange}>
-        <SelectTrigger className="w-full md:w-[200px]">
+        <SelectTrigger className="w-full md:w-[200px]" data-testid="filter-account">
           <SelectValue placeholder="Konto" />
         </SelectTrigger>
         <SelectContent>
@@ -77,7 +77,7 @@ export function TransactionsFilters({ filters, onFilterChange }: TransactionsFil
       </Select>
 
       <Select value={filters.categoryId || "all"} onValueChange={handleCategoryChange}>
-        <SelectTrigger className="w-full md:w-[200px]">
+        <SelectTrigger className="w-full md:w-[200px]" data-testid="filter-category">
           <SelectValue placeholder="Kategoria" />
         </SelectTrigger>
         <SelectContent>
@@ -92,7 +92,11 @@ export function TransactionsFilters({ filters, onFilterChange }: TransactionsFil
 
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant={"outline"} className={cn("w-full md:w-[240px] justify-start text-left font-normal", !filters.dateRange && "text-muted-foreground")}>
+          <Button
+            variant={"outline"}
+            className={cn("w-full md:w-[240px] justify-start text-left font-normal", !filters.dateRange && "text-muted-foreground")}
+            data-testid="filter-date-range"
+          >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {filters.dateRange?.from ? (
               filters.dateRange.to ? (
@@ -120,7 +124,7 @@ export function TransactionsFilters({ filters, onFilterChange }: TransactionsFil
       </Popover>
 
       {(filters.type || filters.accountId || filters.categoryId || filters.dateRange) && (
-        <Button variant="ghost" onClick={clearFilters} className="h-8 px-2 lg:px-3">
+        <Button variant="ghost" onClick={clearFilters} className="h-8 px-2 lg:px-3" data-testid="clear-filters-button">
           Wyczyść
           <X className="ml-2 h-4 w-4" />
         </Button>

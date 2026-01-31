@@ -110,7 +110,7 @@ export default function TransactionForm({ defaultValues, accounts, categories, o
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" data-testid="transaction-form">
         <FormField
           control={form.control}
           name="type"
@@ -119,7 +119,7 @@ export default function TransactionForm({ defaultValues, accounts, categories, o
               <FormLabel>Typ transakcji</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger data-testid="input-type">
                     <SelectValue placeholder="Wybierz typ" />
                   </SelectTrigger>
                 </FormControl>
@@ -142,7 +142,7 @@ export default function TransactionForm({ defaultValues, accounts, categories, o
               <FormItem>
                 <FormLabel>Kwota</FormLabel>
                 <FormControl>
-                  <Input type="number" step="0.01" {...field} />
+                  <Input type="number" step="0.01" {...field} data-testid="input-amount" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -158,7 +158,7 @@ export default function TransactionForm({ defaultValues, accounts, categories, o
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
-                      <Button variant={"outline"} className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
+                      <Button variant={"outline"} className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")} data-testid="input-date">
                         {field.value ? format(field.value, "dd.MM.yyyy") : <span>Wybierz datę</span>}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
@@ -181,7 +181,7 @@ export default function TransactionForm({ defaultValues, accounts, categories, o
             <FormItem>
               <FormLabel>Opis</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} data-testid="input-description" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -197,7 +197,7 @@ export default function TransactionForm({ defaultValues, accounts, categories, o
                 <FormLabel>Z konta</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger data-testid="input-from-account">
                       <SelectValue placeholder="Wybierz konto" />
                     </SelectTrigger>
                   </FormControl>
@@ -224,7 +224,7 @@ export default function TransactionForm({ defaultValues, accounts, categories, o
                 <FormLabel>Na konto</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger data-testid="input-to-account">
                       <SelectValue placeholder="Wybierz konto" />
                     </SelectTrigger>
                   </FormControl>
@@ -251,7 +251,7 @@ export default function TransactionForm({ defaultValues, accounts, categories, o
                 <FormLabel>Kategoria</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger data-testid="input-category">
                       <SelectValue placeholder="Wybierz kategorię" />
                     </SelectTrigger>
                   </FormControl>
@@ -271,7 +271,7 @@ export default function TransactionForm({ defaultValues, accounts, categories, o
           />
         )}
 
-        <Button type="submit" className="w-full" disabled={isLoading}>
+        <Button type="submit" className="w-full" disabled={isLoading} data-testid="submit-transaction-button">
           {isLoading ? "Zapisywanie..." : "Zapisz"}
         </Button>
       </form>

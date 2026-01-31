@@ -44,10 +44,12 @@ function TransactionsViewContent() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="transactions-view">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <PageHeader title="Historia transakcji" description="Przeglądaj i zarządzaj swoimi wydatkami i przychodami." />
-        <AddTransactionDialog onAdd={handleAdd} />
+        <div data-testid="add-transaction-button">
+          <AddTransactionDialog onAdd={handleAdd} />
+        </div>
       </div>
 
       <TransactionsFilters filters={filters} onFilterChange={setFilters} />

@@ -53,7 +53,7 @@ export default function TransactionsTable({ transactions, accounts, categories, 
         </TableHeader>
         <TableBody>
           {transactions.map((transaction) => (
-            <TableRow key={transaction.id}>
+            <TableRow key={transaction.id} data-testid="transaction-row">
               <TableCell className="font-medium">{format(new Date(transaction.date), "dd.MM.yyyy")}</TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
@@ -94,15 +94,17 @@ export default function TransactionsTable({ transactions, accounts, categories, 
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
+                    <Button variant="ghost" className="h-8 w-8 p-0" data-testid="action-menu-trigger">
                       <span className="sr-only">Open menu</span>
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Akcje</DropdownMenuLabel>
-                    <DropdownMenuItem onClick={() => onEdit(transaction)}>Edytuj</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => onDelete(transaction)} className="text-red-600 focus:text-red-600">
+                    <DropdownMenuItem onClick={() => onEdit(transaction)} data-testid="action-edit">
+                      Edytuj
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onDelete(transaction)} className="text-red-600 focus:text-red-600" data-testid="action-delete">
                       Usuń
                     </DropdownMenuItem>
                   </DropdownMenuContent>

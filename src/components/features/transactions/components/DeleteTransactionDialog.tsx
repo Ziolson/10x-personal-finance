@@ -34,7 +34,7 @@ export default function DeleteTransactionDialog({ transaction, open, onOpenChang
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Anuluj</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+          <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700" data-testid="confirm-delete-button">
             Usuń
           </AlertDialogAction>
         </AlertDialogFooter>

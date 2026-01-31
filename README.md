@@ -75,8 +75,8 @@ Follow these instructions to set up and run the project on your local machine.
 
     ```env
     # .env
-    PUBLIC_SUPABASE_URL="YOUR_SUPABASE_PROJECT_URL"
-    PUBLIC_SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY"
+    SUPABASE_URL="YOUR_SUPABASE_PROJECT_URL"
+    SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY"
     ```
 
 5.  **Run the development server:**
