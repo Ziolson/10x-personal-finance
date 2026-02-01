@@ -11,6 +11,7 @@ import type { APIRoute } from "astro";
 import { GetCategoriesQuerySchema, CreateCategorySchema } from "../../../lib/validators/categories.validators";
 import { getCategories, createCategory } from "../../../lib/services/category.service";
 import type { CreateCategoryCommand, ApiErrorResponse, ValidationErrorResponse } from "../../../types";
+import { handleApiError } from "../../../lib/server-utils";
 
 export const prerender = false;
 
@@ -110,42 +111,11 @@ export const GET: APIRoute = async ({ url, locals }) => {
         headers: { "Content-Type": "application/json" },
       });
     } catch (serviceError) {
-      const errorMessage = serviceError instanceof Error ? serviceError.message : "Unknown error";
-
-      // eslint-disable-next-line no-console
-      console.error("Error fetching categories:", errorMessage);
-
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to fetch categories",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "GET /api/categories");
     }
   } catch (error) {
     // Catch unexpected errors at endpoint level
-    // eslint-disable-next-line no-console
-    console.error("Unexpected error in GET /api/categories:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error, "GET /api/categories");
   }
 };
 
@@ -282,41 +252,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
         );
       }
 
-      // Log the error for debugging
-      // eslint-disable-next-line no-console
-      console.error("Error creating category:", errorMessage);
-
       // Return generic error
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to create category",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "POST /api/categories");
     }
   } catch (error) {
     // Catch-all for unexpected errors
-    // eslint-disable-next-line no-console
-    console.error("Unexpected error in POST /api/categories:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error, "POST /api/categories");
   }
 };

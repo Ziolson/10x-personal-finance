@@ -8,7 +8,7 @@
 import type { APIRoute } from "astro";
 import { getLatestInsights } from "../../../lib/services/insights.service";
 import type { GetLatestInsightsResponse, ApiErrorResponse } from "../../../types";
-import logger from "../../../lib/logger";
+import { handleApiError } from "../../../lib/server-utils";
 
 export const prerender = false;
 
@@ -75,19 +75,6 @@ export const GET: APIRoute = async ({ locals }) => {
     });
   } catch (error) {
     // Catch-all for unexpected errors
-    logger.error("Unexpected error in GET /api/insights/latest:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error, "GET /api/insights/latest");
   }
 };

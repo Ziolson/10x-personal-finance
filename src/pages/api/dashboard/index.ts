@@ -9,6 +9,7 @@ import type { APIRoute } from "astro";
 import { z } from "zod";
 import { getDashboardData } from "../../../lib/services/dashboard.service";
 import type { DashboardDTO, ApiErrorResponse, ValidationErrorResponse } from "../../../types";
+import { handleApiError } from "../../../lib/server-utils";
 
 export const prerender = false;
 
@@ -101,41 +102,10 @@ export const GET: APIRoute = async ({ request, locals }) => {
         },
       });
     } catch (serviceError) {
-      const errorMessage = serviceError instanceof Error ? serviceError.message : "Unknown error";
-
-      // eslint-disable-next-line no-console
-      console.error("Error fetching dashboard data:", errorMessage);
-
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to fetch dashboard data",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "GET /api/dashboard");
     }
   } catch (error) {
     // Catch-all for unexpected errors
-    // eslint-disable-next-line no-console
-    console.error("Unexpected error in GET /api/dashboard:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error, "GET /api/dashboard");
   }
 };

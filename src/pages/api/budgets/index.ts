@@ -11,7 +11,7 @@ import type { APIRoute } from "astro";
 import { GetBudgetsQuerySchema, CreateBudgetSchema } from "../../../lib/validators/budgets.validators";
 import { getBudgets, createBudget } from "../../../lib/services/budget.service";
 import type { CreateBudgetCommand, ApiErrorResponse, ValidationErrorResponse } from "../../../types";
-import logger from "../../../lib/logger";
+import { handleApiError } from "../../../lib/server-utils";
 
 export const prerender = false;
 
@@ -96,39 +96,10 @@ export const GET: APIRoute = async ({ url, locals }) => {
         headers: { "Content-Type": "application/json" },
       });
     } catch (serviceError) {
-      const errorMessage = serviceError instanceof Error ? serviceError.message : "Unknown error";
-
-      logger.error("Error fetching budgets:", errorMessage);
-
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to fetch budgets",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "GET /api/budgets");
     }
   } catch (error) {
-    logger.error("Unexpected error in GET /api/budgets:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error, "GET /api/budgets");
   }
 };
 
@@ -238,36 +209,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
         );
       }
 
-      logger.error("Error creating budget:", errorMessage);
-
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to create budget",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "POST /api/budgets");
     }
   } catch (error) {
-    logger.error("Unexpected error in POST /api/budgets:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error, "POST /api/budgets");
   }
 };
