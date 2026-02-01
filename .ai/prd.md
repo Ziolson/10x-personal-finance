@@ -2,7 +2,7 @@
 
 ## 1. Przegląd produktu
 
-Celem projektu "10xPersonal Finance" jest stworzenie aplikacji internetowej w wersji MVP (Minimum Viable Product), która umożliwi użytkownikom świadome zarządzanie finansami osobistymi. Aplikacja skupi się na ręcznym śledzeniu wydatków, przychodów oraz transferów między kontami, a także na prostym mechanizmie budżetowania. Głównym założeniem jest dostarczenie narzędzia, które w jednym miejscu gromadzi informacje o stanie finansów użytkownika, pomagając w ten sposób w lepszym planowaniu i oszczędzaniu.
+Celem projektu "10xPersonal Finance" jest stworzenie aplikacji internetowej w wersji MVP (Minimum Viable Product), która umożliwi użytkownikom świadome zarządzanie finansami osobistymi. Aplikacja skupi się na ręcznym śledzeniu wydatków, przychodów oraz transferów między kontami, a także na prostym mechanizmie budżetowania. Głównym założeniem jest dostarczenie narzędzia, które w jednym miejscu gromadzi informacje o stanie finansów użytkownika, pomagając w ten sposób w lepszym planowaniu i oszczędzaniu. Aplikacja wykorzystuje sztuczną inteligencję do analizy wzorców wydatków i generowania spersonalizowanych rekomendacji oszczędnościowych.
 
 ## 2. Problem użytkownika
 
@@ -12,6 +12,7 @@ Użytkownicy często borykają się z problemem braku kontroli nad swoimi finans
 - Łatwość dokonywania płatności bezgotówkowych (kartą, telefonem) sprawia, że użytkownicy nie są świadomi dokładnych kwot swoich wydatków i nie "czują" odpływu pieniędzy.
 - Brak jednego, scentralizowanego miejsca do agregacji danych o transakcjach prowadzi do trudności w analizie wydatków, planowaniu oszczędności i efektywnym zarządzaniu budżetem domowym.
 - Określenie i monitorowanie miesięcznego budżetu jest często procesem żmudnym i nieintuicyjnym.
+- Użytkownicy nie wiedzą, gdzie mogą zoptymalizować swoje wydatki i ile realistycznie mogą zaoszczędzić, co prowadzi do frustracji i braku motywacji do zmian.
 
 ## 3. Wymagania funkcjonalne
 
@@ -61,11 +62,28 @@ Użytkownicy często borykają się z problemem braku kontroli nad swoimi finans
 - Zawiera wykres kołowy przedstawiający strukturę wydatków w podziale na kategorie.
 - Wyświetla listę ostatnich transakcji.
 - Prezentuje listę wszystkich zdefiniowanych budżetów wraz z paskami postępu ich wykorzystania.
+- Prezentuje kompaktowy widget z rekomendacjami AI pokazujący potencjalne oszczędności i top rekomendację.
 
 ### 3.7. Interfejs i Nawigacja (Global Layout)
 
 - Przycisk "Dodaj transakcję" jest widoczny w najbardziej eksponowanym miejscu (Góra paska bocznego na Desktop, FAB na Mobile).
 - Logo aplikacji jest interaktywnym linkiem prowadzącym do Pulpitu.
+
+### 3.8. Rekomendacje AI
+
+- System AI analizuje wydatki użytkownika z ostatnich 1-3 miesięcy.
+- Na podstawie analizy, AI generuje spersonalizowane rekomendacje oszczędnościowe.
+- Każda rekomendacja zawiera:
+  - Kategorię wydatków do optymalizacji
+  - Obecną kwotę wydatków vs. proponowany cel
+  - Potencjalne oszczędności (miesięcznie)
+  - Priorytet (wysoki/średni/niski)
+  - Konkretne, actionable wskazówki jak osiągnąć cel
+- Rekomendacje są prezentowane w formie wizualnej z wykresami porównawczymi.
+- Użytkownik może wybrać okres analizy (1, 2 lub 3 miesiące).
+- System pokazuje projekcję oszczędności w czasie (3, 6, 12 miesięcy).
+- Analiza jest dostępna jako kompaktowy widget na pulpicie oraz jako dedykowana strona ze szczegółami.
+- Użytkownik może ręcznie odświeżyć analizę AI.
 
 ## 4. Granice produktu
 
@@ -77,6 +95,7 @@ Użytkownicy często borykają się z problemem braku kontroli nad swoimi finans
 - Podstawowy pulpit analityczny i historia transakcji.
 - Obsługa transferów między kontami użytkownika.
 - Obsługa trybu ciemnego i jasnego.
+- Podstawowa analiza AI wydatków z rekomendacjami oszczędnościowymi (p.
 
 ### Poza zakresem MVP:
 
@@ -86,6 +105,8 @@ Użytkownicy często borykają się z problemem braku kontroli nad swoimi finans
 - Obsługa wielu walut i automatyczne przeliczanie kursów.
 - Dedykowany kreator onboardingowy dla nowych użytkowników.
 - Globalna paleta komend (Command Palette).
+- Zaawansowane funkcje AI: automatyczna kategoryzacja transakcji, asystent głosowy, chatbot finansowy, OCR paragonów.
+- Predykcja przyszłych wydatków i inteligentne alerty.
 
 ## 5. Historyjki użytkowników
 
@@ -249,6 +270,49 @@ Użytkownicy często borykają się z problemem braku kontroli nad swoimi finans
 - Kryteria akceptacji:
   1. W menu użytkownika dostępna jest opcja zmiany motywu.
   2. Wybrany motyw jest zapamiętywany.
+
+### Rekomendacje AI
+
+- ID: US-018
+- Tytuł: Generowanie rekomendacji AI wydatków
+- Opis: Jako użytkownik z historią transakcji, chcę móc wygenerować analizę AI moich wydatków, aby dowiedzieć się gdzie mogę zaoszczędzić.
+- Kryteria akceptacji:
+  1. Na pulpicie widoczna jest karta "Rekomendacje AI" z przyciskiem "Analizuj wydatki".
+  2. Użytkownik może wybrać okres analizy: 1, 2 lub 3 miesiące.
+  3. Po kliknięciu, system generuje analizę wydatków przy użyciu AI.
+  4. Jeśli użytkownik nie ma wystarczającej ilości danych (minimum 1 miesiąc transakcji), wyświetlany jest odpowiedni komunikat.
+  5. Podczas generowania widoczny jest indicator ładowania.
+
+- ID: US-019
+- Tytuł: Przeglądanie rekomendacji oszczędnościowych na pulpicie
+- Opis: Jako użytkownik, chcę widzieć na pulpicie podsumowanie moich możliwości oszczędnościowych, aby szybko ocenić potencjał optymalizacji.
+- Kryteria akceptacji:
+  1. Na pulpicie widoczna jest karta z rekomendacjami AI.
+  2. Karta pokazuje całkowitą kwotę potencjalnych oszczędności miesięcznie.
+  3. Widoczna jest top rekomendacja z kwotą i krótkim wyjaśnieniem.
+  4. Karta zawiera przycisk prowadzący do pełnej analizy.
+  5. Wyświetlany jest timestamp ostatniej analizy.
+  6. Użytkownik może odświeżyć analizę poprzez przycisk "Odśwież".
+
+- ID: US-020
+- Tytuł: Przeglądanie szczegółowych rekomendacji AI
+- Opis: Jako użytkownik, chcę mieć dostęp do dedykowanej strony ze szczegółową analizą AI i wszystkimi rekomendacjami, aby dokładnie zrozumieć możliwości oszczędności.
+- Kryteria akceptacji:
+  1. Istnieje dedykowana strona "/insights" dostępna z menu nawigacji.
+  2. Strona prezentuje banner z podsumowaniem: okres analizy, średnie wydatki, potencjał oszczędności.
+  3. Wyświetlane są dwa wykresy:
+     - Wykres słupkowy porównujący obecne wydatki vs. proponowany cel dla każdej kategorii
+     - Wykres liniowy pokazujący projekcję oszczędności w czasie (12 miesięcy)
+  4. Poniżej wykresów znajduje się lista szczegółowych rekomendacji, każda zawierająca:
+     - Ranking (1, 2, 3...)
+     - Nazwę kategorii
+     - Badge z priorytetem (wysoki/średni/niski)
+     - Obecne wydatki vs. cel
+     - Progress bar pokazujący redukcję
+     - Wyjaśnienie dlaczego warto zoptymalizować tę kategorię
+     - 2-4 konkretne, actionable wskazówki
+  5. Rekomendacje są posortowane według priorytetu (wysoki → niski).
+  6. Użytkownik może zmienić okres analizy i przeliczyć rekomendacje.
 
 ## 6. Metryki sukcesu
 
