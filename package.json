@@ -45,6 +45,7 @@
     "date-fns": "^4.1.0",
     "lucide-react": "^0.487.0",
     "nanostores": "^1.1.0",
+    "openai": "^6.17.0",
     "react": "^19.1.1",
     "react-day-picker": "^9.13.0",
     "react-dom": "^19.1.1",
