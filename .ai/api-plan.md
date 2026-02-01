@@ -360,6 +360,7 @@ Resource Path: `/api/insights`
 - **`POST /api/insights/analyze`**
   - **Description**: Generates a new AI analysis or returns cached result if fresh (< 24 hours) and not forcing refresh. Analyzes user's transaction history and generates personalized savings recommendations using AI.
   - **Request Payload**:
+
     ```json
     {
       "months": 3,
@@ -369,6 +370,7 @@ Resource Path: `/api/insights`
 
     - `months`: Number of months to analyze (1, 2, or 3)
     - `force_refresh`: Optional boolean to bypass cache and generate new analysis
+
   - **Response Payload (200 OK)**: Same structure as `GET /api/insights/latest`.
   - **Error Codes**:
     - `400 Bad Request` (validation error or insufficient data - requires at least 28 days of transaction history)
