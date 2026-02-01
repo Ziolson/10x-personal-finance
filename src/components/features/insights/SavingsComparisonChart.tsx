@@ -24,17 +24,19 @@ export function SavingsComparisonChart({ insights }: SavingsComparisonChartProps
         <CardDescription>Obecne vs proponowane cele oszczędności</CardDescription>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer width="100%" height={350} role="img" aria-label="Wykres porównania obecnych wydatków z proponowanymi celami oszczędności dla różnych kategorii">
-          <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="category" angle={-45} textAnchor="end" height={100} fontSize={12} />
-            <YAxis label={{ value: "PLN", angle: -90, position: "insideLeft" }} />
-            <Tooltip formatter={(value: number) => `${value.toFixed(0)} PLN`} labelStyle={{ color: "#000" }} />
-            <Legend wrapperStyle={{ paddingTop: "20px" }} />
-            <Bar dataKey="Obecne wydatki" fill="#9ca3af" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="Proponowany cel" fill="#9333ea" radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
+        <div className="h-[350px] w-full" role="img" aria-label="Wykres porównania obecnych wydatków z proponowanymi celami oszczędności dla różnych kategorii">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="category" angle={-45} textAnchor="end" height={100} fontSize={12} />
+              <YAxis label={{ value: "PLN", angle: -90, position: "insideLeft" }} />
+              <Tooltip formatter={(value: number | undefined) => (value !== undefined ? `${value.toFixed(0)} PLN` : "0 PLN")} labelStyle={{ color: "#000" }} />
+              <Legend wrapperStyle={{ paddingTop: "20px" }} />
+              <Bar dataKey="Obecne wydatki" fill="#9ca3af" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Proponowany cel" fill="#9333ea" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );
