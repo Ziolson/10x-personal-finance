@@ -14,6 +14,8 @@ A web application for conscious personal finance management, focusing on manual 
 - [Getting Started Locally](#getting-started-locally)
   - [Installation](#installation)
 - [Available Scripts](#available-scripts)
+- [Deployment](#deployment)
+- [Testing](#testing)
 - [Project Scope](#project-scope)
   - [In Scope (MVP)](#in-scope-mvp)
 - [Project Status](#project-status)
@@ -36,7 +38,7 @@ The project is built with a modern, robust, and scalable tech stack:
 | **Frontend** | ![Astro](https://img.shields.io/badge/Astro-5-FF5D01?logo=astro) ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react) ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript) ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?logo=tailwind-css) ![Shadcn/UI](https://img.shields.io/badge/shadcn/ui-latest-black?logo=v) |
 | **Backend**  | ![Supabase](https://img.shields.io/badge/Supabase-latest-3ECF8E?logo=supabase)                                                                                                                                                                                                                                                                                                    |
 | **Testing**  | ![Vitest](https://img.shields.io/badge/Vitest-latest-729B1B?logo=vitest) ![Playwright](https://img.shields.io/badge/Playwright-latest-45BA4B?logo=playwright) ![RTL](https://img.shields.io/badge/Testing%20Library-latest-E33332?logo=testing-library)                                                                                                                           |
-| **CI/CD**    | ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-latest-2088FF?logo=github-actions)                                                                                                                                                                                                                                                                                  |
+| **CI/CD**    | ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-latest-2088FF?logo=github-actions) ![Cloudflare Pages](https://img.shields.io/badge/Cloudflare_Pages-latest-F38020?logo=cloudflare)                                                                                                                                                                                 |
 
 ## Getting Started Locally
 
@@ -101,6 +103,55 @@ The following scripts are available in the `package.json`:
 | `npm run format`   | Formats the code using Prettier.                    |
 | `npm run test`     | Runs unit and integration tests using Vitest.       |
 | `npm run test:e2e` | Runs end-to-end tests using Playwright.             |
+
+## Deployment
+
+This project is configured to deploy to **Cloudflare Pages** via GitHub Actions.
+
+### Prerequisites
+
+1. A Cloudflare account
+2. A Cloudflare Pages project created
+3. Cloudflare API Token with Pages permissions
+
+### Required GitHub Secrets
+
+Configure the following secrets in your GitHub repository under `Settings` > `Secrets and variables` > `Actions`:
+
+**Production Environment:**
+
+| Secret Name             | Description                        |
+| ----------------------- | ---------------------------------- |
+| `CLOUDFLARE_ACCOUNT_ID` | Your Cloudflare Account ID         |
+| `CLOUDFLARE_API_TOKEN`  | API Token with Pages permissions   |
+| `SUPABASE_URL`          | Your Supabase project URL          |
+| `SUPABASE_ANON_KEY`     | Your Supabase anonymous key        |
+| `OPENROUTER_API_KEY`    | OpenRouter API key for AI features |
+| `OPENROUTER_BASE_URL`   | OpenRouter base URL                |
+| `AI_MODEL`              | AI model identifier                |
+| `AI_MAX_TOKENS`         | Maximum tokens for AI responses    |
+| `AI_TEMPERATURE`        | AI temperature setting             |
+| `APP_URL`               | Your production app URL            |
+| `APP_NAME`              | Application name                   |
+
+**Integration Environment (for E2E tests):**
+
+| Secret Name         | Description                 |
+| ------------------- | --------------------------- |
+| `SUPABASE_URL`      | Your Supabase project URL   |
+| `SUPABASE_ANON_KEY` | Your Supabase anonymous key |
+| `E2E_USERNAME_ID`   | Test user ID for E2E tests  |
+| `E2E_USERNAME`      | Test username for E2E tests |
+| `E2E_PASSWORD`      | Test password for E2E tests |
+
+### Deployment Process
+
+The deployment happens automatically when code is pushed to the `master` branch:
+
+1. **Build & Test**: The CI pipeline runs linting, type checking, unit tests, and E2E tests
+2. **Deploy**: If all tests pass, the application is automatically deployed to Cloudflare Pages
+
+You can monitor the deployment progress in the **Actions** tab of your GitHub repository.
 
 ## Testing
 

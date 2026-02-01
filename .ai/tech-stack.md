@@ -27,4 +27,4 @@
 ## CI/CD i Hosting
 
 - **GitHub Actions**: Narzędzie do automatyzacji procesów budowania, testowania i wdrażania aplikacji (CI/CD).
-- **DigitalOcean / Prywatny serwer**: Infrastruktura chmurowa, na której będzie działać aplikacja produkcyjna.
+- **Cloudflare Pages**: Infrastruktura chmurowa, na której będzie działać aplikacja produkcyjna.
