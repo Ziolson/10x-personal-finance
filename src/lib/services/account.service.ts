@@ -157,12 +157,7 @@ export async function getAccounts(userId: string, supabase: SupabaseClient): Pro
  */
 export async function getAccountById(accountId: string, userId: string, supabase: SupabaseClient): Promise<AccountDTO | null> {
   // Step 1: Start fetching account and balance concurrently
-  const accountPromise = supabase
-    .from("accounts")
-    .select("id, name, initial_balance, currency, created_at, updated_at")
-    .eq("id", accountId)
-    .eq("user_id", userId)
-    .maybeSingle();
+  const accountPromise = supabase.from("accounts").select("id, name, initial_balance, currency, created_at, updated_at").eq("id", accountId).eq("user_id", userId).maybeSingle();
 
   const balancePromise = supabase.from("account_balances").select("current_balance").eq("account_id", accountId).maybeSingle();
 
