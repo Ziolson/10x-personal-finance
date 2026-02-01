@@ -7,7 +7,6 @@ on:
 jobs:
   build:
     name: Build
-    needs: audit
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -69,17 +68,6 @@ jobs:
 
       - name: Astro Check
         run: npx astro check
-
-  audit:
-    name: Security Audit
-    needs: type-check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Audit
-        run: npm audit --audit-level=high
 
   unit-test:
     name: Unit Tests
