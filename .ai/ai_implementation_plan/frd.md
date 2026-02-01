@@ -1,4 +1,5 @@
 # FRD - AI Rekomendacje Oszczędnościowe
+
 ## Functional Requirements Document
 
 **Projekt:** 10xPersonal Finance  
@@ -18,6 +19,7 @@ Niniejszy dokument definiuje wymagania funkcjonalne dla modułu AI Rekomendacji 
 ### 1.2 Zakres funkcjonalności
 
 Jest to implementacja **Proof of Concept** - podstawowa wersja funkcjonalności AI, która:
+
 - Analizuje wydatki użytkownika z ostatnich 1-3 miesięcy
 - Generuje spersonalizowane rekomendacje oszczędnościowe
 - Prezentuje wyniki w formie wizualnej (wykresy + karty rekomendacji)
@@ -30,7 +32,8 @@ Jest to implementacja **Proof of Concept** - podstawowa wersja funkcjonalności 
 
 **Rozwiązanie:** AI analizuje wzorce wydatków i proponuje konkretne, realistyczne cele oszczędnościowe z praktycznymi wskazówkami ich osiągnięcia.
 
-**Wartość:** 
+**Wartość:**
+
 - Natychmiastowy "wow effect" pokazujący wartość aplikacji
 - Motywacja użytkowników do dalszego śledzenia transakcji
 - Wyróżnik na tle konkurencji
@@ -49,6 +52,7 @@ Jest to implementacja **Proof of Concept** - podstawowa wersja funkcjonalności 
 System musi umożliwiać użytkownikowi wygenerowanie analizy AI jego wydatków z ostatnich 1-3 miesięcy.
 
 **Szczegóły:**
+
 - Użytkownik wybiera okres analizy: 1, 2 lub 3 miesiące (domyślnie 3)
 - Minimum wymagane: 1 pełny miesiąc transakcji (co najmniej 28 dni)
 - System pobiera dane o wydatkach z wybranego okresu
@@ -58,12 +62,14 @@ System musi umożliwiać użytkownikowi wygenerowanie analizy AI jego wydatków 
 - System zapisuje wyniki w bazie danych z timestampem
 
 **Warunki brzegowe:**
+
 - Jeśli użytkownik ma mniej niż 1 miesiąc danych → wyświetl komunikat "Potrzebujesz co najmniej miesiąca historii transakcji"
 - Jeśli użytkownik nie ma żadnych wydatków → wyświetl komunikat "Brak wydatków do analizy"
 - Jeśli API AI zwróci błąd → wyświetl przyjazny komunikat + możliwość retry
 - Jeśli istnieje świeża analiza (< 24h) → pokaż z cache, ale umożliw odświeżenie
 
 **Kryteria akceptacji:**
+
 1. Użytkownik z 1+ miesiącem danych może wygenerować analizę
 2. Podczas generowania wyświetlany jest loading indicator
 3. Proces nie trwa dłużej niż 10 sekund
@@ -81,6 +87,7 @@ System musi umożliwiać użytkownikowi wygenerowanie analizy AI jego wydatków 
 System zapisuje wygenerowane rekomendacje AI w bazie danych, aby użytkownik mógł je przeglądać bez potrzeby regeneracji.
 
 **Szczegóły:**
+
 - Każda wygenerowana analiza jest zapisywana w tabeli `ai_insights`
 - Jeden użytkownik ma tylko jedną aktywną analizę (upsert)
 - Analiza zawiera: dane JSON, timestamp generowania, okres analizy
@@ -89,12 +96,14 @@ System zapisuje wygenerowane rekomendacje AI w bazie danych, aby użytkownik mó
 - Po odświeżeniu: nowa analiza zastępuje starą w bazie
 
 **Korzyści:**
+
 - ✅ Użytkownik widzi ostatnią analizę bez czekania
 - ✅ Redukcja kosztów API (nie generujemy za każdym razem)
 - ✅ Lepsza wydajność (instant load z DB)
 - ✅ Możliwość późniejszej analizy historii rekomendacji (v2.0)
 
 **Kryteria akceptacji:**
+
 1. Po wygenerowaniu, analiza jest zapisana w bazie
 2. Przy ponownym wejściu użytkownik widzi ostatnią analizę natychmiast
 3. Timestamp "Ostatnia analiza: X godz. temu" jest wyświetlany
@@ -112,6 +121,7 @@ System zapisuje wygenerowane rekomendacje AI w bazie danych, aby użytkownik mó
 Dashboard zawiera kompaktowy widget z podsumowaniem rekomendacji AI.
 
 **Szczegóły:**
+
 - Widget "Rekomendacje AI" wyświetlany na dashboardzie
 - Zawartość widgetu:
   - Ikona AI (mózg/sparkles)
@@ -123,18 +133,20 @@ Dashboard zawiera kompaktowy widget z podsumowaniem rekomendacji AI.
   - Przycisk "Odśwież" (ikona)
 
 **Stan "Empty State":**
+
 - Jeśli brak danych do analizy:
   - Komunikat: "Potrzebujesz co najmniej miesiąca danych, aby AI mogło przeprowadzić analizę"
   - Przycisk "Analizuj wydatki" jest disabled
-  
 - Jeśli użytkownik ma dane ale nie wygenerował jeszcze analizy:
   - Komunikat: "Dowiedz się gdzie możesz zaoszczędzić"
   - Przycisk "Analizuj wydatki" jest enabled
-  
+
 **Stan "Loading":**
+
 - Skeleton UI z animacją ładowania podczas regeneracji
 
 **Kryteria akceptacji:**
+
 1. Widget wyświetla się poprawnie na desktop i mobile
 2. Główna metryka jest czytelna i wyróżniona
 3. Kliknięcie "Zobacz pełną analizę" przenosi do /insights
@@ -155,6 +167,7 @@ Dedykowana strona z pełną analizą AI i wszystkimi rekomendacjami.
 **Struktura strony:**
 
 #### A. Header
+
 - Tytuł: "Rekomendacje AI"
 - Opis: Ogólna rekomendacja AI (1-2 zdania)
 - Kontrolki:
@@ -162,7 +175,9 @@ Dedykowana strona z pełną analizą AI i wszystkimi rekomendacjami.
   - Przycisk "Odśwież" z ikoną
 
 #### B. Summary Banner (gradient purple-to-pink)
+
 Trzy metryki obok siebie:
+
 - **Analizowany okres:** X miesiące/miesiąc
 - **Średnie wydatki:** X PLN/mc
 - **Możesz zaoszczędzić:** X PLN/mc (największa, wyróżniona)
@@ -170,6 +185,7 @@ Trzy metryki obok siebie:
 #### C. Wykresy (grid 2 kolumny na desktop, 1 na mobile)
 
 **Wykres 1: Porównanie wydatków (Bar Chart)**
+
 - Oś X: Kategorie wydatków
 - Oś Y: Kwota w PLN
 - Dwa słupki obok siebie dla każdej kategorii:
@@ -179,6 +195,7 @@ Trzy metryki obok siebie:
 - Legenda priorytetów (czerwony=wysoki, pomarańczowy=średni, niebieski=niski)
 
 **Wykres 2: Projekcja w czasie (Area Chart)**
+
 - Oś X: Miesiące (12 miesięcy)
 - Oś Y: Skumulowane wydatki
 - Dwie linie:
@@ -188,7 +205,9 @@ Trzy metryki obok siebie:
 - Nad wykresem: 3 karty z metrykami (za 3 mc, za 6 mc, za rok)
 
 #### D. Szczegółowe rekomendacje
+
 Lista kart, każda zawiera:
+
 - Numer rankingu (1, 2, 3...) w kółku
 - Nazwa kategorii
 - Badge priorytetu (wysoki/średni/niski) z odpowiednim kolorem
@@ -200,6 +219,7 @@ Lista kart, każda zawiera:
 - Lista actionable tips (2-4 punkty) z ikoną żarówki
 
 **Kryteria akceptacji:**
+
 1. Strona dostępna pod /insights
 2. Responsive design (desktop + mobile)
 3. Wszystkie wykresy poprawnie wyświetlają dane
@@ -229,7 +249,7 @@ interface AIInsight {
   current_spending: number; // obecne wydatki
   suggested_target: number; // proponowany cel
   potential_savings: number; // oszczędności (current - target)
-  priority: 'high' | 'medium' | 'low';
+  priority: "high" | "medium" | "low";
   reasoning: string; // 1-2 zdania wyjaśnienia
   actionable_tips: string[]; // 2-4 konkretne wskazówki
 }
@@ -255,6 +275,7 @@ interface AIInsightsResponse {
 ```
 
 **Kryteria akceptacji:**
+
 1. Wszystkie typy są zgodne z TypeScript strict mode
 2. Dane są walidowane po otrzymaniu z AI
 3. Struktura jest gotowa na rozszerzenia (np. confidence_score)
@@ -268,6 +289,7 @@ interface AIInsightsResponse {
 **Model:** GPT-4o-mini (przez OpenRouter)
 
 **Uzasadnienie:**
+
 - Wystarczająca inteligencja do analizy finansowej
 - Niski koszt
 - Szybka odpowiedź (< 5 sekunds)
@@ -276,6 +298,7 @@ interface AIInsightsResponse {
 - OpenRouter jako unified interface do różnych providerów
 
 **Parametry API:**
+
 ```javascript
 {
   model: "openai/gpt-4o-mini",
@@ -288,11 +311,12 @@ interface AIInsightsResponse {
 ### 3.2 Struktura promptu
 
 **System Prompt:**
+
 ```
-Jesteś ekspertem finansowym pomagającym użytkownikom 
+Jesteś ekspertem finansowym pomagającym użytkownikom
 aplikacji do zarządzania finansami osobistymi.
 
-Analizuj dane o wydatkach i proponuj KONKRETNE, 
+Analizuj dane o wydatkach i proponuj KONKRETNE,
 REALISTYCZNE sposoby oszczędzania pieniędzy.
 
 Zasady:
@@ -307,6 +331,7 @@ Zasady:
 ```
 
 **User Prompt:**
+
 ```
 Przeanalizuj wydatki użytkownika z ostatnich {X} miesięcy:
 
@@ -328,6 +353,7 @@ Zwróć odpowiedź w formacie JSON zgodnie ze schematem:
 ```
 
 **Dane wysyłane do AI:**
+
 - ✅ Zagregowane sumy według kategorii
 - ✅ Informacje o budżetach
 - ✅ Okres analizy
@@ -338,6 +364,7 @@ Zwróć odpowiedź w formacie JSON zgodnie ze schematem:
 ### 3.3 Privacy & Security
 
 **Zasady:**
+
 - Dane są anonimizowane przed wysyłką
 - Nie przechowujemy danych w systemach AI providera
 - User consent nie jest wymagany (przesyłamy tylko agregaty, nie dane osobowe)
@@ -372,6 +399,7 @@ CREATE INDEX idx_ai_insights_data ON ai_insights USING gin(data);
 ```
 
 **Wyjaśnienie:**
+
 - `id` - UUID primary key
 - `user_id` - foreign key do tabeli profiles
 - `data` - JSONB z całą analizą AI (elastyczne, łatwo rozszerzać)
@@ -385,8 +413,8 @@ CREATE INDEX idx_ai_insights_data ON ai_insights USING gin(data);
 -- INSERT lub UPDATE (upsert)
 INSERT INTO ai_insights (user_id, data, months_analyzed)
 VALUES ($1, $2, $3)
-ON CONFLICT (user_id) 
-DO UPDATE SET 
+ON CONFLICT (user_id)
+DO UPDATE SET
   data = EXCLUDED.data,
   generated_at = NOW(),
   months_analyzed = EXCLUDED.months_analyzed;
@@ -429,6 +457,7 @@ USING (auth.uid() = user_id);
 ```
 
 **Kryteria akceptacji:**
+
 1. Tabela ai_insights istnieje w bazie danych
 2. RLS jest włączone i polityki działają
 3. Użytkownik nie może widzieć insightów innych użytkowników
@@ -456,6 +485,7 @@ src/components/features/
 ### 5.2 Design System
 
 **Kolory:**
+
 - Primary: Purple (#9333ea - Tailwind purple-600)
 - Accent: Pink (#ec4899)
 - Priority colors:
@@ -464,11 +494,13 @@ src/components/features/
   - Low: Blue (#3b82f6)
 
 **Biblioteki:**
+
 - Recharts (już w projekcie) - do wykresów
 - Lucide React (już w projekcie) - ikony
 - Shadcn/ui (już w projekcie) - komponenty bazowe
 
 **Ikony:**
+
 - Brain (mózg) - główna ikona AI
 - Sparkles - dekoracyjna
 - TrendingDown - oszczędności
@@ -479,11 +511,11 @@ src/components/features/
 ### 5.3 Responsywność
 
 **Breakpoints:**
+
 - Mobile: < 768px
   - Widget: pełna szerokość
   - Wykresy: stack vertically
   - Karty: pojedyncza kolumna
-  
 - Desktop: ≥ 768px
   - Widget: część szerokości dashboardu (w grid)
   - Wykresy: grid 2 kolumny
@@ -508,7 +540,7 @@ src/components/features/
 ```typescript
 // POST /api/insights/analyze
 // Generuje nową analizę AI (lub pobiera z cache jeśli świeża)
-Request Body: { 
+Request Body: {
   months: 1 | 2 | 3,
   forceRefresh?: boolean // opcjonalnie wymusza regenerację
 }
@@ -528,33 +560,22 @@ Response: AIInsightsResponse | null
 
 class InsightsService {
   // Główna funkcja - generuje lub pobiera z cache
-  async generateInsights(
-    userId: string, 
-    months: number,
-    forceRefresh: boolean = false
-  ): Promise<AIInsightsResponse>
-  
+  async generateInsights(userId: string, months: number, forceRefresh: boolean = false): Promise<AIInsightsResponse>;
+
   // Pobiera ostatnią analizę z DB
-  async getLatestInsights(userId: string): Promise<AIInsightsResponse | null>
-  
+  async getLatestInsights(userId: string): Promise<AIInsightsResponse | null>;
+
   // Agreguje transakcje dla AI
-  async aggregateTransactionsForAI(
-    userId: string, 
-    months: number
-  ): Promise<AggregatedData>
-  
+  async aggregateTransactionsForAI(userId: string, months: number): Promise<AggregatedData>;
+
   // Wywołuje OpenAI API
-  async callOpenAI(aggregatedData: AggregatedData): Promise<AIInsightsSummary>
-  
+  async callOpenAI(aggregatedData: AggregatedData): Promise<AIInsightsSummary>;
+
   // Zapisuje wyniki do DB (upsert)
-  async saveInsights(
-    userId: string, 
-    insights: AIInsightsSummary,
-    months: number
-  ): Promise<void>
-  
+  async saveInsights(userId: string, insights: AIInsightsSummary, months: number): Promise<void>;
+
   // Sprawdza czy użytkownik ma wystarczająco danych
-  async hasEnoughData(userId: string): Promise<boolean>
+  async hasEnoughData(userId: string): Promise<boolean>;
 }
 ```
 
@@ -571,7 +592,7 @@ Zawartość: schemat tabeli + RLS policies (z sekcji 4)
 ### 6.4 Environment Variables
 
 ```bash
-# OpenRouter Configuration  
+# OpenRouter Configuration
 OPENROUTER_API_KEY=sk-or-v1-...
 AI_MODEL=openai/gpt-4o-mini
 AI_MAX_TOKENS=2000
@@ -581,6 +602,7 @@ AI_TEMPERATURE=0.7
 ### 6.5 Dependencies
 
 **Nowa zależność:**
+
 ```json
 {
   "dependencies": {
@@ -788,16 +810,16 @@ Wszystkie inne (Recharts, React, Tailwind) już są w projekcie.
 ## Appendix B: Przykładowy kod integracji z OpenRouter
 
 ```javascript
-import OpenAI from 'openai';
+import OpenAI from "openai";
 
 // Konfiguracja klienta dla OpenRouter
 const openai = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY,
-  baseURL: 'https://openrouter.ai/api/v1',
+  baseURL: "https://openrouter.ai/api/v1",
   defaultHeaders: {
-    'HTTP-Referer': process.env.APP_URL, // Opcjonalnie dla rankingów
-    'X-Title': '10xPersonal Finance', // Opcjonalnie dla rankingów
-  }
+    "HTTP-Referer": process.env.APP_URL, // Opcjonalnie dla rankingów
+    "X-Title": "10xPersonal Finance", // Opcjonalnie dla rankingów
+  },
 });
 
 const systemPrompt = `Jesteś ekspertem finansowym pomagającym użytkownikom 
@@ -859,11 +881,11 @@ const response = await openai.chat.completions.create({
   model: "openai/gpt-4o-mini",
   messages: [
     { role: "system", content: systemPrompt },
-    { role: "user", content: userPrompt }
+    { role: "user", content: userPrompt },
   ],
   temperature: 0.7,
   max_tokens: 2000,
-  response_format: { type: "json_object" }
+  response_format: { type: "json_object" },
 });
 
 const aiInsights = JSON.parse(response.choices[0].message.content);
