@@ -16,6 +16,7 @@ Niniejszy dokument definiuje **wyłącznie** kroki związane z implementacją ta
 **Nie obejmuje:** API endpoints, services, typy TypeScript, frontend components
 
 **Powiązane dokumenty:**
+
 - `api_ai_implementation_plan.md` - implementacja API i backend services
 - `views_ai_implementation_plan.md` - implementacja frontend components
 
@@ -25,12 +26,12 @@ Niniejszy dokument definiuje **wyłącznie** kroki związane z implementacją ta
 
 ### 2.1 Nowe obiekty
 
-| Typ obiektu | Nazwa | Opis |
-|-------------|-------|------|
-| Tabela | `ai_insights` | Cache'owane rekomendacje AI |
-| Index | UNIQUE na `user_id` | Automatyczny z UNIQUE constraint |
-| Index | GIN na `data` | Dla JSONB queries (opcjonalnie) |
-| RLS Policy | 4 polityki | SELECT, INSERT, UPDATE, DELETE |
+| Typ obiektu | Nazwa               | Opis                             |
+| ----------- | ------------------- | -------------------------------- |
+| Tabela      | `ai_insights`       | Cache'owane rekomendacje AI      |
+| Index       | UNIQUE na `user_id` | Automatyczny z UNIQUE constraint |
+| Index       | GIN na `data`       | Dla JSONB queries (opcjonalnie)  |
+| RLS Policy  | 4 polityki          | SELECT, INSERT, UPDATE, DELETE   |
 
 ### 2.2 Modyfikacje istniejących obiektów
 
@@ -52,7 +53,7 @@ Niniejszy dokument definiuje **wyłącznie** kroki związane z implementacją ta
 -- migration: create ai_insights table
 -- purpose: add support for AI-powered savings recommendations
 -- affected tables: ai_insights (new)
--- special considerations: 
+-- special considerations:
 --   - uses JSONB for storing full AI response
 --   - one active insight per user (UNIQUE constraint)
 --   - no updated_at column (cache is always fully replaced via upsert)
@@ -67,7 +68,7 @@ create table ai_insights (
     data jsonb not null,
     generated_at timestamptz not null default now(),
     months_analyzed integer not null check (months_analyzed in (1, 2, 3)),
-    
+
     -- ensure one active insight per user
     constraint ai_insights_user_id_unique unique (user_id)
 );
@@ -121,6 +122,7 @@ create policy "Users can delete their own insights"
 ```
 
 **Akcje:**
+
 1. ✅ Utwórz plik migracji zgodnie z konwencją nazewnictwa
 2. ✅ Skopiuj powyższą zawartość SQL
 3. ✅ Zastosuj migrację: `npx supabase db push` (lokalnie) lub `npx supabase db push --linked` (produkcja)
@@ -152,6 +154,7 @@ npx supabase gen types typescript --local > src/db/database.types.ts
 ```
 
 **Akcje:**
+
 1. ✅ Uruchom komendę generowania typów
 2. ✅ Zweryfikuj że w pliku `database.types.ts` pojawiła się definicja dla:
    - `Tables<'ai_insights'>`
@@ -202,6 +205,7 @@ export interface Database {
 **Cel:** Upewnić się że nowa migracja nie koliduje z istniejącymi.
 
 **Istniejące migracje:**
+
 - `20251109170000_create_enum_types.sql` - typy ENUM
 - `20251109170100_create_core_tables.sql` - tabele bazowe
 - `20251109170200_create_indexes.sql` - indeksy
@@ -212,16 +216,17 @@ export interface Database {
 
 **Sprawdzenia:**
 
-| Aspekt | Sprawdzenie | Status |
-|--------|-------------|--------|
-| Nazwa tabeli | `ai_insights` nie istnieje w żadnej migracji | ✅ OK |
-| Referencje | `profiles(id)` istnieje i jest stabilna | ✅ OK |
-| Typy ENUM | Nie używamy nowych typów ENUM | ✅ OK |
-| Triggery | Nie potrzebujemy triggera `updated_at` | ✅ OK |
-| Widoki | Nie modyfikujemy istniejących widoków | ✅ OK |
-| RLS | Wszystkie polityki w jednej migracji | ✅ OK |
+| Aspekt       | Sprawdzenie                                  | Status |
+| ------------ | -------------------------------------------- | ------ |
+| Nazwa tabeli | `ai_insights` nie istnieje w żadnej migracji | ✅ OK  |
+| Referencje   | `profiles(id)` istnieje i jest stabilna      | ✅ OK  |
+| Typy ENUM    | Nie używamy nowych typów ENUM                | ✅ OK  |
+| Triggery     | Nie potrzebujemy triggera `updated_at`       | ✅ OK  |
+| Widoki       | Nie modyfikujemy istniejących widoków        | ✅ OK  |
+| RLS          | Wszystkie polityki w jednej migracji         | ✅ OK  |
 
 **Akcje:**
+
 1. ✅ Przejrzyj wszystkie istniejące migracje
 2. ✅ Upewnij się że nie ma konfliktów nazw
 3. ✅ Zweryfikuj że `profiles` jest dostępna (utworzona wcześniej)
@@ -246,22 +251,22 @@ npx supabase db reset
 
 ```sql
 -- Test 1: Sprawdź czy tabela istnieje
-SELECT table_name, table_type 
-FROM information_schema.tables 
-WHERE table_schema = 'public' 
+SELECT table_name, table_type
+FROM information_schema.tables
+WHERE table_schema = 'public'
   AND table_name = 'ai_insights';
 
 -- Test 2: Sprawdź strukturę kolumn
 SELECT column_name, data_type, is_nullable, column_default
 FROM information_schema.columns
-WHERE table_schema = 'public' 
+WHERE table_schema = 'public'
   AND table_name = 'ai_insights'
 ORDER BY ordinal_position;
 
 -- Test 3: Sprawdź constraints
 SELECT constraint_name, constraint_type
 FROM information_schema.table_constraints
-WHERE table_schema = 'public' 
+WHERE table_schema = 'public'
   AND table_name = 'ai_insights';
 
 -- Test 4: Sprawdź RLS
@@ -297,8 +302,8 @@ VALUES (
   '{"analysis_period": {"start_date": "2026-01-01", "end_date": "2026-02-29", "months_analyzed": 2}, "total_spending": 2000, "average_monthly_spending": 1000, "total_potential_savings": 200, "general_recommendation": "Test Updated", "insights": []}'::jsonb,
   2
 )
-ON CONFLICT (user_id) 
-DO UPDATE SET 
+ON CONFLICT (user_id)
+DO UPDATE SET
   data = EXCLUDED.data,
   generated_at = NOW(),
   months_analyzed = EXCLUDED.months_analyzed;
@@ -311,7 +316,7 @@ DELETE FROM ai_insights WHERE user_id = auth.uid();
 
 ```sql
 -- Query 1: Pobierz total_potential_savings z JSONB
-SELECT 
+SELECT
   id,
   user_id,
   data->>'total_potential_savings' as potential_savings,
@@ -319,7 +324,7 @@ SELECT
 FROM ai_insights;
 
 -- Query 2: Pobierz liczbę insights
-SELECT 
+SELECT
   id,
   jsonb_array_length(data->'insights') as insights_count
 FROM ai_insights;
@@ -331,6 +336,7 @@ WHERE (data->'analysis_period'->>'months_analyzed')::int = 3;
 ```
 
 **Akcje:**
+
 1. ✅ Uruchom wszystkie testy SQL
 2. ✅ Zweryfikuj wyniki
 3. ✅ Napraw ewentualne błędy
@@ -397,6 +403,7 @@ drop table if exists ai_insights;
 ```
 
 **Akcje w przypadku rollback:**
+
 1. ✅ Utwórz plik rollback migracji
 2. ✅ Zastosuj: `npx supabase db push --linked`
 3. ✅ Zweryfikuj że tabela została usunięta
@@ -406,14 +413,14 @@ drop table if exists ai_insights;
 
 ## 4. Podsumowanie kroków - tylko baza danych
 
-| # | Krok | Plik/Akcja | Priorytet | Status |
-|---|------|------------|-----------|--------|
-| 1 | Utwórz migrację SQL | `supabase/migrations/YYYYMMDD_create_ai_insights_table.sql` | MUST | ⏳ TODO |
-| 2 | Wygeneruj typy TS z DB | `src/db/database.types.ts` | MUST | ⏳ TODO |
-| 3 | Weryfikuj migracje | - | MUST | ⏳ TODO |
-| 4 | Testuj lokalnie | SQL queries | MUST | ⏳ TODO |
-| 5 | Wdróż na produkcję | `npx supabase db push` | MUST | ⏳ TODO |
-| 6 | Przygotuj rollback | `supabase/migrations/YYYYMMDD_rollback_ai_insights.sql` | SHOULD | ⏳ TODO |
+| #   | Krok                   | Plik/Akcja                                                  | Priorytet | Status  |
+| --- | ---------------------- | ----------------------------------------------------------- | --------- | ------- |
+| 1   | Utwórz migrację SQL    | `supabase/migrations/YYYYMMDD_create_ai_insights_table.sql` | MUST      | ⏳ TODO |
+| 2   | Wygeneruj typy TS z DB | `src/db/database.types.ts`                                  | MUST      | ⏳ TODO |
+| 3   | Weryfikuj migracje     | -                                                           | MUST      | ⏳ TODO |
+| 4   | Testuj lokalnie        | SQL queries                                                 | MUST      | ⏳ TODO |
+| 5   | Wdróż na produkcję     | `npx supabase db push`                                      | MUST      | ⏳ TODO |
+| 6   | Przygotuj rollback     | `supabase/migrations/YYYYMMDD_rollback_ai_insights.sql`     | SHOULD    | ⏳ TODO |
 
 ---
 
@@ -429,16 +436,17 @@ drop table if exists ai_insights;
 
 ### 5.2 Potencjalne problemy i rozwiązania
 
-| Problem | Rozwiązanie |
-|---------|-------------|
-| Migracja nie przechodzi | Sprawdź czy `profiles` istnieje, to dependency |
-| RLS nie działa | Zweryfikuj czy `auth.uid()` zwraca prawidłowy UUID |
-| JSONB queries wolne | Użyj GIN index lub dodaj dedykowane kolumny dla często używanych pól |
-| Konflikt przy upsert | Upewnij się że używasz `ON CONFLICT (user_id)` w INSERT |
+| Problem                 | Rozwiązanie                                                          |
+| ----------------------- | -------------------------------------------------------------------- |
+| Migracja nie przechodzi | Sprawdź czy `profiles` istnieje, to dependency                       |
+| RLS nie działa          | Zweryfikuj czy `auth.uid()` zwraca prawidłowy UUID                   |
+| JSONB queries wolne     | Użyj GIN index lub dodaj dedykowane kolumny dla często używanych pól |
+| Konflikt przy upsert    | Upewnij się że używasz `ON CONFLICT (user_id)` w INSERT              |
 
 ### 5.3 Następne kroki (poza bazą danych)
 
 Po zakończeniu zmian w bazie danych, przejdź do:
+
 1. **`api_ai_implementation_plan.md`** - implementacja backend services i API endpoints
 2. **`views_ai_implementation_plan.md`** - implementacja frontend components i UI
 

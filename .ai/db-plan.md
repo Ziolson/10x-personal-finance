@@ -177,13 +177,13 @@ Centralna tabela dla wszystkich operacji finansowych (wydatki, przychody, transf
 
 Cache'owane rekomendacje AI dotyczące możliwości oszczędności użytkownika.
 
-| Kolumna          | Typ         | Ograniczenia                                        | Opis                                             |
-| ---------------- | ----------- | --------------------------------------------------- | ------------------------------------------------ |
-| id               | UUID        | PRIMARY KEY, DEFAULT gen_random_uuid()              | Identyfikator analizy                            |
-| user_id          | UUID        | NOT NULL, REFERENCES profiles(id) ON DELETE CASCADE | Właściciel analizy                               |
-| data             | JSONB       | NOT NULL                                            | Pełna odpowiedź AI (struktura AIInsightsSummary) |
-| generated_at     | TIMESTAMPTZ | NOT NULL, DEFAULT now()                             | Data wygenerowania analizy                       |
-| months_analyzed  | INTEGER     | NOT NULL, CHECK (months_analyzed IN (1, 2, 3))      | Liczba miesięcy objętych analizą                 |
+| Kolumna         | Typ         | Ograniczenia                                        | Opis                                             |
+| --------------- | ----------- | --------------------------------------------------- | ------------------------------------------------ |
+| id              | UUID        | PRIMARY KEY, DEFAULT gen_random_uuid()              | Identyfikator analizy                            |
+| user_id         | UUID        | NOT NULL, REFERENCES profiles(id) ON DELETE CASCADE | Właściciel analizy                               |
+| data            | JSONB       | NOT NULL                                            | Pełna odpowiedź AI (struktura AIInsightsSummary) |
+| generated_at    | TIMESTAMPTZ | NOT NULL, DEFAULT now()                             | Data wygenerowania analizy                       |
+| months_analyzed | INTEGER     | NOT NULL, CHECK (months_analyzed IN (1, 2, 3))      | Liczba miesięcy objętych analizą                 |
 
 **Ograniczenia:**
 

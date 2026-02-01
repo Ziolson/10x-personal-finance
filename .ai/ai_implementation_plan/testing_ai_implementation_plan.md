@@ -13,14 +13,16 @@
 Niniejszy dokument definiuje **wyłącznie** strategię i plan testowania dla modułu AI Insights. Obejmuje wszystkie typy testów: unit, integration, component i end-to-end.
 
 **Zakres:** Testy dla backend services, API endpoints, React components, user flows  
-**Nie obejmuje:** Implementacja funkcjonalności (to jest w innych planach)  
+**Nie obejmuje:** Implementacja funkcjonalności (to jest w innych planach)
 
 **Powiązane dokumenty:**
+
 - `db_ai_changes_plan.md` - implementacja zmian w bazie danych
 - `api_ai_implementation_plan.md` - implementacja API i backend services
 - `views_ai_implementation_plan.md` - implementacja frontend components
 
 **Prerequisites:**
+
 - ✅ Vitest skonfigurowany w projekcie
 - ✅ Playwright skonfigurowany dla E2E
 - ✅ Testing Library dla component tests
@@ -49,23 +51,23 @@ Niniejszy dokument definiuje **wyłącznie** strategię i plan testowania dla mo
 
 ### 2.2 Coverage targets
 
-| Layer | Minimum Coverage | Recommended Coverage |
-|-------|------------------|---------------------|
-| Services (InsightsService) | 80% | 90% |
-| API Endpoints | 70% | 85% |
-| React Components | 60% | 75% |
-| Validators | 90% | 95% |
-| Overall | 70% | 80% |
+| Layer                      | Minimum Coverage | Recommended Coverage |
+| -------------------------- | ---------------- | -------------------- |
+| Services (InsightsService) | 80%              | 90%                  |
+| API Endpoints              | 70%              | 85%                  |
+| React Components           | 60%              | 75%                  |
+| Validators                 | 90%              | 95%                  |
+| Overall                    | 70%              | 80%                  |
 
 ### 2.3 Test tools w projekcie
 
-| Typ testu | Tool | Config |
-|-----------|------|--------|
-| Unit | Vitest | `vitest.config.ts` |
-| Component | React Testing Library + Vitest | `test/setup.ts` |
-| Integration | Vitest + MSW | - |
-| E2E | Playwright | `playwright.config.ts` |
-| Mocking | MSW (Mock Service Worker) | - |
+| Typ testu   | Tool                           | Config                 |
+| ----------- | ------------------------------ | ---------------------- |
+| Unit        | Vitest                         | `vitest.config.ts`     |
+| Component   | React Testing Library + Vitest | `test/setup.ts`        |
+| Integration | Vitest + MSW                   | -                      |
+| E2E         | Playwright                     | `playwright.config.ts` |
+| Mocking     | MSW (Mock Service Worker)      | -                      |
 
 ---
 
@@ -80,12 +82,12 @@ Niniejszy dokument definiuje **wyłącznie** strategię i plan testowania dla mo
 **Test cases:**
 
 ```typescript
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { InsightsService } from './insights.service';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../db/database.types';
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { InsightsService } from "./insights.service";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "../../db/database.types";
 
-describe('InsightsService - hasEnoughData()', () => {
+describe("InsightsService - hasEnoughData()", () => {
   let service: InsightsService;
   let mockSupabase: SupabaseClient<Database>;
 
@@ -108,7 +110,7 @@ describe('InsightsService - hasEnoughData()', () => {
     service = new InsightsService(mockSupabase);
   });
 
-  it('should return false when user has no transactions', async () => {
+  it("should return false when user has no transactions", async () => {
     // Mock: No transactions
     mockSupabase.from = vi.fn(() => ({
       select: vi.fn(() => ({
@@ -122,11 +124,11 @@ describe('InsightsService - hasEnoughData()', () => {
       })),
     })) as any;
 
-    const result = await service.hasEnoughData('user-123');
+    const result = await service.hasEnoughData("user-123");
     expect(result).toBe(false);
   });
 
-  it('should return false when oldest transaction is less than 28 days old', async () => {
+  it("should return false when oldest transaction is less than 28 days old", async () => {
     // Mock: Transaction from 20 days ago
     const twentyDaysAgo = new Date();
     twentyDaysAgo.setDate(twentyDaysAgo.getDate() - 20);
@@ -136,21 +138,23 @@ describe('InsightsService - hasEnoughData()', () => {
         eq: vi.fn(() => ({
           eq: vi.fn(() => ({
             order: vi.fn(() => ({
-              limit: vi.fn(() => Promise.resolve({ 
-                data: [{ date: twentyDaysAgo.toISOString().split('T')[0] }], 
-                error: null 
-              })),
+              limit: vi.fn(() =>
+                Promise.resolve({
+                  data: [{ date: twentyDaysAgo.toISOString().split("T")[0] }],
+                  error: null,
+                })
+              ),
             })),
           })),
         })),
       })),
     })) as any;
 
-    const result = await service.hasEnoughData('user-123');
+    const result = await service.hasEnoughData("user-123");
     expect(result).toBe(false);
   });
 
-  it('should return true when oldest transaction is exactly 28 days old', async () => {
+  it("should return true when oldest transaction is exactly 28 days old", async () => {
     const twentyEightDaysAgo = new Date();
     twentyEightDaysAgo.setDate(twentyEightDaysAgo.getDate() - 28);
 
@@ -159,21 +163,23 @@ describe('InsightsService - hasEnoughData()', () => {
         eq: vi.fn(() => ({
           eq: vi.fn(() => ({
             order: vi.fn(() => ({
-              limit: vi.fn(() => Promise.resolve({ 
-                data: [{ date: twentyEightDaysAgo.toISOString().split('T')[0] }], 
-                error: null 
-              })),
+              limit: vi.fn(() =>
+                Promise.resolve({
+                  data: [{ date: twentyEightDaysAgo.toISOString().split("T")[0] }],
+                  error: null,
+                })
+              ),
             })),
           })),
         })),
       })),
     })) as any;
 
-    const result = await service.hasEnoughData('user-123');
+    const result = await service.hasEnoughData("user-123");
     expect(result).toBe(true);
   });
 
-  it('should return true when oldest transaction is more than 28 days old', async () => {
+  it("should return true when oldest transaction is more than 28 days old", async () => {
     const sixtyDaysAgo = new Date();
     sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
 
@@ -182,43 +188,48 @@ describe('InsightsService - hasEnoughData()', () => {
         eq: vi.fn(() => ({
           eq: vi.fn(() => ({
             order: vi.fn(() => ({
-              limit: vi.fn(() => Promise.resolve({ 
-                data: [{ date: sixtyDaysAgo.toISOString().split('T')[0] }], 
-                error: null 
-              })),
+              limit: vi.fn(() =>
+                Promise.resolve({
+                  data: [{ date: sixtyDaysAgo.toISOString().split("T")[0] }],
+                  error: null,
+                })
+              ),
             })),
           })),
         })),
       })),
     })) as any;
 
-    const result = await service.hasEnoughData('user-123');
+    const result = await service.hasEnoughData("user-123");
     expect(result).toBe(true);
   });
 
-  it('should return false when database query fails', async () => {
+  it("should return false when database query fails", async () => {
     mockSupabase.from = vi.fn(() => ({
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
           eq: vi.fn(() => ({
             order: vi.fn(() => ({
-              limit: vi.fn(() => Promise.resolve({ 
-                data: null, 
-                error: { message: 'Database error' } 
-              })),
+              limit: vi.fn(() =>
+                Promise.resolve({
+                  data: null,
+                  error: { message: "Database error" },
+                })
+              ),
             })),
           })),
         })),
       })),
     })) as any;
 
-    const result = await service.hasEnoughData('user-123');
+    const result = await service.hasEnoughData("user-123");
     expect(result).toBe(false);
   });
 });
 ```
 
 **Akcje:**
+
 1. ✅ Utwórz plik testów
 2. ✅ Implement wszystkie test cases
 3. ✅ Uruchom: `npm test src/lib/services/insights.service.test.ts`
@@ -233,27 +244,27 @@ describe('InsightsService - hasEnoughData()', () => {
 **Test cases:**
 
 ```typescript
-describe('InsightsService - aggregateTransactionsForAI()', () => {
-  it('should correctly aggregate transactions by category for 1 month', async () => {
+describe("InsightsService - aggregateTransactionsForAI()", () => {
+  it("should correctly aggregate transactions by category for 1 month", async () => {
     // Mock transactions
     const mockTransactions = [
       {
         amount: 100,
-        date: '2026-01-15',
-        category_id: 'cat-food',
-        categories: { id: 'cat-food', name: 'Jedzenie', budget_id: null, budgets: null },
+        date: "2026-01-15",
+        category_id: "cat-food",
+        categories: { id: "cat-food", name: "Jedzenie", budget_id: null, budgets: null },
       },
       {
         amount: 50,
-        date: '2026-01-20',
-        category_id: 'cat-food',
-        categories: { id: 'cat-food', name: 'Jedzenie', budget_id: null, budgets: null },
+        date: "2026-01-20",
+        category_id: "cat-food",
+        categories: { id: "cat-food", name: "Jedzenie", budget_id: null, budgets: null },
       },
       {
         amount: 200,
-        date: '2026-01-25',
-        category_id: 'cat-transport',
-        categories: { id: 'cat-transport', name: 'Transport', budget_id: null, budgets: null },
+        date: "2026-01-25",
+        category_id: "cat-transport",
+        categories: { id: "cat-transport", name: "Transport", budget_id: null, budgets: null },
       },
     ];
 
@@ -269,68 +280,66 @@ describe('InsightsService - aggregateTransactionsForAI()', () => {
       })),
     })) as any;
 
-    const result = await service.aggregateTransactionsForAI('user-123', 1);
+    const result = await service.aggregateTransactionsForAI("user-123", 1);
 
     expect(result.total_spending).toBe(350);
     expect(result.average_monthly_spending).toBe(350);
     expect(result.period.months).toBe(1);
     expect(result.category_breakdown).toHaveLength(2);
-    
+
     // Check Jedzenie category
-    const foodCategory = result.category_breakdown.find(c => c.category_name === 'Jedzenie');
+    const foodCategory = result.category_breakdown.find((c) => c.category_name === "Jedzenie");
     expect(foodCategory).toBeDefined();
     expect(foodCategory?.total_amount).toBe(150);
     expect(foodCategory?.monthly_average).toBe(150);
     expect(foodCategory?.transaction_count).toBe(2);
 
     // Check Transport category
-    const transportCategory = result.category_breakdown.find(c => c.category_name === 'Transport');
+    const transportCategory = result.category_breakdown.find((c) => c.category_name === "Transport");
     expect(transportCategory).toBeDefined();
     expect(transportCategory?.total_amount).toBe(200);
     expect(transportCategory?.transaction_count).toBe(1);
   });
 
-  it('should sort categories by total spending (descending)', async () => {
+  it("should sort categories by total spending (descending)", async () => {
     const mockTransactions = [
-      { amount: 100, category_id: 'cat-a', categories: { name: 'A' } },
-      { amount: 500, category_id: 'cat-b', categories: { name: 'B' } },
-      { amount: 200, category_id: 'cat-c', categories: { name: 'C' } },
+      { amount: 100, category_id: "cat-a", categories: { name: "A" } },
+      { amount: 500, category_id: "cat-b", categories: { name: "B" } },
+      { amount: 200, category_id: "cat-c", categories: { name: "C" } },
     ];
 
     // ... mock setup ...
 
-    const result = await service.aggregateTransactionsForAI('user-123', 1);
+    const result = await service.aggregateTransactionsForAI("user-123", 1);
 
-    expect(result.category_breakdown[0].category_name).toBe('B'); // 500
-    expect(result.category_breakdown[1].category_name).toBe('C'); // 200
-    expect(result.category_breakdown[2].category_name).toBe('A'); // 100
+    expect(result.category_breakdown[0].category_name).toBe("B"); // 500
+    expect(result.category_breakdown[1].category_name).toBe("C"); // 200
+    expect(result.category_breakdown[2].category_name).toBe("A"); // 100
   });
 
-  it('should calculate correct monthly average for 3 months', async () => {
-    const mockTransactions = [
-      { amount: 300, category_id: 'cat-food', categories: { name: 'Jedzenie' } },
-    ];
+  it("should calculate correct monthly average for 3 months", async () => {
+    const mockTransactions = [{ amount: 300, category_id: "cat-food", categories: { name: "Jedzenie" } }];
 
     // ... mock setup ...
 
-    const result = await service.aggregateTransactionsForAI('user-123', 3);
+    const result = await service.aggregateTransactionsForAI("user-123", 3);
 
     expect(result.total_spending).toBe(300);
     expect(result.average_monthly_spending).toBe(100); // 300 / 3
     expect(result.category_breakdown[0].monthly_average).toBe(100);
   });
 
-  it('should include budget information when available', async () => {
+  it("should include budget information when available", async () => {
     const mockTransactions = [
       {
         amount: 100,
-        category_id: 'cat-food',
+        category_id: "cat-food",
         categories: {
-          name: 'Jedzenie',
-          budget_id: 'budget-1',
+          name: "Jedzenie",
+          budget_id: "budget-1",
           budgets: {
-            id: 'budget-1',
-            name: 'Żywność',
+            id: "budget-1",
+            name: "Żywność",
             amount: 1000,
           },
         },
@@ -339,16 +348,16 @@ describe('InsightsService - aggregateTransactionsForAI()', () => {
 
     // ... mock setup ...
 
-    const result = await service.aggregateTransactionsForAI('user-123', 1);
+    const result = await service.aggregateTransactionsForAI("user-123", 1);
 
     expect(result.budgets).toBeDefined();
     expect(result.budgets).toHaveLength(1);
-    expect(result.budgets?.[0].budget_name).toBe('Żywność');
+    expect(result.budgets?.[0].budget_name).toBe("Żywność");
     expect(result.budgets?.[0].budget_amount).toBe(1000);
-    expect(result.budgets?.[0].category_names).toContain('Jedzenie');
+    expect(result.budgets?.[0].category_names).toContain("Jedzenie");
   });
 
-  it('should handle uncategorized transactions', async () => {
+  it("should handle uncategorized transactions", async () => {
     const mockTransactions = [
       {
         amount: 50,
@@ -359,33 +368,33 @@ describe('InsightsService - aggregateTransactionsForAI()', () => {
 
     // ... mock setup ...
 
-    const result = await service.aggregateTransactionsForAI('user-123', 1);
+    const result = await service.aggregateTransactionsForAI("user-123", 1);
 
-    const uncategorized = result.category_breakdown.find(c => c.category_id === 'uncategorized');
+    const uncategorized = result.category_breakdown.find((c) => c.category_id === "uncategorized");
     expect(uncategorized).toBeDefined();
-    expect(uncategorized?.category_name).toBe('Uncategorized');
+    expect(uncategorized?.category_name).toBe("Uncategorized");
     expect(uncategorized?.total_amount).toBe(50);
   });
 
-  it('should throw error when database query fails', async () => {
+  it("should throw error when database query fails", async () => {
     mockSupabase.from = vi.fn(() => ({
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
           eq: vi.fn(() => ({
             gte: vi.fn(() => ({
-              lte: vi.fn(() => Promise.resolve({ 
-                data: null, 
-                error: { message: 'Database error' } 
-              })),
+              lte: vi.fn(() =>
+                Promise.resolve({
+                  data: null,
+                  error: { message: "Database error" },
+                })
+              ),
             })),
           })),
         })),
       })),
     })) as any;
 
-    await expect(service.aggregateTransactionsForAI('user-123', 1))
-      .rejects
-      .toThrow('Failed to fetch transactions for AI analysis');
+    await expect(service.aggregateTransactionsForAI("user-123", 1)).rejects.toThrow("Failed to fetch transactions for AI analysis");
   });
 });
 ```
@@ -399,49 +408,47 @@ describe('InsightsService - aggregateTransactionsForAI()', () => {
 **Test cases przez integrację:**
 
 ```typescript
-describe('InsightsService - generateInsights() (testing callOpenAI indirectly)', () => {
-  it('should successfully generate insights from OpenAI', async () => {
+describe("InsightsService - generateInsights() (testing callOpenAI indirectly)", () => {
+  it("should successfully generate insights from OpenAI", async () => {
     // Mock hasEnoughData to return true
-    vi.spyOn(service, 'hasEnoughData').mockResolvedValue(true);
+    vi.spyOn(service, "hasEnoughData").mockResolvedValue(true);
 
     // Mock aggregateTransactionsForAI
-    vi.spyOn(service as any, 'aggregateTransactionsForAI').mockResolvedValue({
-      period: { start_date: '2026-01-01', end_date: '2026-01-31', months: 1 },
+    vi.spyOn(service as any, "aggregateTransactionsForAI").mockResolvedValue({
+      period: { start_date: "2026-01-01", end_date: "2026-01-31", months: 1 },
       total_spending: 1000,
       average_monthly_spending: 1000,
-      category_breakdown: [
-        { category_id: 'cat-1', category_name: 'Jedzenie', total_amount: 600, monthly_average: 600, transaction_count: 5 },
-      ],
+      category_breakdown: [{ category_id: "cat-1", category_name: "Jedzenie", total_amount: 600, monthly_average: 600, transaction_count: 5 }],
       budgets: [],
     });
 
     // Mock OpenAI response
     const mockAIResponse = {
       analysis_period: {
-        start_date: '2026-01-01',
-        end_date: '2026-01-31',
+        start_date: "2026-01-01",
+        end_date: "2026-01-31",
         months_analyzed: 1,
       },
       total_spending: 1000,
       average_monthly_spending: 1000,
       total_potential_savings: 100,
-      general_recommendation: 'Test recommendation',
+      general_recommendation: "Test recommendation",
       insights: [
         {
-          id: 'ins-1',
-          category: 'Jedzenie',
+          id: "ins-1",
+          category: "Jedzenie",
           current_spending: 600,
           suggested_target: 500,
           potential_savings: 100,
-          priority: 'high' as const,
-          reasoning: 'Test reasoning',
-          actionable_tips: ['Tip 1', 'Tip 2'],
+          priority: "high" as const,
+          reasoning: "Test reasoning",
+          actionable_tips: ["Tip 1", "Tip 2"],
         },
       ],
     };
 
     // Mock callOpenAI
-    vi.spyOn(service as any, 'callOpenAI').mockResolvedValue(mockAIResponse);
+    vi.spyOn(service as any, "callOpenAI").mockResolvedValue(mockAIResponse);
 
     // Mock saveInsights
     mockSupabase.from = vi.fn(() => ({
@@ -452,43 +459,41 @@ describe('InsightsService - generateInsights() (testing callOpenAI indirectly)',
     mockSupabase.from = vi.fn(() => ({
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
-          single: vi.fn(() => Promise.resolve({
-            data: {
-              id: 'insight-123',
-              data: mockAIResponse,
-              generated_at: new Date().toISOString(),
-              months_analyzed: 1,
-            },
-            error: null,
-          })),
+          single: vi.fn(() =>
+            Promise.resolve({
+              data: {
+                id: "insight-123",
+                data: mockAIResponse,
+                generated_at: new Date().toISOString(),
+                months_analyzed: 1,
+              },
+              error: null,
+            })
+          ),
         })),
       })),
     })) as any;
 
-    const result = await service.generateInsights('user-123', { months: 1, force_refresh: false });
+    const result = await service.generateInsights("user-123", { months: 1, force_refresh: false });
 
     expect(result).toBeDefined();
     expect(result.data.insights).toHaveLength(1);
     expect(result.data.total_potential_savings).toBe(100);
   });
 
-  it('should throw error when OpenAI returns invalid JSON', async () => {
-    vi.spyOn(service, 'hasEnoughData').mockResolvedValue(true);
-    vi.spyOn(service as any, 'aggregateTransactionsForAI').mockResolvedValue({
-      period: { start_date: '2026-01-01', end_date: '2026-01-31', months: 1 },
+  it("should throw error when OpenAI returns invalid JSON", async () => {
+    vi.spyOn(service, "hasEnoughData").mockResolvedValue(true);
+    vi.spyOn(service as any, "aggregateTransactionsForAI").mockResolvedValue({
+      period: { start_date: "2026-01-01", end_date: "2026-01-31", months: 1 },
       total_spending: 1000,
       average_monthly_spending: 1000,
       category_breakdown: [],
     });
 
     // Mock OpenAI to return invalid structure
-    vi.spyOn(service as any, 'callOpenAI').mockRejectedValue(
-      new Error('Invalid AI response structure')
-    );
+    vi.spyOn(service as any, "callOpenAI").mockRejectedValue(new Error("Invalid AI response structure"));
 
-    await expect(service.generateInsights('user-123', { months: 1 }))
-      .rejects
-      .toThrow('Invalid AI response structure');
+    await expect(service.generateInsights("user-123", { months: 1 })).rejects.toThrow("Invalid AI response structure");
   });
 });
 ```
@@ -500,9 +505,9 @@ describe('InsightsService - generateInsights() (testing callOpenAI indirectly)',
 **Test cases:**
 
 ```typescript
-describe('InsightsService - Cache Logic', () => {
-  it('should return cached insights if fresh (< 24h)', async () => {
-    vi.spyOn(service, 'hasEnoughData').mockResolvedValue(true);
+describe("InsightsService - Cache Logic", () => {
+  it("should return cached insights if fresh (< 24h)", async () => {
+    vi.spyOn(service, "hasEnoughData").mockResolvedValue(true);
 
     const oneHourAgo = new Date();
     oneHourAgo.setHours(oneHourAgo.getHours() - 1);
@@ -511,29 +516,31 @@ describe('InsightsService - Cache Logic', () => {
     mockSupabase.from = vi.fn(() => ({
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
-          single: vi.fn(() => Promise.resolve({
-            data: {
-              id: 'insight-123',
-              data: { insights: [], total_potential_savings: 100 },
-              generated_at: oneHourAgo.toISOString(),
-              months_analyzed: 3,
-            },
-            error: null,
-          })),
+          single: vi.fn(() =>
+            Promise.resolve({
+              data: {
+                id: "insight-123",
+                data: { insights: [], total_potential_savings: 100 },
+                generated_at: oneHourAgo.toISOString(),
+                months_analyzed: 3,
+              },
+              error: null,
+            })
+          ),
         })),
       })),
     })) as any;
 
-    const callOpenAISpy = vi.spyOn(service as any, 'callOpenAI');
+    const callOpenAISpy = vi.spyOn(service as any, "callOpenAI");
 
-    const result = await service.generateInsights('user-123', { months: 3, force_refresh: false });
+    const result = await service.generateInsights("user-123", { months: 3, force_refresh: false });
 
     expect(result).toBeDefined();
     expect(callOpenAISpy).not.toHaveBeenCalled(); // Should use cache
   });
 
-  it('should regenerate if cache is stale (> 24h)', async () => {
-    vi.spyOn(service, 'hasEnoughData').mockResolvedValue(true);
+  it("should regenerate if cache is stale (> 24h)", async () => {
+    vi.spyOn(service, "hasEnoughData").mockResolvedValue(true);
 
     const twoDaysAgo = new Date();
     twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
@@ -542,31 +549,33 @@ describe('InsightsService - Cache Logic', () => {
     mockSupabase.from = vi.fn(() => ({
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
-          single: vi.fn(() => Promise.resolve({
-            data: {
-              id: 'insight-123',
-              data: { insights: [] },
-              generated_at: twoDaysAgo.toISOString(),
-              months_analyzed: 3,
-            },
-            error: null,
-          })),
+          single: vi.fn(() =>
+            Promise.resolve({
+              data: {
+                id: "insight-123",
+                data: { insights: [] },
+                generated_at: twoDaysAgo.toISOString(),
+                months_analyzed: 3,
+              },
+              error: null,
+            })
+          ),
         })),
       })),
     })) as any;
 
-    const callOpenAISpy = vi.spyOn(service as any, 'callOpenAI').mockResolvedValue({
+    const callOpenAISpy = vi.spyOn(service as any, "callOpenAI").mockResolvedValue({
       insights: [],
       total_potential_savings: 200,
     });
 
-    await service.generateInsights('user-123', { months: 3, force_refresh: false });
+    await service.generateInsights("user-123", { months: 3, force_refresh: false });
 
     expect(callOpenAISpy).toHaveBeenCalled(); // Should regenerate
   });
 
-  it('should regenerate if force_refresh is true', async () => {
-    vi.spyOn(service, 'hasEnoughData').mockResolvedValue(true);
+  it("should regenerate if force_refresh is true", async () => {
+    vi.spyOn(service, "hasEnoughData").mockResolvedValue(true);
 
     const oneHourAgo = new Date();
     oneHourAgo.setHours(oneHourAgo.getHours() - 1);
@@ -574,29 +583,31 @@ describe('InsightsService - Cache Logic', () => {
     mockSupabase.from = vi.fn(() => ({
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
-          single: vi.fn(() => Promise.resolve({
-            data: {
-              id: 'insight-123',
-              data: { insights: [] },
-              generated_at: oneHourAgo.toISOString(),
-              months_analyzed: 3,
-            },
-            error: null,
-          })),
+          single: vi.fn(() =>
+            Promise.resolve({
+              data: {
+                id: "insight-123",
+                data: { insights: [] },
+                generated_at: oneHourAgo.toISOString(),
+                months_analyzed: 3,
+              },
+              error: null,
+            })
+          ),
         })),
       })),
     })) as any;
 
-    const callOpenAISpy = vi.spyOn(service as any, 'callOpenAI').mockResolvedValue({
+    const callOpenAISpy = vi.spyOn(service as any, "callOpenAI").mockResolvedValue({
       insights: [],
     });
 
-    await service.generateInsights('user-123', { months: 3, force_refresh: true });
+    await service.generateInsights("user-123", { months: 3, force_refresh: true });
 
     expect(callOpenAISpy).toHaveBeenCalled(); // Should regenerate despite fresh cache
   });
 
-  it('isCacheFresh should return true for 23 hours old', () => {
+  it("isCacheFresh should return true for 23 hours old", () => {
     const twentyThreeHoursAgo = new Date();
     twentyThreeHoursAgo.setHours(twentyThreeHoursAgo.getHours() - 23);
 
@@ -604,7 +615,7 @@ describe('InsightsService - Cache Logic', () => {
     expect(result).toBe(true);
   });
 
-  it('isCacheFresh should return false for 25 hours old', () => {
+  it("isCacheFresh should return false for 25 hours old", () => {
     const twentyFiveHoursAgo = new Date();
     twentyFiveHoursAgo.setHours(twentyFiveHoursAgo.getHours() - 25);
 
@@ -625,10 +636,10 @@ describe('InsightsService - Cache Logic', () => {
 **Test cases:**
 
 ```typescript
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { GET } from './latest';
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { GET } from "./latest";
 
-describe('GET /api/insights/latest', () => {
+describe("GET /api/insights/latest", () => {
   let mockLocals: any;
   let mockRequest: Request;
 
@@ -643,32 +654,32 @@ describe('GET /api/insights/latest', () => {
       },
     };
 
-    mockRequest = new Request('http://localhost:3000/api/insights/latest');
+    mockRequest = new Request("http://localhost:3000/api/insights/latest");
   });
 
-  it('should return 401 if user is not authenticated', async () => {
+  it("should return 401 if user is not authenticated", async () => {
     mockLocals.supabase.auth.getUser.mockResolvedValue({
       data: { user: null },
-      error: { message: 'Not authenticated' },
+      error: { message: "Not authenticated" },
     });
 
     const response = await GET({ locals: mockLocals, request: mockRequest } as any);
 
     expect(response.status).toBe(401);
     const body = await response.json();
-    expect(body.error).toBe('Unauthorized');
+    expect(body.error).toBe("Unauthorized");
   });
 
-  it('should return 404 if no insights exist for user', async () => {
+  it("should return 404 if no insights exist for user", async () => {
     mockLocals.supabase.auth.getUser.mockResolvedValue({
-      data: { user: { id: 'user-123' } },
+      data: { user: { id: "user-123" } },
       error: null,
     });
 
     mockLocals.supabase.from.mockReturnValue({
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
-          single: vi.fn(() => Promise.resolve({ data: null, error: { code: 'PGRST116' } })),
+          single: vi.fn(() => Promise.resolve({ data: null, error: { code: "PGRST116" } })),
         })),
       })),
     });
@@ -677,18 +688,18 @@ describe('GET /api/insights/latest', () => {
 
     expect(response.status).toBe(404);
     const body = await response.json();
-    expect(body.error).toBe('No insights available yet');
+    expect(body.error).toBe("No insights available yet");
   });
 
-  it('should return 200 with insights data', async () => {
+  it("should return 200 with insights data", async () => {
     const mockInsight = {
-      id: 'insight-123',
+      id: "insight-123",
       data: {
-        analysis_period: { start_date: '2026-01-01', end_date: '2026-01-31', months_analyzed: 1 },
+        analysis_period: { start_date: "2026-01-01", end_date: "2026-01-31", months_analyzed: 1 },
         total_spending: 1000,
         average_monthly_spending: 1000,
         total_potential_savings: 100,
-        general_recommendation: 'Test',
+        general_recommendation: "Test",
         insights: [],
       },
       generated_at: new Date().toISOString(),
@@ -696,7 +707,7 @@ describe('GET /api/insights/latest', () => {
     };
 
     mockLocals.supabase.auth.getUser.mockResolvedValue({
-      data: { user: { id: 'user-123' } },
+      data: { user: { id: "user-123" } },
       error: null,
     });
 
@@ -712,18 +723,18 @@ describe('GET /api/insights/latest', () => {
 
     expect(response.status).toBe(200);
     const body = await response.json();
-    expect(body.id).toBe('insight-123');
+    expect(body.id).toBe("insight-123");
     expect(body.data.total_potential_savings).toBe(100);
   });
 
-  it('should return 500 on unexpected error', async () => {
-    mockLocals.supabase.auth.getUser.mockRejectedValue(new Error('Database connection failed'));
+  it("should return 500 on unexpected error", async () => {
+    mockLocals.supabase.auth.getUser.mockRejectedValue(new Error("Database connection failed"));
 
     const response = await GET({ locals: mockLocals, request: mockRequest } as any);
 
     expect(response.status).toBe(500);
     const body = await response.json();
-    expect(body.error).toBe('Internal server error');
+    expect(body.error).toBe("Internal server error");
   });
 });
 ```
@@ -737,10 +748,10 @@ describe('GET /api/insights/latest', () => {
 **Test cases:**
 
 ```typescript
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { POST } from './analyze';
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { POST } from "./analyze";
 
-describe('POST /api/insights/analyze', () => {
+describe("POST /api/insights/analyze", () => {
   let mockLocals: any;
   let mockRequest: Request;
 
@@ -755,14 +766,14 @@ describe('POST /api/insights/analyze', () => {
     };
   });
 
-  it('should return 401 if user is not authenticated', async () => {
+  it("should return 401 if user is not authenticated", async () => {
     mockLocals.supabase.auth.getUser.mockResolvedValue({
       data: { user: null },
-      error: { message: 'Not authenticated' },
+      error: { message: "Not authenticated" },
     });
 
-    mockRequest = new Request('http://localhost:3000/api/insights/analyze', {
-      method: 'POST',
+    mockRequest = new Request("http://localhost:3000/api/insights/analyze", {
+      method: "POST",
       body: JSON.stringify({ months: 3 }),
     });
 
@@ -771,15 +782,15 @@ describe('POST /api/insights/analyze', () => {
     expect(response.status).toBe(401);
   });
 
-  it('should return 400 for invalid request body', async () => {
+  it("should return 400 for invalid request body", async () => {
     mockLocals.supabase.auth.getUser.mockResolvedValue({
-      data: { user: { id: 'user-123' } },
+      data: { user: { id: "user-123" } },
       error: null,
     });
 
     // Invalid months value
-    mockRequest = new Request('http://localhost:3000/api/insights/analyze', {
-      method: 'POST',
+    mockRequest = new Request("http://localhost:3000/api/insights/analyze", {
+      method: "POST",
       body: JSON.stringify({ months: 5 }), // Only 1, 2, 3 allowed
     });
 
@@ -787,17 +798,17 @@ describe('POST /api/insights/analyze', () => {
 
     expect(response.status).toBe(400);
     const body = await response.json();
-    expect(body.error).toBe('Validation error');
+    expect(body.error).toBe("Validation error");
   });
 
-  it('should return 400 if user has insufficient data', async () => {
+  it("should return 400 if user has insufficient data", async () => {
     mockLocals.supabase.auth.getUser.mockResolvedValue({
-      data: { user: { id: 'user-123' } },
+      data: { user: { id: "user-123" } },
       error: null,
     });
 
-    mockRequest = new Request('http://localhost:3000/api/insights/analyze', {
-      method: 'POST',
+    mockRequest = new Request("http://localhost:3000/api/insights/analyze", {
+      method: "POST",
       body: JSON.stringify({ months: 3 }),
     });
 
@@ -810,18 +821,18 @@ describe('POST /api/insights/analyze', () => {
     // Will depend on actual data in test database
     if (response.status === 400) {
       const body = await response.json();
-      expect(body.error).toContain('Insufficient data');
+      expect(body.error).toContain("Insufficient data");
     }
   });
 
-  it('should return 503 if AI service fails', async () => {
+  it("should return 503 if AI service fails", async () => {
     mockLocals.supabase.auth.getUser.mockResolvedValue({
-      data: { user: { id: 'user-123' } },
+      data: { user: { id: "user-123" } },
       error: null,
     });
 
-    mockRequest = new Request('http://localhost:3000/api/insights/analyze', {
-      method: 'POST',
+    mockRequest = new Request("http://localhost:3000/api/insights/analyze", {
+      method: "POST",
       body: JSON.stringify({ months: 3 }),
     });
 
@@ -833,14 +844,14 @@ describe('POST /api/insights/analyze', () => {
     // expect(response.status).toBe(503);
   });
 
-  it('should return 200 with generated insights', async () => {
+  it("should return 200 with generated insights", async () => {
     mockLocals.supabase.auth.getUser.mockResolvedValue({
-      data: { user: { id: 'user-123' } },
+      data: { user: { id: "user-123" } },
       error: null,
     });
 
-    mockRequest = new Request('http://localhost:3000/api/insights/analyze', {
-      method: 'POST',
+    mockRequest = new Request("http://localhost:3000/api/insights/analyze", {
+      method: "POST",
       body: JSON.stringify({ months: 3, force_refresh: false }),
     });
 
@@ -867,22 +878,22 @@ describe('POST /api/insights/analyze', () => {
 **Test cases:**
 
 ```typescript
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
-import { useInsights } from './useInsights';
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { renderHook, waitFor } from "@testing-library/react";
+import { useInsights } from "./useInsights";
 
 // Mock fetch globally
 global.fetch = vi.fn();
 
-describe('useInsights hook', () => {
+describe("useInsights hook", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe('fetchLatest', () => {
-    it('should fetch latest insights successfully', async () => {
+  describe("fetchLatest", () => {
+    it("should fetch latest insights successfully", async () => {
       const mockData = {
-        id: 'insight-123',
+        id: "insight-123",
         data: { insights: [], total_potential_savings: 100 },
         generated_at: new Date().toISOString(),
         months_analyzed: 3,
@@ -908,11 +919,11 @@ describe('useInsights hook', () => {
       });
     });
 
-    it('should handle 404 as empty state', async () => {
+    it("should handle 404 as empty state", async () => {
       (global.fetch as any).mockResolvedValueOnce({
         ok: false,
         status: 404,
-        json: async () => ({ error: 'No insights available yet' }),
+        json: async () => ({ error: "No insights available yet" }),
       });
 
       const { result } = renderHook(() => useInsights());
@@ -926,11 +937,11 @@ describe('useInsights hook', () => {
       });
     });
 
-    it('should handle fetch error', async () => {
+    it("should handle fetch error", async () => {
       (global.fetch as any).mockResolvedValueOnce({
         ok: false,
         status: 500,
-        json: async () => ({ error: { message: 'Internal server error' } }),
+        json: async () => ({ error: { message: "Internal server error" } }),
       });
 
       const { result } = renderHook(() => useInsights());
@@ -944,10 +955,10 @@ describe('useInsights hook', () => {
     });
   });
 
-  describe('generateInsights', () => {
-    it('should generate insights successfully', async () => {
+  describe("generateInsights", () => {
+    it("should generate insights successfully", async () => {
       const mockData = {
-        id: 'insight-456',
+        id: "insight-456",
         data: { insights: [], total_potential_savings: 150 },
         generated_at: new Date().toISOString(),
         months_analyzed: 2,
@@ -969,7 +980,7 @@ describe('useInsights hook', () => {
       });
     });
 
-    it('should pass force_refresh parameter', async () => {
+    it("should pass force_refresh parameter", async () => {
       (global.fetch as any).mockResolvedValueOnce({
         ok: true,
         status: 200,
@@ -981,9 +992,9 @@ describe('useInsights hook', () => {
       await result.current.generateInsights({ months: 3, force_refresh: true });
 
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/insights/analyze',
+        "/api/insights/analyze",
         expect.objectContaining({
-          method: 'POST',
+          method: "POST",
           body: JSON.stringify({ months: 3, force_refresh: true }),
         })
       );
@@ -1252,80 +1263,80 @@ describe('InsightDetailCard', () => {
 **Test cases:**
 
 ```typescript
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect, type Page } from "@playwright/test";
 
-test.describe.serial('AI Insights Flow', () => {
+test.describe.serial("AI Insights Flow", () => {
   let page: Page;
 
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
 
     // Login
-    await page.goto('/login');
-    await page.getByTestId('email-input').fill(process.env.E2E_USERNAME || '');
-    await page.getByTestId('password-input').fill(process.env.E2E_PASSWORD || '');
-    await page.getByTestId('login-submit-button').click();
+    await page.goto("/login");
+    await page.getByTestId("email-input").fill(process.env.E2E_USERNAME || "");
+    await page.getByTestId("password-input").fill(process.env.E2E_PASSWORD || "");
+    await page.getByTestId("login-submit-button").click();
 
-    await expect(page).toHaveURL('/', { timeout: 10000 });
+    await expect(page).toHaveURL("/", { timeout: 10000 });
   });
 
   test.afterAll(async () => {
     await page.close();
   });
 
-  test('should display AI Insights widget on dashboard', async () => {
-    await page.goto('/');
+  test("should display AI Insights widget on dashboard", async () => {
+    await page.goto("/");
 
     // Check if widget is visible
-    await expect(page.getByText('Rekomendacje AI')).toBeVisible();
+    await expect(page.getByText("Rekomendacje AI")).toBeVisible();
   });
 
-  test('should navigate to /insights page from dashboard widget', async () => {
-    await page.goto('/');
+  test("should navigate to /insights page from dashboard widget", async () => {
+    await page.goto("/");
 
     // Wait for widget to load
-    await expect(page.getByText('Rekomendacje AI')).toBeVisible();
+    await expect(page.getByText("Rekomendacje AI")).toBeVisible();
 
     // Look for "Zobacz pełną analizę" button (if insights exist)
-    const fullAnalysisButton = page.getByText('Zobacz pełną analizę');
-    
+    const fullAnalysisButton = page.getByText("Zobacz pełną analizę");
+
     if (await fullAnalysisButton.isVisible()) {
       await fullAnalysisButton.click();
-      await expect(page).toHaveURL('/insights');
+      await expect(page).toHaveURL("/insights");
     } else {
       // User might not have insights yet - check for "Analizuj wydatki" button
-      const analyzeButton = page.getByText('Analizuj wydatki');
+      const analyzeButton = page.getByText("Analizuj wydatki");
       await expect(analyzeButton).toBeVisible();
     }
   });
 
-  test('should display insights page structure', async () => {
-    await page.goto('/insights');
+  test("should display insights page structure", async () => {
+    await page.goto("/insights");
 
     // Check page title
-    await expect(page.getByRole('heading', { name: 'Rekomendacje AI' })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Rekomendacje AI" })).toBeVisible();
 
     // Check for controls (dropdown and refresh button)
-    await expect(page.getByRole('combobox')).toBeVisible(); // Period selector
-    await expect(page.getByRole('button', { name: /odśwież/i })).toBeVisible();
+    await expect(page.getByRole("combobox")).toBeVisible(); // Period selector
+    await expect(page.getByRole("button", { name: /odśwież/i })).toBeVisible();
   });
 
-  test('should generate first analysis if none exists', async () => {
-    await page.goto('/insights');
+  test("should generate first analysis if none exists", async () => {
+    await page.goto("/insights");
 
     // Check if empty state is shown
-    const analyzeButton = page.getByText('Wygeneruj pierwszą analizę');
+    const analyzeButton = page.getByText("Wygeneruj pierwszą analizę");
 
     if (await analyzeButton.isVisible()) {
       await analyzeButton.click();
 
       // Wait for loading (might take several seconds due to OpenAI API)
-      await expect(page.getByText('Rekomendacje AI')).toBeVisible({ timeout: 15000 });
+      await expect(page.getByText("Rekomendacje AI")).toBeVisible({ timeout: 15000 });
 
       // Check for success (summary banner or insights)
       // This depends on whether user has enough data
       const potentialSavings = page.getByText(/Możesz zaoszczędzić/i);
-      
+
       if (await potentialSavings.isVisible()) {
         // Success - insights generated
         await expect(potentialSavings).toBeVisible();
@@ -1336,15 +1347,15 @@ test.describe.serial('AI Insights Flow', () => {
     }
   });
 
-  test('should change analysis period', async () => {
-    await page.goto('/insights');
+  test("should change analysis period", async () => {
+    await page.goto("/insights");
 
     // Assume insights exist
-    const periodSelector = page.getByRole('combobox');
+    const periodSelector = page.getByRole("combobox");
     await periodSelector.click();
 
     // Select 1 month
-    await page.getByRole('option', { name: '1 miesiąc' }).click();
+    await page.getByRole("option", { name: "1 miesiąc" }).click();
 
     // Wait for update (check generated_at timestamp changes or loading indicator)
     await page.waitForTimeout(2000); // Simple wait for API call
@@ -1353,11 +1364,11 @@ test.describe.serial('AI Insights Flow', () => {
     await expect(page.getByText(/1 miesiąc/i)).toBeVisible();
   });
 
-  test('should refresh insights', async () => {
-    await page.goto('/insights');
+  test("should refresh insights", async () => {
+    await page.goto("/insights");
 
-    const refreshButton = page.getByRole('button', { name: /odśwież/i });
-    
+    const refreshButton = page.getByRole("button", { name: /odśwież/i });
+
     if (await refreshButton.isVisible()) {
       // Note the current timestamp (if visible)
       const timestampBefore = await page.getByText(/Ostatnia aktualizacja:/i).textContent();
@@ -1376,32 +1387,32 @@ test.describe.serial('AI Insights Flow', () => {
     }
   });
 
-  test('should display summary banner with metrics', async () => {
-    await page.goto('/insights');
+  test("should display summary banner with metrics", async () => {
+    await page.goto("/insights");
 
     // Check for summary metrics (if insights exist)
-    await expect(page.getByText('Analizowany okres')).toBeVisible();
-    await expect(page.getByText('Średnie wydatki')).toBeVisible();
+    await expect(page.getByText("Analizowany okres")).toBeVisible();
+    await expect(page.getByText("Średnie wydatki")).toBeVisible();
     await expect(page.getByText(/Możesz zaoszczędzić/i)).toBeVisible();
   });
 
-  test('should display charts', async () => {
-    await page.goto('/insights');
+  test("should display charts", async () => {
+    await page.goto("/insights");
 
     // Check for chart titles
-    await expect(page.getByText('Porównanie wydatków')).toBeVisible();
-    await expect(page.getByText('Projekcja oszczędności w czasie')).toBeVisible();
+    await expect(page.getByText("Porównanie wydatków")).toBeVisible();
+    await expect(page.getByText("Projekcja oszczędności w czasie")).toBeVisible();
   });
 
-  test('should display detailed recommendation cards', async () => {
-    await page.goto('/insights');
+  test("should display detailed recommendation cards", async () => {
+    await page.goto("/insights");
 
     // Check for "Szczegółowe rekomendacje" section
-    await expect(page.getByText('Szczegółowe rekomendacje')).toBeVisible();
+    await expect(page.getByText("Szczegółowe rekomendacje")).toBeVisible();
 
     // Check for at least one insight card (with rank badge)
     const insightCards = page.locator('[class*="border-l-4"]'); // Cards have left border
-    
+
     if (await insightCards.first().isVisible()) {
       await expect(insightCards.first()).toBeVisible();
 
@@ -1412,28 +1423,28 @@ test.describe.serial('AI Insights Flow', () => {
     }
   });
 
-  test('should handle empty state gracefully', async () => {
+  test("should handle empty state gracefully", async () => {
     // This test assumes a fresh user with no transactions
     // In real scenario, you'd need to clear data or use a specific test user
 
-    await page.goto('/insights');
+    await page.goto("/insights");
 
     // Check for empty state message
     const emptyMessage = page.getByText(/Potrzebujesz co najmniej miesiąca/i);
-    
+
     if (await emptyMessage.isVisible()) {
       await expect(emptyMessage).toBeVisible();
-      await expect(page.getByText('Wygeneruj pierwszą analizę')).toBeVisible();
+      await expect(page.getByText("Wygeneruj pierwszą analizę")).toBeVisible();
     }
   });
 
-  test('should be responsive on mobile', async () => {
+  test("should be responsive on mobile", async () => {
     await page.setViewportSize({ width: 375, height: 667 }); // iPhone SE
 
-    await page.goto('/insights');
+    await page.goto("/insights");
 
     // Check if elements stack vertically
-    await expect(page.getByText('Rekomendacje AI')).toBeVisible();
+    await expect(page.getByText("Rekomendacje AI")).toBeVisible();
 
     // Charts should stack on mobile
     const charts = page.locator('text="Porównanie wydatków"');
@@ -1459,37 +1470,37 @@ test.describe.serial('AI Insights Flow', () => {
 **Zawartość:**
 
 ```typescript
-import type { AIInsightsSummary, AIInsight, AggregatedTransactionData } from '@/types';
+import type { AIInsightsSummary, AIInsight, AggregatedTransactionData } from "@/types";
 
 /**
  * Mock aggregated transaction data
  */
 export const mockAggregatedData: AggregatedTransactionData = {
   period: {
-    start_date: '2026-01-01',
-    end_date: '2026-03-31',
+    start_date: "2026-01-01",
+    end_date: "2026-03-31",
     months: 3,
   },
   total_spending: 37500,
   average_monthly_spending: 12500,
   category_breakdown: [
     {
-      category_id: 'cat-food',
-      category_name: 'Jedzenie',
+      category_id: "cat-food",
+      category_name: "Jedzenie",
       total_amount: 10500,
       monthly_average: 3500,
       transaction_count: 45,
     },
     {
-      category_id: 'cat-transport',
-      category_name: 'Transport',
+      category_id: "cat-transport",
+      category_name: "Transport",
       total_amount: 3600,
       monthly_average: 1200,
       transaction_count: 15,
     },
     {
-      category_id: 'cat-entertainment',
-      category_name: 'Rozrywka',
+      category_id: "cat-entertainment",
+      category_name: "Rozrywka",
       total_amount: 2400,
       monthly_average: 800,
       transaction_count: 12,
@@ -1497,9 +1508,9 @@ export const mockAggregatedData: AggregatedTransactionData = {
   ],
   budgets: [
     {
-      budget_name: 'Żywność',
+      budget_name: "Żywność",
       budget_amount: 3000,
-      category_names: ['Jedzenie'],
+      category_names: ["Jedzenie"],
     },
   ],
 };
@@ -1509,47 +1520,41 @@ export const mockAggregatedData: AggregatedTransactionData = {
  */
 export const mockInsights: AIInsight[] = [
   {
-    id: 'ins-1',
-    category: 'Jedzenie',
-    category_id: 'cat-food',
+    id: "ins-1",
+    category: "Jedzenie",
+    category_id: "cat-food",
     current_spending: 3500,
     suggested_target: 3100,
     potential_savings: 400,
-    priority: 'high',
-    reasoning: 'Wydajesz 3500 PLN miesięcznie na jedzenie, co jest 17% powyżej budżetu.',
+    priority: "high",
+    reasoning: "Wydajesz 3500 PLN miesięcznie na jedzenie, co jest 17% powyżej budżetu.",
     actionable_tips: [
-      'Planuj posiłki na tydzień i twórz listę zakupów',
-      'Rozważ zakupy w tańszych sieciach (np. Biedronka, Lidl)',
-      'Ogranicz jedzenie na wynos do 1-2 razy w tygodniu',
+      "Planuj posiłki na tydzień i twórz listę zakupów",
+      "Rozważ zakupy w tańszych sieciach (np. Biedronka, Lidl)",
+      "Ogranicz jedzenie na wynos do 1-2 razy w tygodniu",
     ],
   },
   {
-    id: 'ins-2',
-    category: 'Transport',
-    category_id: 'cat-transport',
+    id: "ins-2",
+    category: "Transport",
+    category_id: "cat-transport",
     current_spending: 1200,
     suggested_target: 900,
     potential_savings: 300,
-    priority: 'medium',
-    reasoning: 'Wysokie wydatki na transport mogą być zoptymalizowane przez komunikację publiczną.',
-    actionable_tips: [
-      'Rozważ karnet miesięczny zamiast pojedynczych biletów',
-      'Użyj roweru miejskiego do krótkich tras',
-    ],
+    priority: "medium",
+    reasoning: "Wysokie wydatki na transport mogą być zoptymalizowane przez komunikację publiczną.",
+    actionable_tips: ["Rozważ karnet miesięczny zamiast pojedynczych biletów", "Użyj roweru miejskiego do krótkich tras"],
   },
   {
-    id: 'ins-3',
-    category: 'Rozrywka',
-    category_id: 'cat-entertainment',
+    id: "ins-3",
+    category: "Rozrywka",
+    category_id: "cat-entertainment",
     current_spending: 800,
     suggested_target: 650,
     potential_savings: 150,
-    priority: 'low',
-    reasoning: 'Możesz nieznacznie ograniczyć wydatki na rozrywkę bez wpływu na jakość życia.',
-    actionable_tips: [
-      'Szukaj darmowych wydarzeń w mieście',
-      'Rozważ współdzielenie subskrypcji z rodziną',
-    ],
+    priority: "low",
+    reasoning: "Możesz nieznacznie ograniczyć wydatki na rozrywkę bez wpływu na jakość życia.",
+    actionable_tips: ["Szukaj darmowych wydarzeń w mieście", "Rozważ współdzielenie subskrypcji z rodziną"],
   },
 ];
 
@@ -1558,15 +1563,14 @@ export const mockInsights: AIInsight[] = [
  */
 export const mockAIInsightsSummary: AIInsightsSummary = {
   analysis_period: {
-    start_date: '2026-01-01',
-    end_date: '2026-03-31',
+    start_date: "2026-01-01",
+    end_date: "2026-03-31",
     months_analyzed: 3,
   },
   total_spending: 37500,
   average_monthly_spending: 12500,
   total_potential_savings: 850,
-  general_recommendation:
-    'Widzę kilka obszarów gdzie możesz zoptymalizować wydatki bez drastycznych zmian w stylu życia. Największy potencjał to jedzenie i transport.',
+  general_recommendation: "Widzę kilka obszarów gdzie możesz zoptymalizować wydatki bez drastycznych zmian w stylu życia. Największy potencjał to jedzenie i transport.",
   insights: mockInsights,
   confidence_score: 85,
 };
@@ -1589,14 +1593,14 @@ export const mockOpenAIResponse = {
  */
 export function createMockInsight(overrides: Partial<AIInsight> = {}): AIInsight {
   return {
-    id: 'ins-test',
-    category: 'Test Category',
+    id: "ins-test",
+    category: "Test Category",
     current_spending: 1000,
     suggested_target: 800,
     potential_savings: 200,
-    priority: 'medium',
-    reasoning: 'Test reasoning',
-    actionable_tips: ['Test tip 1', 'Test tip 2'],
+    priority: "medium",
+    reasoning: "Test reasoning",
+    actionable_tips: ["Test tip 1", "Test tip 2"],
     ...overrides,
   };
 }
@@ -1726,30 +1730,31 @@ npm test -- insights
 
 ### 11.1 Test Coverage Matrix
 
-| Komponent | Unit | Integration | Component | E2E | Status |
-|-----------|------|-------------|-----------|-----|--------|
-| InsightsService | ✅ | ✅ | - | - | ⏳ TODO |
-| GET /api/insights/latest | - | ✅ | - | - | ⏳ TODO |
-| POST /api/insights/analyze | - | ✅ | - | - | ⏳ TODO |
-| useInsights hook | ✅ | - | ✅ | - | ⏳ TODO |
-| AIInsightsCard | - | - | ✅ | - | ⏳ TODO |
-| InsightDetailCard | - | - | ✅ | - | ⏳ TODO |
-| Full user flow | - | - | - | ✅ | ⏳ TODO |
+| Komponent                  | Unit | Integration | Component | E2E | Status  |
+| -------------------------- | ---- | ----------- | --------- | --- | ------- |
+| InsightsService            | ✅   | ✅          | -         | -   | ⏳ TODO |
+| GET /api/insights/latest   | -    | ✅          | -         | -   | ⏳ TODO |
+| POST /api/insights/analyze | -    | ✅          | -         | -   | ⏳ TODO |
+| useInsights hook           | ✅   | -           | ✅        | -   | ⏳ TODO |
+| AIInsightsCard             | -    | -           | ✅        | -   | ⏳ TODO |
+| InsightDetailCard          | -    | -           | ✅        | -   | ⏳ TODO |
+| Full user flow             | -    | -           | -         | ✅  | ⏳ TODO |
 
 ### 11.2 Estimated Time
 
-| Faza | Szacowany czas | Priorytet |
-|------|---------------|-----------|
-| Unit Tests (Services) | 4-6 godzin | MUST |
-| Integration Tests (API) | 3-4 godziny | MUST |
-| Component Tests | 4-5 godzin | SHOULD |
-| E2E Tests | 2-3 godziny | SHOULD |
-| Fixtures & Helpers | 1-2 godziny | NICE TO HAVE |
-| **TOTAL** | **14-20 godzin** | - |
+| Faza                    | Szacowany czas   | Priorytet    |
+| ----------------------- | ---------------- | ------------ |
+| Unit Tests (Services)   | 4-6 godzin       | MUST         |
+| Integration Tests (API) | 3-4 godziny      | MUST         |
+| Component Tests         | 4-5 godzin       | SHOULD       |
+| E2E Tests               | 2-3 godziny      | SHOULD       |
+| Fixtures & Helpers      | 1-2 godziny      | NICE TO HAVE |
+| **TOTAL**               | **14-20 godzin** | -            |
 
 ### 11.3 Priorytetyzacja
 
 **Minimum Viable Tests (MVP):**
+
 1. Unit tests dla `InsightsService.hasEnoughData()`
 2. Unit tests dla `InsightsService.aggregateTransactionsForAI()`
 3. Integration test dla POST `/api/insights/analyze` (happy path)
@@ -1757,6 +1762,7 @@ npm test -- insights
 5. E2E test (happy path: dashboard → insights → view)
 
 **Nice to Have:**
+
 - Wszystkie edge cases w unit tests
 - Component tests dla wszystkich komponentów
 - E2E tests dla wszystkich user flows

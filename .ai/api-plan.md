@@ -346,10 +346,7 @@ Resource Path: `/api/insights`
             "potential_savings": 400.0,
             "priority": "high",
             "reasoning": "You're spending 3500 PLN monthly on groceries...",
-            "actionable_tips": [
-              "Plan weekly meals to reduce impulse purchases",
-              "Compare prices across different stores"
-            ]
+            "actionable_tips": ["Plan weekly meals to reduce impulse purchases", "Compare prices across different stores"]
           }
         ],
         "confidence_score": 85
@@ -369,15 +366,17 @@ Resource Path: `/api/insights`
       "force_refresh": false
     }
     ```
+
     - `months`: Number of months to analyze (1, 2, or 3)
     - `force_refresh`: Optional boolean to bypass cache and generate new analysis
   - **Response Payload (200 OK)**: Same structure as `GET /api/insights/latest`.
-  - **Error Codes**: 
+  - **Error Codes**:
     - `400 Bad Request` (validation error or insufficient data - requires at least 28 days of transaction history)
     - `503 Service Unavailable` (AI service temporarily unavailable)
     - `500 Internal Server Error` (other errors)
 
 **Notes on AI Insights**:
+
 - Requires at least 1 month (28 days) of expense transactions to generate insights
 - Analysis is cached for 24 hours to optimize API costs and response time
 - Uses OpenRouter/OpenAI API for generating recommendations

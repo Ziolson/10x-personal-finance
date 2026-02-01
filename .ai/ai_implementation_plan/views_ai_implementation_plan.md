@@ -13,13 +13,15 @@
 Niniejszy dokument definiuje **wyłącznie** kroki związane z implementacją frontend components, widoków i interfejsu użytkownika dla modułu AI Insights.
 
 **Zakres:** React components, Astro pages, hooks, charts, UI/UX  
-**Nie obejmuje:** Baza danych, API endpoints, backend services  
+**Nie obejmuje:** Baza danych, API endpoints, backend services
 
 **Powiązane dokumenty:**
+
 - `db_ai_changes_plan.md` - implementacja zmian w bazie danych
 - `api_ai_implementation_plan.md` - implementacja API i backend services (prerequisite)
 
 **Prerequisites:**
+
 - ✅ Tabela `ai_insights` w bazie danych
 - ✅ API endpoints działają: `/api/insights/latest`, `/api/insights/analyze`
 - ✅ Typy TypeScript dostępne w `src/types.ts`
@@ -30,29 +32,29 @@ Niniejszy dokument definiuje **wyłącznie** kroki związane z implementacją fr
 
 ### 2.1 Nowe komponenty
 
-| Komponent | Ścieżka | Opis | Priorytet |
-|-----------|---------|------|-----------|
-| `AIInsightsCard` | `src/components/features/dashboard/AIInsightsCard.tsx` | Widget na dashboardzie | MUST |
-| `InsightsView` | `src/components/features/insights/InsightsView.tsx` | Główny kontener strony /insights | MUST |
-| `InsightsHeader` | `src/components/features/insights/InsightsHeader.tsx` | Header z kontrolkami | MUST |
-| `InsightsSummaryBanner` | `src/components/features/insights/InsightsSummaryBanner.tsx` | Banner z metrykami | MUST |
-| `SavingsComparisonChart` | `src/components/features/insights/SavingsComparisonChart.tsx` | Bar chart porównania | MUST |
-| `SavingsImpactChart` | `src/components/features/insights/SavingsImpactChart.tsx` | Area chart projekcji | MUST |
-| `InsightDetailCard` | `src/components/features/insights/InsightDetailCard.tsx` | Karta rekomendacji | MUST |
-| `useInsights` | `src/hooks/useInsights.ts` | Custom hook do API | MUST |
+| Komponent                | Ścieżka                                                       | Opis                             | Priorytet |
+| ------------------------ | ------------------------------------------------------------- | -------------------------------- | --------- |
+| `AIInsightsCard`         | `src/components/features/dashboard/AIInsightsCard.tsx`        | Widget na dashboardzie           | MUST      |
+| `InsightsView`           | `src/components/features/insights/InsightsView.tsx`           | Główny kontener strony /insights | MUST      |
+| `InsightsHeader`         | `src/components/features/insights/InsightsHeader.tsx`         | Header z kontrolkami             | MUST      |
+| `InsightsSummaryBanner`  | `src/components/features/insights/InsightsSummaryBanner.tsx`  | Banner z metrykami               | MUST      |
+| `SavingsComparisonChart` | `src/components/features/insights/SavingsComparisonChart.tsx` | Bar chart porównania             | MUST      |
+| `SavingsImpactChart`     | `src/components/features/insights/SavingsImpactChart.tsx`     | Area chart projekcji             | MUST      |
+| `InsightDetailCard`      | `src/components/features/insights/InsightDetailCard.tsx`      | Karta rekomendacji               | MUST      |
+| `useInsights`            | `src/hooks/useInsights.ts`                                    | Custom hook do API               | MUST      |
 
 ### 2.2 Nowe strony
 
-| Strona | Ścieżka | Opis | Priorytet |
-|--------|---------|------|-----------|
-| Insights | `src/pages/insights.astro` | Dedykowana strona analizy AI | MUST |
+| Strona   | Ścieżka                    | Opis                         | Priorytet |
+| -------- | -------------------------- | ---------------------------- | --------- |
+| Insights | `src/pages/insights.astro` | Dedykowana strona analizy AI | MUST      |
 
 ### 2.3 Modyfikacje istniejących komponentów
 
-| Komponent | Modyfikacja | Priorytet |
-|-----------|-------------|-----------|
-| Dashboard | Dodaj `<AIInsightsCard />` | MUST |
-| Navigation | Dodaj link do `/insights` (opcjonalnie) | SHOULD |
+| Komponent  | Modyfikacja                             | Priorytet |
+| ---------- | --------------------------------------- | --------- |
+| Dashboard  | Dodaj `<AIInsightsCard />`              | MUST      |
+| Navigation | Dodaj link do `/insights` (opcjonalnie) | SHOULD    |
 
 ---
 
@@ -67,8 +69,8 @@ Niniejszy dokument definiuje **wyłącznie** kroki związane z implementacją fr
 **Zawartość:**
 
 ```typescript
-import { useState, useCallback } from 'react';
-import type { AIInsightsDTO, GenerateAIInsightsCommand, ApiErrorResponse } from '@/types';
+import { useState, useCallback } from "react";
+import type { AIInsightsDTO, GenerateAIInsightsCommand, ApiErrorResponse } from "@/types";
 
 // Helper function for consistent API response parsing (zgodny z useAccounts, useBudgets)
 async function parseResponse<T>(response: Response): Promise<T> {
@@ -122,7 +124,7 @@ export function useInsights() {
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
-      const response = await fetch('/api/insights/latest');
+      const response = await fetch("/api/insights/latest");
 
       // Handle 404 as empty state (no insights yet)
       if (response.status === 404) {
@@ -134,7 +136,7 @@ export function useInsights() {
       setState({ data, loading: false, error: null });
       return data;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
+      const message = error instanceof Error ? error.message : "Unknown error";
       setState((prev) => ({ ...prev, loading: false, error: message }));
       return null;
     }
@@ -147,10 +149,10 @@ export function useInsights() {
     setState((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
-      const response = await fetch('/api/insights/analyze', {
-        method: 'POST',
+      const response = await fetch("/api/insights/analyze", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(command),
       });
@@ -159,7 +161,7 @@ export function useInsights() {
       setState({ data, loading: false, error: null });
       return data;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
+      const message = error instanceof Error ? error.message : "Unknown error";
       setState((prev) => ({ ...prev, loading: false, error: message }));
       return null;
     }
@@ -174,6 +176,7 @@ export function useInsights() {
 ```
 
 **Akcje:**
+
 1. ✅ Utwórz plik w `src/components/hooks/useInsights.ts` (zgodnie z konwencją projektu)
 2. ✅ Wklej powyższą zawartość
 3. ✅ Zweryfikuj typy w `src/types.ts`
@@ -289,6 +292,7 @@ export function AIInsightsCard() {
 ```
 
 **Akcje (część 1):**
+
 1. ✅ Utwórz katalog `src/components/features/dashboard/` jeśli nie istnieje
 2. ✅ Utwórz plik `AIInsightsCard.tsx`
 3. ✅ Wklej część 1
@@ -306,7 +310,7 @@ export function AIInsightsCard() {
   // Success state with data
   const topInsight = data.data.insights[0]; // Top recommendation
   const totalSavings = data.data.total_potential_savings;
-  
+
   // Format timestamp
   const generatedAgo = formatTimeAgo(new Date(data.generated_at));
 
@@ -373,11 +377,11 @@ function formatTimeAgo(date: Date): string {
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  
+
   if (diffHours < 1) return 'mniej niż godzinę temu';
   if (diffHours === 1) return '1 godzinę temu';
   if (diffHours < 24) return `${diffHours} godz. temu`;
-  
+
   const diffDays = Math.floor(diffHours / 24);
   if (diffDays === 1) return '1 dzień temu';
   return `${diffDays} dni temu`;
@@ -385,6 +389,7 @@ function formatTimeAgo(date: Date): string {
 ```
 
 **Akcje (część 2):**
+
 1. ✅ Dodaj success state do komponentu
 2. ✅ Dodaj helper function `formatTimeAgo`
 3. ✅ Test komponentu na dashboardzie
@@ -401,7 +406,7 @@ function formatTimeAgo(date: Date): string {
 
 ```astro
 ---
-import AIInsightsCard from '../components/features/dashboard/AIInsightsCard';
+import AIInsightsCard from "../components/features/dashboard/AIInsightsCard";
 // ... inne importy
 ---
 
@@ -410,16 +415,17 @@ import AIInsightsCard from '../components/features/dashboard/AIInsightsCard';
     <!-- Istniejące karty -->
     <AccountsSummaryCard />
     <BudgetsSummaryCard />
-    
+
     <!-- NOWA: AI Insights Card -->
     <AIInsightsCard client:load />
-    
+
     <!-- Inne karty -->
   </div>
 </Layout>
 ```
 
 **Akcje:**
+
 1. ✅ Znajdź plik z dashboardem
 2. ✅ Dodaj import `AIInsightsCard`
 3. ✅ Umieść w odpowiednim miejscu w gridzie
@@ -437,13 +443,13 @@ import AIInsightsCard from '../components/features/dashboard/AIInsightsCard';
 
 ```astro
 ---
-import Layout from '../layouts/Layout.astro';
-import InsightsView from '../components/features/insights/InsightsView';
+import Layout from "../layouts/Layout.astro";
+import InsightsView from "../components/features/insights/InsightsView";
 
 // Sprawdzenie autoryzacji (zgodnie z middleware pattern)
 const session = Astro.locals.session;
 if (!session) {
-  return Astro.redirect('/login');
+  return Astro.redirect("/login");
 }
 
 // Włączenie SSR dla tej strony (wyłączenie prerenderingu)
@@ -458,6 +464,7 @@ export const prerender = false;
 ```
 
 **Akcje:**
+
 1. ✅ Utwórz plik `src/pages/insights.astro`
 2. ✅ Wklej powyższą zawartość
 3. ✅ Zweryfikuj routing: `http://localhost:4321/insights`
@@ -626,6 +633,7 @@ export default function InsightsView() {
 ```
 
 **Akcje:**
+
 1. ✅ Utwórz katalog `src/components/features/insights/`
 2. ✅ Utwórz plik `InsightsView.tsx`
 3. ✅ Wklej powyższą zawartość
@@ -715,6 +723,7 @@ export function InsightsHeader({
 ```
 
 **Akcje:**
+
 1. ✅ Utwórz plik `InsightsHeader.tsx`
 2. ✅ Wklej zawartość
 3. ✅ Zaimportuj komponenty Shadcn (Select)
@@ -791,6 +800,7 @@ export function InsightsSummaryBanner({
 ```
 
 **Akcje:**
+
 1. ✅ Utwórz plik `InsightsSummaryBanner.tsx`
 2. ✅ Wklej zawartość
 
@@ -838,8 +848,8 @@ export function SavingsComparisonChart({ insights }: SavingsComparisonChartProps
         <CardDescription>Obecne vs proponowane cele oszczędności</CardDescription>
       </CardHeader>
       <CardContent>
-        <ResponsiveContainer 
-          width="100%" 
+        <ResponsiveContainer
+          width="100%"
           height={350}
           role="img"
           aria-label="Wykres porównania obecnych wydatków z proponowanymi celami oszczędności dla różnych kategorii"
@@ -891,6 +901,7 @@ export function SavingsComparisonChart({ insights }: SavingsComparisonChartProps
 ```
 
 **Akcje:**
+
 1. ✅ Utwórz plik `SavingsComparisonChart.tsx`
 2. ✅ Wklej zawartość
 3. ✅ Zweryfikuj że Recharts jest zainstalowany (powinien być w projekcie)
@@ -920,7 +931,7 @@ export function SavingsImpactChart({ averageMonthlySpending, potentialSavings }:
   // Generate 12 months projection - memoized to avoid recalculation
   const chartData = useMemo(() => {
     const optimizedMonthly = averageMonthlySpending - potentialSavings;
-    
+
     return Array.from({ length: 12 }, (_, i) => {
       const month = i + 1;
       return {
@@ -968,8 +979,8 @@ export function SavingsImpactChart({ averageMonthlySpending, potentialSavings }:
         </div>
 
         {/* Chart */}
-        <ResponsiveContainer 
-          width="100%" 
+        <ResponsiveContainer
+          width="100%"
           height={250}
           role="img"
           aria-label="Wykres projekcji skumulowanych oszczędności w ciągu 12 miesięcy porównujący scenariusz bez optymalizacji i z optymalizacją wydatków"
@@ -1012,6 +1023,7 @@ export function SavingsImpactChart({ averageMonthlySpending, potentialSavings }:
 ```
 
 **Akcje:**
+
 1. ✅ Utwórz plik `SavingsImpactChart.tsx`
 2. ✅ Wklej zawartość
 3. ✅ useMemo zapewnia optymalizację dla chart data i metrics
@@ -1130,6 +1142,7 @@ export function InsightDetailCard({ insight, rank }: InsightDetailCardProps) {
 ```
 
 **Akcje:**
+
 1. ✅ Utwórz plik `InsightDetailCard.tsx`
 2. ✅ Wklej zawartość
 3. ✅ Zaimportuj komponenty Shadcn (Badge, Progress)
@@ -1181,20 +1194,20 @@ Desktop (≥ 768px):
 
 ## 5. Podsumowanie kroków - tylko frontend
 
-| # | Krok | Plik | Priorytet | Ulepszenia | Status |
-|---|------|------|-----------|------------|--------|
-| 1 | useInsights hook | `src/components/hooks/useInsights.ts` | MUST | ✅ parseResponse helper | ⏳ TODO |
-| 2 | AIInsightsCard (part 1) | Struktura i stany | MUST | ✅ Poprawione importy | ⏳ TODO |
-| 3 | AIInsightsCard (part 2) | Success state | MUST | - | ⏳ TODO |
-| 4 | Integracja z dashboard | Dodaj do dashboard | MUST | - | ⏳ TODO |
-| 5 | Strona Insights | `src/pages/insights.astro` | MUST | ✅ SSR + auth check | ⏳ TODO |
-| 6 | InsightsView | Main container | MUST | ✅ ToastProvider | ⏳ TODO |
-| 7 | InsightsHeader | Header z kontrolkami | MUST | ✅ ARIA labels | ⏳ TODO |
-| 8 | InsightsSummaryBanner | Banner z metrykami | MUST | - | ⏳ TODO |
-| 9 | SavingsComparisonChart | Bar chart | MUST | ✅ useMemo + ARIA | ⏳ TODO |
-| 10 | SavingsImpactChart | Area chart | MUST | ✅ useMemo + ARIA | ⏳ TODO |
-| 11 | InsightDetailCard | Karta rekomendacji | MUST | - | ⏳ TODO |
-| 12 | Testuj UI | Wszystkie komponenty | MUST | - | ⏳ TODO |
+| #   | Krok                    | Plik                                  | Priorytet | Ulepszenia              | Status  |
+| --- | ----------------------- | ------------------------------------- | --------- | ----------------------- | ------- |
+| 1   | useInsights hook        | `src/components/hooks/useInsights.ts` | MUST      | ✅ parseResponse helper | ⏳ TODO |
+| 2   | AIInsightsCard (part 1) | Struktura i stany                     | MUST      | ✅ Poprawione importy   | ⏳ TODO |
+| 3   | AIInsightsCard (part 2) | Success state                         | MUST      | -                       | ⏳ TODO |
+| 4   | Integracja z dashboard  | Dodaj do dashboard                    | MUST      | -                       | ⏳ TODO |
+| 5   | Strona Insights         | `src/pages/insights.astro`            | MUST      | ✅ SSR + auth check     | ⏳ TODO |
+| 6   | InsightsView            | Main container                        | MUST      | ✅ ToastProvider        | ⏳ TODO |
+| 7   | InsightsHeader          | Header z kontrolkami                  | MUST      | ✅ ARIA labels          | ⏳ TODO |
+| 8   | InsightsSummaryBanner   | Banner z metrykami                    | MUST      | -                       | ⏳ TODO |
+| 9   | SavingsComparisonChart  | Bar chart                             | MUST      | ✅ useMemo + ARIA       | ⏳ TODO |
+| 10  | SavingsImpactChart      | Area chart                            | MUST      | ✅ useMemo + ARIA       | ⏳ TODO |
+| 11  | InsightDetailCard       | Karta rekomendacji                    | MUST      | -                       | ⏳ TODO |
+| 12  | Testuj UI               | Wszystkie komponenty                  | MUST      | -                       | ⏳ TODO |
 
 ---
 
@@ -1203,6 +1216,7 @@ Desktop (≥ 768px):
 ### 6.0 Zgodność z regułami projektu
 
 **✅ Zgodność z `.cursor/rules/shared.mdc`:**
+
 - Struktura katalogów: `src/components/hooks/`, `src/components/features/insights/`
 - Custom hooks w `src/components/hooks/useInsights.ts`
 - Typy w `src/types.ts` (AIInsightsDTO, GenerateAIInsightsCommand)
@@ -1210,12 +1224,14 @@ Desktop (≥ 768px):
 - Proper error logging i user-friendly messages (ToastProvider)
 
 **✅ Zgodność z `.cursor/rules/astro.mdc`:**
+
 - `export const prerender = false` dla strony insights.astro (SSR)
 - Sprawdzenie autoryzacji przez `Astro.locals.session`
 - Logika biznesowa wyekstraktowana do services (będzie w API)
 - Hybrid rendering (SSR dla insights.astro)
 
 **✅ Zgodność z `.cursor/rules/frontend.mdc`:**
+
 - Astro components (.astro) dla statycznej struktury strony
 - React components tylko dla interaktywności (InsightsView, charts, cards)
 - Tailwind CSS z responsive variants (md:, lg:)
@@ -1223,6 +1239,7 @@ Desktop (≥ 768px):
 - Dark mode support przez dark: variant (jeśli zaimplementowany w projekcie)
 
 **✅ Zgodność z `.cursor/rules/react.mdc`:**
+
 - Functional components z hooks (nie class components)
 - Brak "use client" directive (to Next.js, nie Astro)
 - Custom hooks w `src/components/hooks/` (useInsights)
@@ -1262,6 +1279,7 @@ Desktop (≥ 768px):
 - ⚠️ Focus indicators - domyślne z Tailwind (focus-visible:)
 
 **Sugerowane ulepszenia accessibility:**
+
 1. Dodać `aria-label` do wykresów w Recharts
 2. Użyć `aria-describedby` dla złożonych metryk
 3. Dodać `role="status"` dla loading states
@@ -1280,6 +1298,7 @@ Desktop (≥ 768px):
 ### 6.4 Następne kroki
 
 Po zakończeniu implementacji UI:
+
 1. Testy E2E z Playwright
 2. Polish & refinements
 3. User testing
@@ -1290,13 +1309,13 @@ Po zakończeniu implementacji UI:
 
 ### Struktura katalogów (shared.mdc) ✅
 
-| Element | Wymagana lokalizacja | Status |
-|---------|---------------------|--------|
-| Custom hook | `src/components/hooks/useInsights.ts` | ✅ Poprawione |
-| View component | `src/components/features/insights/InsightsView.tsx` | ✅ |
-| Sub-components | `src/components/features/insights/*.tsx` | ✅ |
-| Strona Astro | `src/pages/insights.astro` | ✅ |
-| Typy | `src/types.ts` (AIInsightsDTO, etc.) | ✅ |
+| Element        | Wymagana lokalizacja                                | Status        |
+| -------------- | --------------------------------------------------- | ------------- |
+| Custom hook    | `src/components/hooks/useInsights.ts`               | ✅ Poprawione |
+| View component | `src/components/features/insights/InsightsView.tsx` | ✅            |
+| Sub-components | `src/components/features/insights/*.tsx`            | ✅            |
+| Strona Astro   | `src/pages/insights.astro`                          | ✅            |
+| Typy           | `src/types.ts` (AIInsightsDTO, etc.)                | ✅            |
 
 ### Wzorce kodowania (shared.mdc) ✅
 
@@ -1337,21 +1356,22 @@ Po zakończeniu implementacji UI:
 ### Import paths ✅
 
 Wszystkie importy używają alias `@/`:
+
 ```typescript
-import { useInsights } from '@/components/hooks/useInsights';
-import { Card } from '@/components/ui/card';
-import type { AIInsightsDTO } from '@/types';
+import { useInsights } from "@/components/hooks/useInsights";
+import { Card } from "@/components/ui/card";
+import type { AIInsightsDTO } from "@/types";
 ```
 
 ### Spójność z istniejącym kodem ✅
 
-| Pattern | Użycie w projekcie | Użycie w planie |
-|---------|-------------------|-----------------|
-| `parseResponse<T>()` | useAccounts, useBudgets | ✅ useInsights |
-| ToastProvider wrapper | TransactionsView, AccountsView | ✅ InsightsView |
-| Early returns | DashboardView, wszystkie views | ✅ Wszystkie komponenty |
-| Functional components | Cały projekt | ✅ Wszystkie komponenty |
-| `client:load` | Dashboard, Transactions | ✅ InsightsView |
+| Pattern               | Użycie w projekcie             | Użycie w planie         |
+| --------------------- | ------------------------------ | ----------------------- |
+| `parseResponse<T>()`  | useAccounts, useBudgets        | ✅ useInsights          |
+| ToastProvider wrapper | TransactionsView, AccountsView | ✅ InsightsView         |
+| Early returns         | DashboardView, wszystkie views | ✅ Wszystkie komponenty |
+| Functional components | Cały projekt                   | ✅ Wszystkie komponenty |
+| `client:load`         | Dashboard, Transactions        | ✅ InsightsView         |
 
 ---
 

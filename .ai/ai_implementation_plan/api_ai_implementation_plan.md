@@ -13,13 +13,15 @@
 Niniejszy dokument definiuje **wyłącznie** kroki związane z implementacją backend services, API endpoints i integracją z OpenRouter/OpenAI dla modułu AI Insights.
 
 **Zakres:** Backend services, API endpoints, OpenRouter integration, Zod validation  
-**Nie obejmuje:** Baza danych (migracje, tabele), frontend components  
+**Nie obejmuje:** Baza danych (migracje, tabele), frontend components
 
 **Powiązane dokumenty:**
+
 - `db_ai_changes_plan.md` - implementacja zmian w bazie danych (prerequisite)
 - `views_ai_implementation_plan.md` - implementacja frontend components
 
 **Prerequisites:**
+
 - ✅ Tabela `ai_insights` w bazie danych
 - ✅ Typy TypeScript wygenerowane z bazy (`src/db/database.types.ts`)
 
@@ -29,21 +31,21 @@ Niniejszy dokument definiuje **wyłącznie** kroki związane z implementacją ba
 
 ### 2.1 Nowe pliki
 
-| Plik | Opis | Priorytet |
-|------|------|-----------|
-| `src/types.ts` | Typy AI (DTOs, commands, aggregate data) | MUST |
-| `src/lib/services/insights.service.ts` | Główny service dla AI Insights | MUST |
-| `src/lib/services/openrouter.client.ts` | Klient OpenRouter/OpenAI | MUST |
-| `src/pages/api/insights/latest.ts` | GET endpoint - pobierz ostatnią analizę | MUST |
-| `src/pages/api/insights/analyze.ts` | POST endpoint - wygeneruj/odśwież analizę | MUST |
-| `.env.example` | Dodaj zmienne OpenRouter | MUST |
+| Plik                                    | Opis                                      | Priorytet |
+| --------------------------------------- | ----------------------------------------- | --------- |
+| `src/types.ts`                          | Typy AI (DTOs, commands, aggregate data)  | MUST      |
+| `src/lib/services/insights.service.ts`  | Główny service dla AI Insights            | MUST      |
+| `src/lib/services/openrouter.client.ts` | Klient OpenRouter/OpenAI                  | MUST      |
+| `src/pages/api/insights/latest.ts`      | GET endpoint - pobierz ostatnią analizę   | MUST      |
+| `src/pages/api/insights/analyze.ts`     | POST endpoint - wygeneruj/odśwież analizę | MUST      |
+| `.env.example`                          | Dodaj zmienne OpenRouter                  | MUST      |
 
 ### 2.2 Modyfikacje istniejących plików
 
-| Plik | Modyfikacja | Priorytet |
-|------|-------------|-----------|
-| `package.json` | Dodaj dependency: `openai` | MUST |
-| `.ai/api-plan.md` | Dokumentacja nowych endpointów | SHOULD |
+| Plik              | Modyfikacja                    | Priorytet |
+| ----------------- | ------------------------------ | --------- |
+| `package.json`    | Dodaj dependency: `openai`     | MUST      |
+| `.ai/api-plan.md` | Dokumentacja nowych endpointów | SHOULD    |
 
 ---
 
@@ -62,6 +64,7 @@ npm install openai
 **Wersja:** ^4.62.0 (lub nowsza)
 
 **Akcje:**
+
 1. ✅ Uruchom komendę instalacji
 2. ✅ Zweryfikuj że `package.json` zawiera dependency
 3. ✅ Uruchom `npm install` żeby zaktualizować lock file
@@ -103,6 +106,7 @@ APP_NAME=10xPersonal Finance
 ```
 
 **Akcje:**
+
 1. ✅ Utwórz konto na [OpenRouter.ai](https://openrouter.ai/)
 2. ✅ Wygeneruj API key
 3. ✅ Dodaj zmienne do `.env` lokalnie
@@ -215,6 +219,7 @@ export interface AggregatedTransactionData {
 ```
 
 **Akcje:**
+
 1. ✅ Otwórz plik `src/types.ts`
 2. ✅ Dodaj nową sekcję na końcu pliku
 3. ✅ Wklej powyższe typy
@@ -232,7 +237,7 @@ export interface AggregatedTransactionData {
 **Zawartość:**
 
 ```typescript
-import OpenAI from 'openai';
+import OpenAI from "openai";
 
 /**
  * OpenRouter client configuration
@@ -240,10 +245,10 @@ import OpenAI from 'openai';
  */
 export const openRouterClient = new OpenAI({
   apiKey: import.meta.env.OPENROUTER_API_KEY,
-  baseURL: import.meta.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1',
+  baseURL: import.meta.env.OPENROUTER_BASE_URL || "https://openrouter.ai/api/v1",
   defaultHeaders: {
-    'HTTP-Referer': import.meta.env.APP_URL || '',
-    'X-Title': import.meta.env.APP_NAME || '10xPersonal Finance',
+    "HTTP-Referer": import.meta.env.APP_URL || "",
+    "X-Title": import.meta.env.APP_NAME || "10xPersonal Finance",
   },
 });
 
@@ -251,13 +256,14 @@ export const openRouterClient = new OpenAI({
  * AI Model configuration
  */
 export const AI_CONFIG = {
-  model: import.meta.env.AI_MODEL || 'openai/gpt-4o-mini',
-  maxTokens: parseInt(import.meta.env.AI_MAX_TOKENS || '2000', 10),
-  temperature: parseFloat(import.meta.env.AI_TEMPERATURE || '0.7'),
+  model: import.meta.env.AI_MODEL || "openai/gpt-4o-mini",
+  maxTokens: parseInt(import.meta.env.AI_MAX_TOKENS || "2000", 10),
+  temperature: parseFloat(import.meta.env.AI_TEMPERATURE || "0.7"),
 } as const;
 ```
 
 **Akcje:**
+
 1. ✅ Utwórz katalog `src/lib/services/` jeśli nie istnieje
 2. ✅ Utwórz plik `openrouter.client.ts`
 3. ✅ Wklej powyższą zawartość
@@ -274,15 +280,10 @@ export const AI_CONFIG = {
 **Część 1: Struktura i pomocnicze funkcje**
 
 ```typescript
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../db/database.types';
-import type {
-  AIInsightsSummary,
-  AIInsightsDTO,
-  AggregatedTransactionData,
-  GenerateAIInsightsCommand,
-} from '../../types';
-import { openRouterClient, AI_CONFIG } from './openrouter.client';
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "../../db/database.types";
+import type { AIInsightsSummary, AIInsightsDTO, AggregatedTransactionData, GenerateAIInsightsCommand } from "../../types";
+import { openRouterClient, AI_CONFIG } from "./openrouter.client";
 
 /**
  * Insights Service
@@ -298,11 +299,11 @@ export class InsightsService {
   async hasEnoughData(userId: string): Promise<boolean> {
     // Get earliest transaction date
     const { data: transactions, error } = await this.supabase
-      .from('transactions')
-      .select('date')
-      .eq('user_id', userId)
-      .eq('type', 'expense')
-      .order('date', { ascending: true })
+      .from("transactions")
+      .select("date")
+      .eq("user_id", userId)
+      .eq("type", "expense")
+      .order("date", { ascending: true })
       .limit(1);
 
     if (error || !transactions || transactions.length === 0) {
@@ -320,11 +321,7 @@ export class InsightsService {
    * Get the latest cached AI insights for user
    */
   async getLatestInsights(userId: string): Promise<AIInsightsDTO | null> {
-    const { data, error } = await this.supabase
-      .from('ai_insights')
-      .select('id, data, generated_at, months_analyzed')
-      .eq('user_id', userId)
-      .single();
+    const { data, error } = await this.supabase.from("ai_insights").select("id, data, generated_at, months_analyzed").eq("user_id", userId).single();
 
     if (error || !data) {
       return null;
@@ -351,6 +348,7 @@ export class InsightsService {
 ```
 
 **Akcje:**
+
 1. ✅ Utwórz plik `src/lib/services/insights.service.ts`
 2. ✅ Wklej powyższą zawartość (część 1)
 3. ✅ Zweryfikuj importy
@@ -451,7 +449,7 @@ export class InsightsService {
 
     // Extract budget information (if any)
     const budgetMap = new Map<string, { budget_name: string; budget_amount: number; category_names: string[] }>();
-    
+
     for (const tx of transactions) {
       if (tx.categories?.budgets) {
         const budget = tx.categories.budgets;
@@ -489,6 +487,7 @@ export class InsightsService {
 ```
 
 **Akcje:**
+
 1. ✅ Dodaj metodę do klasy `InsightsService`
 2. ✅ Zweryfikuj że typy są poprawne
 3. ✅ Test lokalnie z przykładowymi danymi
@@ -610,6 +609,7 @@ Zwróć odpowiedź w formacie JSON zgodnie ze schematem:
 ```
 
 **Akcje:**
+
 1. ✅ Dodaj metody do klasy `InsightsService`
 2. ✅ Zweryfikuj że prompt jest zgodny z FRD
 3. ✅ Test z przykładowymi danymi
@@ -691,6 +691,7 @@ Zwróć odpowiedź w formacie JSON zgodnie ze schematem:
 ```
 
 **Akcje:**
+
 1. ✅ Dodaj metody do klasy `InsightsService`
 2. ✅ Zweryfikuj logikę cache
 3. ✅ Test całego flow end-to-end
@@ -706,8 +707,8 @@ Zwróć odpowiedź w formacie JSON zgodnie ze schematem:
 **Zawartość:**
 
 ```typescript
-import type { APIRoute } from 'astro';
-import { InsightsService } from '../../../lib/services/insights.service';
+import type { APIRoute } from "astro";
+import { InsightsService } from "../../../lib/services/insights.service";
 
 export const GET: APIRoute = async ({ locals }) => {
   try {
@@ -720,9 +721,9 @@ export const GET: APIRoute = async ({ locals }) => {
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       });
     }
 
@@ -731,33 +732,28 @@ export const GET: APIRoute = async ({ locals }) => {
     const insights = await insightsService.getLatestInsights(user.id);
 
     if (!insights) {
-      return new Response(
-        JSON.stringify({ error: 'No insights available yet' }),
-        {
-          status: 404,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+      return new Response(JSON.stringify({ error: "No insights available yet" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     return new Response(JSON.stringify(insights), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error('GET /api/insights/latest error:', error);
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    console.error("GET /api/insights/latest error:", error);
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 };
 ```
 
 **Akcje:**
+
 1. ✅ Utwórz katalog `src/pages/api/insights/`
 2. ✅ Utwórz plik `latest.ts`
 3. ✅ Wklej powyższą zawartość
@@ -774,10 +770,10 @@ export const GET: APIRoute = async ({ locals }) => {
 **Zawartość:**
 
 ```typescript
-import type { APIRoute } from 'astro';
-import { z } from 'zod';
-import { InsightsService } from '../../../lib/services/insights.service';
-import type { GenerateAIInsightsCommand } from '../../../types';
+import type { APIRoute } from "astro";
+import { z } from "zod";
+import { InsightsService } from "../../../lib/services/insights.service";
+import type { GenerateAIInsightsCommand } from "../../../types";
 
 // Zod schema for request validation
 const GenerateInsightsSchema = z.object({
@@ -796,9 +792,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
     } = await supabase.auth.getUser();
 
     if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       });
     }
 
@@ -809,12 +805,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
     if (!validationResult.success) {
       return new Response(
         JSON.stringify({
-          error: 'Validation error',
+          error: "Validation error",
           details: validationResult.error.errors,
         }),
         {
           status: 400,
-          headers: { 'Content-Type': 'application/json' },
+          headers: { "Content-Type": "application/json" },
         }
       );
     }
@@ -827,46 +823,38 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     return new Response(JSON.stringify(insights), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error('POST /api/insights/analyze error:', error);
+    console.error("POST /api/insights/analyze error:", error);
 
     // Handle specific errors
     if (error instanceof Error) {
-      if (error.message.includes('Insufficient data')) {
-        return new Response(
-          JSON.stringify({ error: error.message }),
-          {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' },
-          }
-        );
+      if (error.message.includes("Insufficient data")) {
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
       }
 
-      if (error.message.includes('Failed to generate AI insights')) {
-        return new Response(
-          JSON.stringify({ error: 'AI service temporarily unavailable. Please try again later.' }),
-          {
-            status: 503,
-            headers: { 'Content-Type': 'application/json' },
-          }
-        );
+      if (error.message.includes("Failed to generate AI insights")) {
+        return new Response(JSON.stringify({ error: "AI service temporarily unavailable. Please try again later." }), {
+          status: 503,
+          headers: { "Content-Type": "application/json" },
+        });
       }
     }
 
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 };
 ```
 
 **Akcje:**
+
 1. ✅ Utwórz plik `analyze.ts` w `src/pages/api/insights/`
 2. ✅ Wklej powyższą zawartość
 3. ✅ Test endpoint: `POST http://localhost:4321/api/insights/analyze`
@@ -879,7 +867,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
 **Dodaj nową sekcję:**
 
-```markdown
+````markdown
 ### 2.7. AI Insights
 
 Resource Path: `/api/insights`
@@ -931,13 +919,14 @@ Resource Path: `/api/insights`
     }
     ```
   - **Response Payload (200 OK)**: Same as GET /api/insights/latest.
-  - **Error Codes**: 
+  - **Error Codes**:
     - `400 Bad Request` (validation error, insufficient data)
     - `503 Service Unavailable` (AI service error)
     - `500 Internal Server Error` (other errors)
-```
+````
 
 **Akcje:**
+
 1. ✅ Otwórz plik `.ai/api-plan.md`
 2. ✅ Znajdź sekcję 1 (Resources) i dodaj AI Insights
 3. ✅ Dodaj sekcję 2.7 z endpointami
@@ -998,20 +987,20 @@ curl -X POST http://localhost:4321/api/insights/analyze \
 
 ## 5. Podsumowanie kroków - tylko API/backend
 
-| # | Krok | Plik/Akcja | Priorytet | Status |
-|---|------|------------|-----------|--------|
-| 1 | Instaluj OpenAI SDK | `npm install openai` | MUST | ⏳ TODO |
-| 2 | Konfiguruj env vars | `.env`, `.env.example` | MUST | ⏳ TODO |
-| 3 | Dodaj typy AI | `src/types.ts` | MUST | ⏳ TODO |
-| 4 | Utwórz OpenRouter client | `src/lib/services/openrouter.client.ts` | MUST | ⏳ TODO |
-| 5 | InsightsService (cz. 1) | Pomocnicze funkcje | MUST | ⏳ TODO |
-| 6 | InsightsService (cz. 2) | Agregacja danych | MUST | ⏳ TODO |
-| 7 | InsightsService (cz. 3) | Komunikacja z AI | MUST | ⏳ TODO |
-| 8 | InsightsService (cz. 4) | Główna logika | MUST | ⏳ TODO |
-| 9 | GET endpoint | `/api/insights/latest` | MUST | ⏳ TODO |
-| 10 | POST endpoint | `/api/insights/analyze` | MUST | ⏳ TODO |
-| 11 | Zaktualizuj docs | `.ai/api-plan.md` | SHOULD | ⏳ TODO |
-| 12 | Testuj API | curl/Postman | MUST | ⏳ TODO |
+| #   | Krok                     | Plik/Akcja                              | Priorytet | Status  |
+| --- | ------------------------ | --------------------------------------- | --------- | ------- |
+| 1   | Instaluj OpenAI SDK      | `npm install openai`                    | MUST      | ⏳ TODO |
+| 2   | Konfiguruj env vars      | `.env`, `.env.example`                  | MUST      | ⏳ TODO |
+| 3   | Dodaj typy AI            | `src/types.ts`                          | MUST      | ⏳ TODO |
+| 4   | Utwórz OpenRouter client | `src/lib/services/openrouter.client.ts` | MUST      | ⏳ TODO |
+| 5   | InsightsService (cz. 1)  | Pomocnicze funkcje                      | MUST      | ⏳ TODO |
+| 6   | InsightsService (cz. 2)  | Agregacja danych                        | MUST      | ⏳ TODO |
+| 7   | InsightsService (cz. 3)  | Komunikacja z AI                        | MUST      | ⏳ TODO |
+| 8   | InsightsService (cz. 4)  | Główna logika                           | MUST      | ⏳ TODO |
+| 9   | GET endpoint             | `/api/insights/latest`                  | MUST      | ⏳ TODO |
+| 10  | POST endpoint            | `/api/insights/analyze`                 | MUST      | ⏳ TODO |
+| 11  | Zaktualizuj docs         | `.ai/api-plan.md`                       | SHOULD    | ⏳ TODO |
+| 12  | Testuj API               | curl/Postman                            | MUST      | ⏳ TODO |
 
 ---
 
@@ -1027,16 +1016,17 @@ curl -X POST http://localhost:4321/api/insights/analyze \
 
 ### 6.2 Potencjalne problemy
 
-| Problem | Rozwiązanie |
-|---------|-------------|
-| OpenRouter timeout | Zwiększ `max_tokens` lub dodaj retry logic |
-| AI zwraca nieprawidłowy JSON | Dodaj Zod schema validation dla AI response |
-| Rate limiting OpenRouter | Implementuj exponential backoff |
-| User ma 0 transakcji | `hasEnoughData()` zwraca false, zwracamy 400 |
+| Problem                      | Rozwiązanie                                  |
+| ---------------------------- | -------------------------------------------- |
+| OpenRouter timeout           | Zwiększ `max_tokens` lub dodaj retry logic   |
+| AI zwraca nieprawidłowy JSON | Dodaj Zod schema validation dla AI response  |
+| Rate limiting OpenRouter     | Implementuj exponential backoff              |
+| User ma 0 transakcji         | `hasEnoughData()` zwraca false, zwracamy 400 |
 
 ### 6.3 Następne kroki
 
 Po zakończeniu implementacji API:
+
 1. **`views_ai_implementation_plan.md`** - implementacja frontend components
 2. Testy E2E z Playwright
 3. Monitoring i logging (opcjonalnie)
