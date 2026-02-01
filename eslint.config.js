@@ -57,4 +57,25 @@ const reactConfig = tseslint.config({
   },
 });
 
-export default tseslint.config(includeIgnoreFile(gitignorePath), baseConfig, jsxA11yConfig, reactConfig, eslintPluginAstro.configs["flat/recommended"], eslintPluginPrettier);
+export default tseslint.config(
+  includeIgnoreFile(gitignorePath),
+  baseConfig,
+  jsxA11yConfig,
+  reactConfig,
+  eslintPluginAstro.configs["flat/recommended"],
+  eslintPluginPrettier,
+  {
+    // Opanowanie plików .astro oraz ich wirtualnych plików (skryptów)
+    files: ["**/*.astro", "**/*.astro/*.js", "**/*.astro/*.ts"],
+    rules: {
+      "prettier/prettier": "off",
+    },
+  },
+  {
+    files: ["**/*.astro", "**/*.astro/*.js", "**/*.astro/*.ts"],
+    rules: {
+      "arrow-body-style": "off",
+      "prefer-arrow-callback": "off",
+    },
+  }
+);
