@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, TrendingUp, DollarSign, BarChart3, Tags, Plus } from "lucide-react";
+import { Home, TrendingUp, DollarSign, BarChart3, Tags, Sparkles, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThemeToggle } from "./ThemeToggle";
@@ -34,6 +34,7 @@ const navigationItems: NavigationItem[] = [
   { name: "Konta", href: "/accounts", icon: <DollarSign className="size-5" /> },
   { name: "Budżety", href: "/budgets", icon: <BarChart3 className="size-5" /> },
   { name: "Kategorie", href: "/categories", icon: <Tags className="size-5" /> },
+  { name: "Rekomendacje AI", href: "/insights", icon: <Sparkles className="size-5" /> },
 ];
 
 /**

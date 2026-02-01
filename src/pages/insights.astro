@@ -1,0 +1,12 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+import InsightsView from '../components/features/insights/InsightsView';
+
+// Enable SSR for this page (disable prerendering)
+// Authentication is handled by middleware and AppLayout
+export const prerender = false;
+---
+
+<AppLayout title="Rekomendacje AI | 10xPersonal Finance">
+  <InsightsView client:load />
+</AppLayout>

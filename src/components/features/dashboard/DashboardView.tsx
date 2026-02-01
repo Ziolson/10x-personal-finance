@@ -7,6 +7,7 @@ import { RecentTransactionsList } from "./RecentTransactionsList";
 import { BudgetsProgressList } from "./BudgetsProgressList";
 import { ExpensesPieChart } from "./ExpensesPieChart";
 import { EmptyState } from "./EmptyState";
+import { AIInsightsCard } from "./AIInsightsCard";
 // Import data fetching
 import { getDashboard } from "@/lib/api";
 import type { DashboardDTO } from "@/types";
@@ -109,20 +110,16 @@ export default function DashboardView() {
           {/* Summary Cards */}
           <SummaryCards summary={data.summary} />
 
-          {/* Main Content Grid */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            {/* Left Column (2/3 width on large screens) */}
-            <div className="space-y-6 lg:col-span-2">
-              <div className="grid gap-6 md:grid-cols-2">
-                <ExpensesPieChart data={data.expense_by_category} />
-                <BudgetsProgressList budgets={data.budget_progress} />
-              </div>
-            </div>
+          {/* Date-dependent content - Charts and Budgets */}
+          <div className="grid gap-6 md:grid-cols-2">
+            <ExpensesPieChart data={data.expense_by_category} />
+            <BudgetsProgressList budgets={data.budget_progress} />
+          </div>
 
-            {/* Right Column (1/3 width) */}
-            <div className="space-y-6">
-              <RecentTransactionsList transactions={data.recent_transactions} />
-            </div>
+          {/* Date-independent content - AI Insights and Recent Transactions */}
+          <div className="grid gap-6 md:grid-cols-2">
+            <AIInsightsCard />
+            <RecentTransactionsList transactions={data.recent_transactions} />
           </div>
         </div>
       )}

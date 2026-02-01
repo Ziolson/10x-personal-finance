@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, TrendingUp, DollarSign, BarChart3, Tags, Plus } from "lucide-react";
+import { Home, TrendingUp, DollarSign, BarChart3, Sparkles, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MobileBottomNavProps {
@@ -22,7 +22,7 @@ const navigationItems: NavItem[] = [
   { name: "Transakcje", href: "/transactions", icon: <TrendingUp className="size-5" /> },
   { name: "Konta", href: "/accounts", icon: <DollarSign className="size-5" /> },
   { name: "Budżety", href: "/budgets", icon: <BarChart3 className="size-5" /> },
-  { name: "Kategorie", href: "/categories", icon: <Tags className="size-5" /> },
+  { name: "AI", href: "/insights", icon: <Sparkles className="size-5" /> },
 ];
 
 /**
