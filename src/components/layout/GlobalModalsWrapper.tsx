@@ -1,6 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useStore } from "@nanostores/react";
-import { isAddTransactionModalOpen } from "@/lib/stores/layoutStore";
+import { isAddTransactionModalOpen, closeAddTransactionModal } from "@/lib/stores/layoutStore";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import TransactionForm from "@/components/features/transactions/components/TransactionForm";
+import useAccounts from "@/components/hooks/useAccounts";
+import { useCategories } from "@/components/hooks/useCategories";
+import { format } from "date-fns";
+import type { CreateTransactionCommand } from "@/types";
+import type { TransactionFormValues } from "@/components/features/transactions/types";
+import logger from "@/lib/logger";
 
 /**
  * GlobalModalsWrapper Component
@@ -16,19 +24,99 @@ import { isAddTransactionModalOpen } from "@/lib/stores/layoutStore";
  */
 export const GlobalModalsWrapper = React.memo(function GlobalModalsWrapper() {
   const isModalOpen = useStore(isAddTransactionModalOpen);
+  const [isLoading, setIsLoading] = useState(false);
+  const { accounts, refetch: fetchAccounts } = useAccounts();
+  const { categories, fetchCategories } = useCategories();
+
+  useEffect(() => {
+    if (isModalOpen) {
+      fetchAccounts();
+      fetchCategories();
+    }
+  }, [isModalOpen, fetchAccounts, fetchCategories]);
+
+  const handleSubmit = async (values: TransactionFormValues) => {
+    setIsLoading(true);
+    try {
+      const dateStr = format(values.date, "yyyy-MM-dd");
+      let command: CreateTransactionCommand;
+
+      if (values.type === "expense") {
+        if (!values.from_account_id || !values.category_id) {
+          throw new Error("Brak wymaganych pól dla wydatku");
+        }
+        command = {
+          type: "expense",
+          amount: values.amount,
+          date: dateStr,
+          description: values.description,
+          from_account_id: values.from_account_id,
+          category_id: values.category_id,
+        };
+      } else if (values.type === "income") {
+        if (!values.to_account_id || !values.category_id) {
+          throw new Error("Brak wymaganych pól dla przychodu");
+        }
+        command = {
+          type: "income",
+          amount: values.amount,
+          date: dateStr,
+          description: values.description,
+          to_account_id: values.to_account_id,
+          category_id: values.category_id,
+        };
+      } else {
+        // transfer
+        if (!values.from_account_id || !values.to_account_id) {
+          throw new Error("Brak wymaganych pól dla transferu");
+        }
+        command = {
+          type: "transfer",
+          amount: values.amount,
+          date: dateStr,
+          description: values.description,
+          from_account_id: values.from_account_id,
+          to_account_id: values.to_account_id,
+        };
+      }
+
+      // Call API to create transaction
+      const response = await fetch("/api/transactions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(command),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Nie udało się dodać transakcji");
+      }
+
+      closeAddTransactionModal();
+
+      // Reload the page to show the new transaction
+      window.location.reload();
+    } catch (error) {
+      logger.error(error);
+      alert(error instanceof Error ? error.message : "Wystąpił błąd podczas dodawania transakcji");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
-      {/* Add Transaction Modal Placeholder */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          {/* TODO: Replace with AddTransactionModal component when ready */}
-          <div className="rounded-lg bg-white p-6 dark:bg-neutral-900">
-            <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">Add Transaction</h2>
-            <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">Modal content will be implemented here</p>
-          </div>
-        </div>
-      )}
+      {/* Add Transaction Modal */}
+      <Dialog open={isModalOpen} onOpenChange={(open) => !open && closeAddTransactionModal()}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Dodaj nową transakcję</DialogTitle>
+          </DialogHeader>
+          <TransactionForm accounts={accounts || []} categories={categories} onSubmit={handleSubmit} isLoading={isLoading} />
+        </DialogContent>
+      </Dialog>
 
       {/* Additional global modals can be added here */}
       {/* Example: */}

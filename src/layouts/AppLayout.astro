@@ -4,7 +4,6 @@ import { Sidebar } from "@/components/layout/Sidebar.tsx";
 import { MobileHeader } from "@/components/layout/MobileHeader.tsx";
 import { MobileBottomNav } from "@/components/layout/MobileBottomNav.tsx";
 import { GlobalModalsWrapper } from "@/components/layout/GlobalModalsWrapper.tsx";
-import { openAddTransactionModal } from "@/lib/stores/layoutStore";
 
 interface Props {
   title?: string;
@@ -19,17 +18,12 @@ const currentPath = new URL(Astro.request.url).pathname;
 const user = Astro.locals.user;
 const userName = user?.email || "User";
 const avatarUrl = undefined; // Avatar URL can be added later from user profile
-
-// Handle add transaction
-const handleAddTransaction = () => {
-  openAddTransactionModal();
-};
 ---
 
 <Layout title={title}>
   <div class="flex h-screen flex-col md:flex-row">
     <!-- Desktop Sidebar (hidden on mobile) -->
-    <Sidebar currentPath={currentPath} userName={userName} avatarUrl={avatarUrl} onAddTransaction={handleAddTransaction} client:load />
+    <Sidebar currentPath={currentPath} userName={userName} avatarUrl={avatarUrl} client:load />
 
     <!-- Mobile Header (hidden on desktop) -->
     <MobileHeader userName={userName} avatarUrl={avatarUrl} client:load />
@@ -44,7 +38,7 @@ const handleAddTransaction = () => {
     </main>
 
     <!-- Mobile Bottom Navigation (hidden on desktop) -->
-    <MobileBottomNav currentPath={currentPath} onAddTransaction={handleAddTransaction} client:load />
+    <MobileBottomNav currentPath={currentPath} client:load />
   </div>
 
   <!-- Global Modals Container -->

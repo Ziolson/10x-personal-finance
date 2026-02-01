@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThemeToggle } from "./ThemeToggle";
 import { LogoutButton } from "./LogoutButton";
 import { cn } from "@/lib/utils";
+import { openAddTransactionModal } from "@/lib/stores/layoutStore";
 
 interface NavigationItem {
   name: string;
@@ -20,8 +21,6 @@ interface SidebarProps {
   userName?: string;
   /** User's avatar URL */
   avatarUrl?: string;
-  /** Callback when "Add Transaction" button is clicked */
-  onAddTransaction: () => void;
   /** Callback when logout is clicked */
   onLogout?: () => Promise<void>;
   /** Optional CSS class for wrapper */
@@ -43,7 +42,7 @@ const navigationItems: NavigationItem[] = [
  * Vertical navigation bar displayed on desktop screens.
  * Includes logo/home link, navigation menu, and user profile section at the bottom.
  */
-export const Sidebar = React.memo(function Sidebar({ currentPath, userName = "User", avatarUrl, onAddTransaction, onLogout, className }: SidebarProps) {
+export const Sidebar = React.memo(function Sidebar({ currentPath, userName = "User", avatarUrl, onLogout, className }: SidebarProps) {
   const isActive = (href: string) => {
     if (href === "/") {
       return currentPath === "/";
@@ -60,6 +59,10 @@ export const Sidebar = React.memo(function Sidebar({ currentPath, userName = "Us
       .slice(0, 2);
   };
 
+  const handleAddTransaction = () => {
+    openAddTransactionModal();
+  };
+
   return (
     <aside
       className={cn("hidden md:flex flex-col h-screen w-64 border-r border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950", className)}
@@ -74,7 +77,7 @@ export const Sidebar = React.memo(function Sidebar({ currentPath, userName = "Us
           <span className="font-semibold text-neutral-900 dark:text-neutral-100">Finance</span>
         </a>
 
-        <Button onClick={onAddTransaction} className="w-full gap-2" size="default" aria-label="Add new transaction">
+        <Button onClick={handleAddTransaction} className="w-full gap-2" size="default" aria-label="Add new transaction">
           <Plus className="size-4" />
           <span>Dodaj transakcję</span>
         </Button>
