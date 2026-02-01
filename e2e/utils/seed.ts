@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import dotenv from "dotenv";
+import logger from "@/lib/logger";
 
 dotenv.config({ path: ".env.test" });
 
@@ -60,7 +61,7 @@ export async function setupE2EData() {
 
     if (createAccountError) throw new Error(`Error creating account: ${createAccountError.message}`);
     accountId = newAccount.id;
-    console.log("Created E2E Account");
+    logger.info("Created E2E Account");
   } else {
     accountId = existingAccounts[0].id;
     // console.log("E2E Account already exists");
@@ -85,7 +86,7 @@ export async function setupE2EData() {
 
     if (createCategoryError) throw new Error(`Error creating category: ${createCategoryError.message}`);
     categoryId = newCategory.id;
-    console.log("Created E2E Category");
+    logger.info("Created E2E Category");
   } else {
     categoryId = existingCategories[0].id;
     // console.log("E2E Category already exists");

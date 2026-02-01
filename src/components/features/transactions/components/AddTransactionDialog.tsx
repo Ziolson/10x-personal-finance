@@ -8,6 +8,7 @@ import useAccounts from "@/components/hooks/useAccounts";
 import { useCategories } from "@/components/hooks/useCategories";
 import type { CreateTransactionCommand } from "@/types";
 import type { TransactionFormValues } from "../types";
+import logger from "@/lib/logger";
 
 interface AddTransactionDialogProps {
   onAdd: (command: CreateTransactionCommand) => Promise<void>;
@@ -50,7 +51,7 @@ export default function AddTransactionDialog({ onAdd }: AddTransactionDialogProp
     } catch (error) {
       // Error handling is usually done in the parent or hook,
       // but we could show toast here if needed.
-      console.error(error);
+      logger.error(error);
     } finally {
       setIsLoading(false);
     }

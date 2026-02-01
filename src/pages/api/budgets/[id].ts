@@ -11,6 +11,7 @@ import type { APIRoute } from "astro";
 import { BudgetIdParamSchema, UpdateBudgetSchema } from "../../../lib/validators/budgets.validators";
 import { updateBudget, deleteBudget } from "../../../lib/services/budget.service";
 import type { UpdateBudgetCommand, ApiErrorResponse, ValidationErrorResponse } from "../../../types";
+import logger from "../../../lib/logger";
 
 export const prerender = false;
 
@@ -63,6 +64,7 @@ export const PUT: APIRoute = async ({ request, params, locals }) => {
           error: {
             message: "Invalid budget ID",
             code: "VALIDATION_ERROR",
+            details: idValidation.error.formErrors.fieldErrors,
           },
         } satisfies ApiErrorResponse),
         {
@@ -158,7 +160,7 @@ export const PUT: APIRoute = async ({ request, params, locals }) => {
         );
       }
 
-      console.error("Error updating budget:", errorMessage);
+      logger.error("Error updating budget:", errorMessage);
 
       return new Response(
         JSON.stringify({
@@ -175,7 +177,7 @@ export const PUT: APIRoute = async ({ request, params, locals }) => {
       );
     }
   } catch (error) {
-    console.error("Unexpected error in PUT /api/budgets/[id]:", error);
+    logger.error("Unexpected error in PUT /api/budgets/[id]:", error);
     return new Response(
       JSON.stringify({
         error: {
@@ -233,6 +235,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
           error: {
             message: "Invalid budget ID",
             code: "VALIDATION_ERROR",
+            details: idValidation.error.formErrors.fieldErrors,
           },
         } satisfies ApiErrorResponse),
         {
@@ -268,7 +271,7 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
         );
       }
 
-      console.error("Error deleting budget:", errorMessage);
+      logger.error("Error deleting budget:", errorMessage);
 
       return new Response(
         JSON.stringify({
@@ -285,7 +288,8 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
       );
     }
   } catch (error) {
-    console.error("Unexpected error in DELETE /api/budgets/[id]:", error);
+    logger.error("Unexpected error in DELETE /api/budgets/[id]:", error);
+
     return new Response(
       JSON.stringify({
         error: {

@@ -11,6 +11,7 @@ import type { APIRoute } from "astro";
 import { GetBudgetsQuerySchema, CreateBudgetSchema } from "../../../lib/validators/budgets.validators";
 import { getBudgets, createBudget } from "../../../lib/services/budget.service";
 import type { CreateBudgetCommand, ApiErrorResponse, ValidationErrorResponse } from "../../../types";
+import logger from "../../../lib/logger";
 
 export const prerender = false;
 
@@ -97,7 +98,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
     } catch (serviceError) {
       const errorMessage = serviceError instanceof Error ? serviceError.message : "Unknown error";
 
-      console.error("Error fetching budgets:", errorMessage);
+      logger.error("Error fetching budgets:", errorMessage);
 
       return new Response(
         JSON.stringify({
@@ -114,7 +115,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
       );
     }
   } catch (error) {
-    console.error("Unexpected error in GET /api/budgets:", error);
+    logger.error("Unexpected error in GET /api/budgets:", error);
 
     return new Response(
       JSON.stringify({
@@ -237,7 +238,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         );
       }
 
-      console.error("Error creating budget:", errorMessage);
+      logger.error("Error creating budget:", errorMessage);
 
       return new Response(
         JSON.stringify({
@@ -254,7 +255,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
   } catch (error) {
-    console.error("Unexpected error in POST /api/budgets:", error);
+    logger.error("Unexpected error in POST /api/budgets:", error);
 
     return new Response(
       JSON.stringify({

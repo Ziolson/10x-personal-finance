@@ -2,6 +2,8 @@ import React, { useCallback } from "react";
 import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+import logger from "@/lib/logger";
+
 interface LogoutButtonProps {
   /** Callback function when logout is clicked */
   onLogout?: () => Promise<void>;
@@ -36,11 +38,11 @@ export const LogoutButton = React.memo(function LogoutButton({ onLogout, classNa
         if (response.ok) {
           window.location.href = "/login";
         } else {
-          console.error("Logout failed");
+          logger.error("Logout failed");
         }
       }
     } catch (error) {
-      console.error("Logout error:", error);
+      logger.error("Logout error:", error);
     } finally {
       setIsLoggingOut(false);
     }

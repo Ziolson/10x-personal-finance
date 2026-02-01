@@ -10,6 +10,7 @@
 
 import type { SupabaseClient } from "../../db/supabase.client";
 import type { CreateBudgetCommand, UpdateBudgetCommand, BudgetDTO, GetBudgetsQuery } from "../../types";
+import logger from "../logger";
 
 /**
  * Fetches all budgets for a user with optional month/year filtering
@@ -112,7 +113,7 @@ export async function createBudget(command: CreateBudgetCommand, userId: string,
     const { error: linkError } = await supabase.from("categories").update({ budget_id: newBudget.id }).in("id", command.category_ids).eq("user_id", userId);
 
     if (linkError) {
-      console.error("Failed to link categories to budget", linkError);
+      logger.error("Failed to link categories to budget", linkError);
       // We continue as the budget itself was created successfully.
     }
   }

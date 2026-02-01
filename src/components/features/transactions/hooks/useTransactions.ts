@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import type { TransactionDTO, PaginationInfo, CreateTransactionCommand, UpdateTransactionCommand, GetTransactionsQuery } from "@/types";
 import type { TransactionFiltersState } from "../types";
 import { format } from "date-fns";
+import logger from "@/lib/logger";
 
 interface UseTransactionsResult {
   transactions: TransactionDTO[];
@@ -59,7 +60,7 @@ export const useTransactions = (): UseTransactionsResult => {
       setPagination(data.pagination);
       setStatus("success");
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       setStatus("error");
     }
   }, [pagination.currentPage, filters]);
@@ -90,13 +91,13 @@ export const useTransactions = (): UseTransactionsResult => {
       });
 
       if (!response.ok) {
-        console.error(response);
+        logger.error(response);
         throw new Error("Failed to create transaction");
       }
 
       await fetchTransactions(); // Refresh list
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       setStatus("error");
       throw error;
     }
@@ -119,7 +120,7 @@ export const useTransactions = (): UseTransactionsResult => {
 
       await fetchTransactions(); // Refresh list
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       setStatus("error");
       throw error;
     }
@@ -138,7 +139,7 @@ export const useTransactions = (): UseTransactionsResult => {
 
       await fetchTransactions(); // Refresh list
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       setStatus("error");
       throw error;
     }

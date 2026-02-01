@@ -6,6 +6,7 @@ import useAccounts from "@/components/hooks/useAccounts";
 import { useCategories } from "@/components/hooks/useCategories";
 import type { TransactionDTO, UpdateTransactionCommand } from "@/types";
 import type { TransactionFormValues } from "../types";
+import logger from "@/lib/logger";
 
 interface EditTransactionDialogProps {
   transaction: TransactionDTO | null;
@@ -45,7 +46,7 @@ export default function EditTransactionDialog({ transaction, open, onOpenChange,
       await onEdit(transaction.id, command);
       onOpenChange(false);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     } finally {
       setIsLoading(false);
     }
