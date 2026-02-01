@@ -27,7 +27,7 @@ export class TransactionsPage {
   constructor(page: Page) {
     this.page = page;
     this.transactionsView = page.getByTestId("transactions-view");
-    this.addTransactionButton = page.getByRole("button", { name: "Dodaj transakcję" });
+    this.addTransactionButton = page.getByTestId("add-transaction-button");
 
     this.filterType = page.getByTestId("filter-type");
     this.filterAccount = page.getByTestId("filter-account");

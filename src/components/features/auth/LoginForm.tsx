@@ -100,7 +100,7 @@ export default function LoginForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="nazwa@przyklad.com" {...field} />
+                  <Input placeholder="nazwa@przyklad.com" {...field} data-testid="email-input" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -118,7 +118,7 @@ export default function LoginForm() {
                   </a>
                 </div>
                 <FormControl>
-                  <PasswordInput placeholder="••••••••" {...field} />
+                  <PasswordInput placeholder="••••••••" {...field} data-testid="password-input" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -127,7 +127,7 @@ export default function LoginForm() {
 
           {error && <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">{error}</div>}
 
-          <Button type="submit" className="w-full" disabled={isLoading || rateLimitCountdown !== null}>
+          <Button type="submit" className="w-full" disabled={isLoading || rateLimitCountdown !== null} data-testid="login-submit-button">
             {isLoading && <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />}
             {rateLimitCountdown !== null ? `Poczekaj ${rateLimitCountdown}s` : "Zaloguj się"}
           </Button>

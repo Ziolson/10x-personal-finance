@@ -84,7 +84,7 @@ export default function AddTransactionDialog({ onAdd }: AddTransactionDialogProp
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button data-testid="add-transaction-button">
           <Plus className="mr-2 h-4 w-4" />
           Dodaj transakcję
         </Button>

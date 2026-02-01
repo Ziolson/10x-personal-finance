@@ -19,9 +19,9 @@ test.describe.serial("Transactions View", () => {
 
     // 3. Login once
     await page.goto("/login");
-    await page.getByLabel("Email").fill(process.env.E2E_USERNAME || "");
-    await page.getByLabel("Hasło").fill(process.env.E2E_PASSWORD || "");
-    await page.getByRole("button", { name: "Zaloguj się" }).click();
+    await page.getByTestId("email-input").fill(process.env.E2E_USERNAME || "");
+    await page.getByTestId("password-input").fill(process.env.E2E_PASSWORD || "");
+    await page.getByTestId("login-submit-button").click();
 
     // Wait for either redirect OR error message
     const errorLocator = page.locator(".text-destructive");
