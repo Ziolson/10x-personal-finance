@@ -1,9 +1,16 @@
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
+/* eslint-disable @typescript-eslint/consistent-indexed-object-style */
+
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
-export interface Database {
+export type Database = {
   graphql_public: {
-    Tables: Record<never, never>;
-    Views: Record<never, never>;
+    Tables: {
+      [_ in never]: never;
+    };
+    Views: {
+      [_ in never]: never;
+    };
     Functions: {
       graphql: {
         Args: {
@@ -15,8 +22,12 @@ export interface Database {
         Returns: Json;
       };
     };
-    Enums: Record<never, never>;
-    CompositeTypes: Record<never, never>;
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
   public: {
     Tables: {
@@ -53,6 +64,38 @@ export interface Database {
             foreignKeyName: "accounts_user_id_fkey";
             columns: ["user_id"];
             isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      ai_insights: {
+        Row: {
+          data: Json;
+          generated_at: string;
+          id: string;
+          months_analyzed: number;
+          user_id: string;
+        };
+        Insert: {
+          data: Json;
+          generated_at?: string;
+          id?: string;
+          months_analyzed: number;
+          user_id: string;
+        };
+        Update: {
+          data?: Json;
+          generated_at?: string;
+          id?: string;
+          months_analyzed?: number;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "ai_insights_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: true;
             referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
@@ -280,14 +323,14 @@ export interface Database {
           budget_amount: number | null;
           budget_id: string | null;
           budget_name: string | null;
+          category_ids: string[] | null;
+          created_at: string | null;
           month: number | null;
           percentage_used: number | null;
           remaining_amount: number | null;
           spent_amount: number | null;
           user_id: string | null;
           year: number | null;
-          created_at: string | null;
-          category_ids: string[] | null;
         };
         Relationships: [
           {
@@ -310,9 +353,11 @@ export interface Database {
       category_type: "expense" | "income";
       transaction_type: "expense" | "income" | "transfer";
     };
-    CompositeTypes: Record<never, never>;
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
-}
+};
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
 
