@@ -72,8 +72,17 @@ export async function getTransactions(query: GetTransactionsQuery, userId: strin
       dataQuery = dataQuery.lte("date", endDate);
     }
 
-    // Step 3: Get total count for pagination
-    const { count, error: countError } = await countQuery;
+    // Step 3 & 4: Execute count and data queries concurrently
+    // Optimization: Running these in parallel reduces latency by avoiding a waterfall
+    const [countResult, dataResult] = await Promise.all([
+      countQuery,
+      dataQuery
+        .order("date", { ascending: false })
+        .order("created_at", { ascending: false })
+        .range(offset, offset + limit - 1),
+    ]);
+
+    const { count, error: countError } = countResult;
 
     if (countError) {
       // eslint-disable-next-line no-console
@@ -87,11 +96,7 @@ export async function getTransactions(query: GetTransactionsQuery, userId: strin
 
     const totalItems = count ?? 0;
 
-    // Step 4: Fetch paginated data sorted by date (newest first)
-    const { data: transactions, error: dataError } = await dataQuery
-      .order("date", { ascending: false })
-      .order("created_at", { ascending: false })
-      .range(offset, offset + limit - 1);
+    const { data: transactions, error: dataError } = dataResult;
 
     if (dataError) {
       // eslint-disable-next-line no-console
