@@ -180,7 +180,7 @@ export async function updateBudget(budgetId: string, userId: string, data: Updat
   }
 
   // Step 3: Update fields
-  const updatePayload: Record<string, any> = {};
+  const updatePayload: { name?: string; amount?: number } = {};
   if (data.name !== undefined) updatePayload.name = data.name;
   if (data.amount !== undefined) updatePayload.amount = data.amount;
 

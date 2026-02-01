@@ -10,7 +10,7 @@ import type { APIRoute } from "astro";
 
 import { GetCategoriesQuerySchema, CreateCategorySchema } from "../../../lib/validators/categories.validators";
 import { getCategories, createCategory } from "../../../lib/services/category.service";
-import type { CreateCategoryCommand, ApiErrorResponse, ValidationErrorResponse, GetCategoriesResponse } from "../../../types";
+import type { CreateCategoryCommand, ApiErrorResponse, ValidationErrorResponse } from "../../../types";
 
 export const prerender = false;
 

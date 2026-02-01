@@ -7,7 +7,8 @@ import TransactionsList from "./components/TransactionsList";
 import AddTransactionDialog from "./components/AddTransactionDialog";
 import EditTransactionDialog from "./components/EditTransactionDialog";
 import DeleteTransactionDialog from "./components/DeleteTransactionDialog";
-import type { TransactionDTO } from "@/types";
+import type { TransactionDTO, CreateTransactionCommand, UpdateTransactionCommand } from "@/types";
+import logger from "@/lib/logger";
 
 function TransactionsViewContent() {
   const notify = useToast();
@@ -16,20 +17,22 @@ function TransactionsViewContent() {
   const [editingTransaction, setEditingTransaction] = useState<TransactionDTO | null>(null);
   const [deletingTransaction, setDeletingTransaction] = useState<TransactionDTO | null>(null);
 
-  const handleAdd = async (command: any) => {
+  const handleAdd = async (command: CreateTransactionCommand) => {
     try {
       await addTransaction(command);
       notify.success("Transakcja została dodana pomyślnie.");
     } catch (error) {
+      logger.error(error);
       notify.error("Nie udało się dodać transakcji.");
     }
   };
 
-  const handleEdit = async (id: string, command: any) => {
+  const handleEdit = async (id: string, command: UpdateTransactionCommand) => {
     try {
       await updateTransaction(id, command);
       notify.success("Transakcja została zaktualizowana pomyślnie.");
     } catch (error) {
+      logger.error(error);
       notify.error("Nie udało się zaktualizować transakcji.");
     }
   };
@@ -39,6 +42,7 @@ function TransactionsViewContent() {
       await deleteTransaction(id);
       notify.success("Transakcja została usunięta pomyślnie.");
     } catch (error) {
+      logger.error(error);
       notify.error("Nie udało się usunąć transakcji.");
     }
   };

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { CreateBudgetSchema } from "@/lib/validators/budgets.validators";
-import type { CategoryDTO, BudgetDTO } from "@/types";
+import type { CategoryDTO } from "@/types";
 import { useMemo } from "react";
 
 // Create a form schema without month/year for the form

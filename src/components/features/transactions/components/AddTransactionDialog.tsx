@@ -30,27 +30,51 @@ export default function AddTransactionDialog({ onAdd }: AddTransactionDialogProp
   const handleSubmit = async (values: TransactionFormValues) => {
     setIsLoading(true);
     try {
-      // Cast values to conform to CreateTransactionCommand union
-      const command = {
-        ...values,
-        date: format(values.date, "yyyy-MM-dd"),
-      } as any; // Type casting simplified here, logic handled in hook/backend
+      const dateStr = format(values.date, "yyyy-MM-dd");
+      let command: CreateTransactionCommand;
 
-      // But we should be precise for runtime correctness
       if (values.type === "expense") {
-        // cleanup unused fields if any
-        delete command.to_account_id;
+        if (!values.from_account_id || !values.category_id) {
+          throw new Error("Brak wymaganych pól dla wydatku");
+        }
+        command = {
+          type: "expense",
+          amount: values.amount,
+          date: dateStr,
+          description: values.description,
+          from_account_id: values.from_account_id,
+          category_id: values.category_id,
+        };
       } else if (values.type === "income") {
-        delete command.from_account_id;
-      } else if (values.type === "transfer") {
-        delete command.category_id;
+        if (!values.to_account_id || !values.category_id) {
+          throw new Error("Brak wymaganych pól dla przychodu");
+        }
+        command = {
+          type: "income",
+          amount: values.amount,
+          date: dateStr,
+          description: values.description,
+          to_account_id: values.to_account_id,
+          category_id: values.category_id,
+        };
+      } else {
+        // transfer
+        if (!values.from_account_id || !values.to_account_id) {
+          throw new Error("Brak wymaganych pól dla transferu");
+        }
+        command = {
+          type: "transfer",
+          amount: values.amount,
+          date: dateStr,
+          description: values.description,
+          from_account_id: values.from_account_id,
+          to_account_id: values.to_account_id,
+        };
       }
 
-      await onAdd(command as CreateTransactionCommand);
+      await onAdd(command);
       setOpen(false);
     } catch (error) {
-      // Error handling is usually done in the parent or hook,
-      // but we could show toast here if needed.
       logger.error(error);
     } finally {
       setIsLoading(false);

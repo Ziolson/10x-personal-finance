@@ -94,7 +94,7 @@ export default function useAccounts() {
         method: "DELETE",
       });
 
-      await parseResponse<void>(response);
+      await parseResponse<undefined>(response);
       await fetchAccounts();
     },
     [fetchAccounts]

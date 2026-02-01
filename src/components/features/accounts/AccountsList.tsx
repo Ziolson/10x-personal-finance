@@ -13,7 +13,7 @@ export default function AccountsList({ accounts, onEdit, onDelete }: AccountsLis
   }
 
   return (
-    <ul role="list" className="space-y-3">
+    <ul className="space-y-3">
       {accounts.map((account) => (
         <li key={account.id}>
           <AccountListItem account={account} onEdit={onEdit} onDelete={onDelete} />

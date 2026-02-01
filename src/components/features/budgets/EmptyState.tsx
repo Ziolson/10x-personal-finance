@@ -9,7 +9,7 @@ export default function EmptyState() {
       </div>
       <h3 className="mt-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100">Brak budżetów</h3>
       <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">Nie masz jeszcze żadnych budżetów dla tego miesiąca.</p>
-      <p className="text-sm text-neutral-500 dark:text-neutral-400">Kliknij przycisk "Dodaj budżet" aby utworzyć pierwszy budżet.</p>
+      <p className="text-sm text-neutral-500 dark:text-neutral-400">Kliknij przycisk &quot;Dodaj budżet&quot; aby utworzyć pierwszy budżet.</p>
     </div>
   );
 }

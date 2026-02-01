@@ -21,7 +21,7 @@ type PaginationLinkProps = {
 } & Pick<React.ComponentProps<typeof Button>, "size"> &
   React.ComponentProps<"a">;
 
-function PaginationLink({ className, isActive, size = "icon", ...props }: PaginationLinkProps) {
+function PaginationLink({ className, isActive, size = "icon", children, ...props }: PaginationLinkProps) {
   return (
     <a
       aria-current={isActive ? "page" : undefined}
@@ -35,7 +35,9 @@ function PaginationLink({ className, isActive, size = "icon", ...props }: Pagina
         className
       )}
       {...props}
-    />
+    >
+      {children}
+    </a>
   );
 }
 
@@ -59,7 +61,7 @@ function PaginationNext({ className, ...props }: React.ComponentProps<typeof Pag
 
 function PaginationEllipsis({ className, ...props }: React.ComponentProps<"span">) {
   return (
-    <span aria-hidden data-slot="pagination-ellipsis" className={cn("flex size-9 items-center justify-center", className)} {...props}>
+    <span data-slot="pagination-ellipsis" className={cn("flex size-9 items-center justify-center", className)} {...props}>
       <MoreHorizontalIcon className="size-4" />
       <span className="sr-only">More pages</span>
     </span>

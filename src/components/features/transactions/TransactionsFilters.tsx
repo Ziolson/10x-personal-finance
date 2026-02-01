@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import useAccounts from "@/components/hooks/useAccounts";
 import { useCategories } from "@/components/hooks/useCategories";
 import type { TransactionFiltersState } from "../types";
+import type { TransactionType } from "@/types";
 
 interface TransactionsFiltersProps {
   filters: TransactionFiltersState;
@@ -26,7 +27,7 @@ export function TransactionsFilters({ filters, onFilterChange }: TransactionsFil
   const handleTypeChange = (value: string) => {
     onFilterChange({
       ...filters,
-      type: value === "all" ? undefined : (value as any),
+      type: value === "all" ? undefined : (value as TransactionType),
     });
   };
 

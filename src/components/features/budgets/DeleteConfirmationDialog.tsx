@@ -30,7 +30,7 @@ export default function DeleteConfirmationDialog({ isOpen, onOpenChange, onConfi
         <AlertDialogHeader>
           <AlertDialogTitle>Czy na pewno chcesz usunąć ten budżet?</AlertDialogTitle>
           <AlertDialogDescription>
-            Budżet "<strong>{budget.name}</strong>" zostanie trwale usunięty. Ta operacja jest nieodwracalna.
+            Budżet &quot;<strong>{budget.name}</strong>&quot; zostanie trwale usunięty. Ta operacja jest nieodwracalna.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

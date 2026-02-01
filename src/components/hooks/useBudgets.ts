@@ -123,7 +123,7 @@ export function useBudgets(params?: UseBudgetsParams): UseBudgetsResult {
         method: "DELETE",
       });
 
-      await parseResponse<void>(response);
+      await parseResponse<undefined>(response);
       await fetchBudgets();
     },
     [fetchBudgets]

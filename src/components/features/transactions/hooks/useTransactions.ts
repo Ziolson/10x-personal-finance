@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import type { TransactionDTO, PaginationInfo, CreateTransactionCommand, UpdateTransactionCommand, GetTransactionsQuery } from "@/types";
+import type { TransactionDTO, PaginationInfo, CreateTransactionCommand, UpdateTransactionCommand } from "@/types";
 import type { TransactionFiltersState } from "../types";
 import { format } from "date-fns";
 import logger from "@/lib/logger";

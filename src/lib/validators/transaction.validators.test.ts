@@ -4,7 +4,6 @@ import { CreateTransactionSchema, UpdateTransactionSchema, GetTransactionsQueryS
 describe("transaction.validators", () => {
   const validUUID1 = "550e8400-e29b-41d4-a716-446655440000";
   const validUUID2 = "550e8400-e29b-41d4-a716-446655440001";
-  const validUUID3 = "550e8400-e29b-41d4-a716-446655440002";
 
   describe("CreateTransactionSchema", () => {
     describe("Expense", () => {

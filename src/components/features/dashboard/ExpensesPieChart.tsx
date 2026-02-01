@@ -22,7 +22,14 @@ export function ExpensesPieChart({ data }: ExpensesPieChartProps) {
   // Filter out zero amounts just in case
   const chartData = data.filter((item) => item.amount > 0);
 
-  const CustomTooltip = ({ active, payload }: any) => {
+  interface CustomTooltipProps {
+    active?: boolean;
+    payload?: {
+      payload: ExpenseByCategory;
+    }[];
+  }
+
+  const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
       const item = payload[0].payload;
       return (

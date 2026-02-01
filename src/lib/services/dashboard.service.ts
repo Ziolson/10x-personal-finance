@@ -110,7 +110,6 @@ async function getExpensesByCategory(client: SupabaseClient, userId: string, sta
 
   // Aggregate
   for (const t of transactions || []) {
-    // @ts-ignore - Supabase type inference for joined tables can be tricky
     const categoryName = t.categories?.name || "Uncategorized";
     const current = categoryMap.get(categoryName) || 0;
     categoryMap.set(categoryName, current + t.amount);
@@ -173,11 +172,11 @@ async function getBudgetProgress(client: SupabaseClient, userId: string, month: 
 
   // Map DB Type to DTO Type
   return (data || []).map((b) => ({
-    budget_id: b.budget_id!,
-    budget_name: b.budget_name!,
-    budget_amount: b.budget_amount!,
-    spent_amount: b.spent_amount!,
-    remaining_amount: b.remaining_amount!,
-    percentage_used: b.percentage_used!,
+    budget_id: b.budget_id ?? "",
+    budget_name: b.budget_name ?? "Unknown",
+    budget_amount: b.budget_amount ?? 0,
+    spent_amount: b.spent_amount ?? 0,
+    remaining_amount: b.remaining_amount ?? 0,
+    percentage_used: b.percentage_used ?? 0,
   }));
 }
