@@ -156,13 +156,20 @@ export async function getAccounts(userId: string, supabase: SupabaseClient): Pro
  * @throws Error if database query fails
  */
 export async function getAccountById(accountId: string, userId: string, supabase: SupabaseClient): Promise<AccountDTO | null> {
-  // Step 1: Fetch the account by ID and user_id (authorization check)
-  const { data: account, error: accountError } = await supabase
+  // Step 1: Start fetching account and balance concurrently
+  const accountPromise = supabase
     .from("accounts")
     .select("id, name, initial_balance, currency, created_at, updated_at")
     .eq("id", accountId)
     .eq("user_id", userId)
     .maybeSingle();
+
+  const balancePromise = supabase.from("account_balances").select("current_balance").eq("account_id", accountId).maybeSingle();
+
+  // Step 2: Await both results
+  const [accountResult, balanceResult] = await Promise.all([accountPromise, balancePromise]);
+
+  const { data: account, error: accountError } = accountResult;
 
   if (accountError) {
     throw new Error(`Database error while fetching account: ${accountError.message}`);
@@ -173,8 +180,7 @@ export async function getAccountById(accountId: string, userId: string, supabase
     return null;
   }
 
-  // Step 2: Fetch current balance from account_balances view
-  const { data: balanceData, error: balanceError } = await supabase.from("account_balances").select("current_balance").eq("account_id", accountId).maybeSingle();
+  const { data: balanceData, error: balanceError } = balanceResult;
 
   if (balanceError) {
     // Log error but don't fail - use initial_balance as fallback
