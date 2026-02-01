@@ -1,7 +1,7 @@
-name: Pull Request
+name: Production Build & Deploy
 
 on:
-  pull_request:
+  push:
     branches: ["master"]
 
 jobs:
@@ -140,21 +140,20 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
-  status-comment:
-    name: Post Status Comment
+  deploy:
+    name: Deploy to Production
     needs: [build, lint, type-check, audit, unit-test, e2e-test]
     runs-on: ubuntu-latest
-    if: success()
-    permissions:
-      pull-requests: write
+    environment: production
     steps:
-      - name: Post success comment
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '✅ All checks (Build, Lint, Type Check, Audit, Unit Tests, E2E Tests) passed successfully!'
-            })
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy Information
+        run: |
+          echo "Starting deployment to production..."
+          echo "This is a placeholder. Add your deployment steps here."
+          # Example:
+          # - Install doctl (DigitalOcean CLI)
+          # - doctl apps create-deployment ...
+          # - OR triggers a webhook
