@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useId } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { z } from "zod";
 import type { AccountFormViewModel } from "@/types";
 
@@ -43,7 +43,7 @@ export default function AccountForm({ onSubmit, initialData, isSubmitting, serve
     formState: { errors },
     reset,
   } = useForm<AccountFormViewModel>({
-    resolver: zodResolver(accountFormSchema),
+    resolver: zodResolver(accountFormSchema) as Resolver<AccountFormViewModel>,
     mode: "onTouched",
     defaultValues: {
       name: initialData?.name ?? "",
@@ -92,7 +92,7 @@ export default function AccountForm({ onSubmit, initialData, isSubmitting, serve
           className="mt-1 w-full rounded-md border border-neutral-200 px-3 py-2 text-sm text-neutral-900 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
           placeholder="0.00"
           aria-invalid={errors.initial_balance || serverErrors?.initial_balance ? "true" : "false"}
-          {...register("initial_balance", { valueAsNumber: true })}
+          {...register("initial_balance")}
         />
         {(errors.initial_balance?.message || serverErrors?.initial_balance) && (
           <p className="mt-1 text-xs text-destructive">{errors.initial_balance?.message ?? serverErrors?.initial_balance}</p>

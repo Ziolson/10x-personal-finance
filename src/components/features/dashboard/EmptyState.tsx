@@ -27,7 +27,9 @@ export function EmptyState() {
           <AddAccountModal
             isOpen={isModalOpen}
             onOpenChange={setIsModalOpen}
-            onSubmit={createAccount}
+            onSubmit={async (data) => {
+              await createAccount(data);
+            }}
             onSuccess={() => {
               setIsModalOpen(false);
               window.location.reload();

@@ -8,7 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import useAccounts from "@/components/hooks/useAccounts";
 import { useCategories } from "@/components/hooks/useCategories";
-import type { TransactionFiltersState } from "../types";
+import type { TransactionFiltersState } from "./types";
 import type { TransactionType } from "@/types";
 
 interface TransactionsFiltersProps {

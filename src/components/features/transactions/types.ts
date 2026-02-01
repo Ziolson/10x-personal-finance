@@ -1,13 +1,11 @@
+import type { DateRange } from "react-day-picker";
 import type { TransactionType } from "@/types";
 
 export interface TransactionFiltersState {
   type?: TransactionType;
   accountId?: string;
   categoryId?: string;
-  dateRange?: {
-    from?: Date;
-    to?: Date;
-  };
+  dateRange?: DateRange;
 }
 
 export interface TransactionFormValues {

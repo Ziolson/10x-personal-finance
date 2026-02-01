@@ -315,10 +315,10 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
     // Step 3: Fetch transactions with filters from service layer
     try {
-      const result = await getTransactions(query, user.id, locals.supabase);
+      const result: GetTransactionsResponse = await getTransactions(query, user.id, locals.supabase);
 
       // Step 4: Return success response with 200 OK
-      return new Response(JSON.stringify(result) as unknown as GetTransactionsResponse, {
+      return new Response(JSON.stringify(result), {
         status: 200,
         headers: { "Content-Type": "application/json" },
       });

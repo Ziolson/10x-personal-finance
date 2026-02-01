@@ -1,4 +1,4 @@
-import { test, expect, Page } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import { TransactionsPage } from "./pages/TransactionsPage";
 import { setupE2EData } from "./utils/seed";
 
