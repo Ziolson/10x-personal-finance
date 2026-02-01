@@ -56,31 +56,32 @@ export function SavingsImpactChart({ averageMonthlySpending, potentialSavings }:
         </div>
 
         {/* Chart */}
-        <ResponsiveContainer
-          width="100%"
-          height={250}
+        <div
+          className="h-[250px] w-full"
           role="img"
           aria-label="Wykres projekcji skumulowanych oszczędności w ciągu 12 miesięcy porównujący scenariusz bez optymalizacji i z optymalizacją wydatków"
         >
-          <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-            <defs>
-              <linearGradient id="colorWithout" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#9ca3af" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#9ca3af" stopOpacity={0} />
-              </linearGradient>
-              <linearGradient id="colorWith" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" fontSize={12} />
-            <YAxis fontSize={12} />
-            <Tooltip formatter={(value: number) => `${value.toFixed(0)} PLN`} />
-            <Area type="monotone" dataKey="Bez optymalizacji" stroke="#9ca3af" fillOpacity={1} fill="url(#colorWithout)" />
-            <Area type="monotone" dataKey="Z optymalizacją" stroke="#22c55e" fillOpacity={1} fill="url(#colorWith)" />
-          </AreaChart>
-        </ResponsiveContainer>
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="colorWithout" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#9ca3af" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#9ca3af" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="colorWith" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" fontSize={12} />
+              <YAxis fontSize={12} />
+              <Tooltip formatter={(value: number | undefined) => (value !== undefined ? `${value.toFixed(0)} PLN` : "0 PLN")} />
+              <Area type="monotone" dataKey="Bez optymalizacji" stroke="#9ca3af" fillOpacity={1} fill="url(#colorWithout)" />
+              <Area type="monotone" dataKey="Z optymalizacją" stroke="#22c55e" fillOpacity={1} fill="url(#colorWith)" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
       </CardContent>
     </Card>
   );
