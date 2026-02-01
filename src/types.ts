@@ -360,3 +360,100 @@ export interface ValidationErrorResponse {
     details: ValidationError[];
   };
 }
+
+// =============================================================================
+// AI Insights Types
+// =============================================================================
+
+/**
+ * AI Insight Entity - Re-export from database types
+ */
+export type AIInsightEntity = Tables<"ai_insights">;
+
+/**
+ * Single AI insight recommendation for a specific category
+ */
+export interface AIInsight {
+  id: string;
+  category: string;
+  category_id?: string; // Optional reference to categories table (not enforced)
+  current_spending: number;
+  suggested_target: number;
+  potential_savings: number;
+  priority: "high" | "medium" | "low";
+  reasoning: string;
+  actionable_tips: string[];
+}
+
+/**
+ * Analysis period metadata
+ */
+export interface AIAnalysisPeriod {
+  start_date: string; // YYYY-MM-DD
+  end_date: string; // YYYY-MM-DD
+  months_analyzed: 1 | 2 | 3;
+}
+
+/**
+ * Complete AI insights summary structure (stored in JSONB)
+ */
+export interface AIInsightsSummary {
+  analysis_period: AIAnalysisPeriod;
+  total_spending: number;
+  average_monthly_spending: number;
+  total_potential_savings: number;
+  general_recommendation: string;
+  insights: AIInsight[];
+  confidence_score?: number; // Optional 0-100
+}
+
+/**
+ * AI Insights DTO - Response type for AI insights endpoints
+ * Omits user_id for security reasons (handled by RLS)
+ */
+export interface AIInsightsDTO {
+  id: string;
+  data: AIInsightsSummary;
+  generated_at: string;
+  months_analyzed: 1 | 2 | 3;
+}
+
+/**
+ * Generate AI Insights Command - Request payload for generating new insights
+ */
+export interface GenerateAIInsightsCommand {
+  months: 1 | 2 | 3;
+  force_refresh?: boolean; // Optional flag to bypass cache
+}
+
+/**
+ * Aggregated transaction data for AI analysis (input for OpenAI)
+ */
+export interface AggregatedTransactionData {
+  period: {
+    start_date: string;
+    end_date: string;
+    months: number;
+  };
+  total_spending: number;
+  average_monthly_spending: number;
+  category_breakdown: {
+    category_id: string;
+    category_name: string;
+    total_amount: number;
+    monthly_average: number;
+    transaction_count: number;
+  }[];
+  budgets?: {
+    budget_name: string;
+    budget_amount: number;
+    category_names: string[];
+  }[];
+}
+
+// =============================================================================
+// AI Insights Response Types
+// =============================================================================
+
+export type GetLatestInsightsResponse = AIInsightsDTO;
+export type GenerateInsightsResponse = AIInsightsDTO;
