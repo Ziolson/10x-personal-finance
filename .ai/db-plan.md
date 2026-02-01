@@ -173,6 +173,62 @@ Centralna tabela dla wszystkich operacji finansowych (wydatki, przychody, transf
 
 ---
 
+### ai_insights
+
+Cache'owane rekomendacje AI dotyczące możliwości oszczędności użytkownika.
+
+| Kolumna          | Typ         | Ograniczenia                                        | Opis                                             |
+| ---------------- | ----------- | --------------------------------------------------- | ------------------------------------------------ |
+| id               | UUID        | PRIMARY KEY, DEFAULT gen_random_uuid()              | Identyfikator analizy                            |
+| user_id          | UUID        | NOT NULL, REFERENCES profiles(id) ON DELETE CASCADE | Właściciel analizy                               |
+| data             | JSONB       | NOT NULL                                            | Pełna odpowiedź AI (struktura AIInsightsSummary) |
+| generated_at     | TIMESTAMPTZ | NOT NULL, DEFAULT now()                             | Data wygenerowania analizy                       |
+| months_analyzed  | INTEGER     | NOT NULL, CHECK (months_analyzed IN (1, 2, 3))      | Liczba miesięcy objętych analizą                 |
+
+**Ograniczenia:**
+
+- PRIMARY KEY: `id`
+- FOREIGN KEY: `user_id` REFERENCES `profiles(id)` ON DELETE CASCADE
+- UNIQUE: `user_id` - jeden użytkownik może mieć tylko jedną aktywną analizę (upsert pattern)
+- CHECK: `months_analyzed IN (1, 2, 3)`
+
+**Indeksy:**
+
+- PRIMARY KEY na `id` (automatyczny)
+- UNIQUE INDEX na `user_id` (automatyczny)
+- INDEX na `data` USING gin - dla zapytań JSONB (opcjonalnie, na przyszłość)
+
+**Struktura JSONB w kolumnie `data`:**
+
+```typescript
+{
+  "analysis_period": {
+    "start_date": "YYYY-MM-DD",
+    "end_date": "YYYY-MM-DD",
+    "months_analyzed": 1 | 2 | 3
+  },
+  "total_spending": number,
+  "average_monthly_spending": number,
+  "total_potential_savings": number,
+  "general_recommendation": "string",
+  "confidence_score": number, // opcjonalnie
+  "insights": [
+    {
+      "id": "string",
+      "category": "string",
+      "current_spending": number,
+      "suggested_target": number,
+      "potential_savings": number,
+      "priority": "high" | "medium" | "low",
+      "reasoning": "string",
+      "actionable_tips": ["string", "string", ...]
+    }
+  ]
+}
+```
+
+---
+
 ## 3. Relacje między tabelami
 
 ### profiles ↔ auth.users
@@ -209,6 +265,13 @@ Centralna tabela dla wszystkich operacji finansowych (wydatki, przychody, transf
 - **Opis**: Użytkownik może mieć wiele transakcji
 - **Implementacja**: `transactions.user_id` REFERENCES `profiles(id)`
 - **ON DELETE**: CASCADE - usunięcie profilu usuwa wszystkie jego transakcje
+
+### profiles → ai_insights
+
+- **Typ**: Jeden-do-jednego
+- **Opis**: Użytkownik może mieć tylko jedną aktywną analizę AI (cache'owaną)
+- **Implementacja**: `ai_insights.user_id` REFERENCES `profiles(id)` + UNIQUE constraint
+- **ON DELETE**: CASCADE - usunięcie profilu usuwa jego analizę AI
 
 ### budgets → categories
 
@@ -276,6 +339,8 @@ CREATE TRIGGER update_budgets_updated_at BEFORE UPDATE ON budgets
 CREATE TRIGGER update_transactions_updated_at BEFORE UPDATE ON transactions
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 ```
+
+**Uwaga:** Tabela `ai_insights` nie ma kolumny `updated_at`, ponieważ jest to cache read-only - dane są zawsze nadpisywane całościowo (upsert), a `generated_at` rejestruje moment utworzenia/aktualizacji.
 
 ### Trigger: create_default_categories
 
@@ -356,6 +421,7 @@ ALTER TABLE accounts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE budgets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ai_insights ENABLE ROW LEVEL SECURITY;
 ```
 
 ### Polityki dla tabeli `profiles`
@@ -533,6 +599,41 @@ CREATE POLICY "Users can delete their own transactions"
     USING (auth.uid() = user_id);
 ```
 
+### Polityki dla tabeli `ai_insights`
+
+**SELECT**:
+
+```sql
+CREATE POLICY "Users can view their own insights"
+    ON ai_insights FOR SELECT
+    USING (auth.uid() = user_id);
+```
+
+**INSERT**:
+
+```sql
+CREATE POLICY "Users can insert their own insights"
+    ON ai_insights FOR INSERT
+    WITH CHECK (auth.uid() = user_id);
+```
+
+**UPDATE**:
+
+```sql
+CREATE POLICY "Users can update their own insights"
+    ON ai_insights FOR UPDATE
+    USING (auth.uid() = user_id)
+    WITH CHECK (auth.uid() = user_id);
+```
+
+**DELETE**:
+
+```sql
+CREATE POLICY "Users can delete their own insights"
+    ON ai_insights FOR DELETE
+    USING (auth.uid() = user_id);
+```
+
 ---
 
 ## 6. Widoki (Views)
@@ -659,6 +760,13 @@ $$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
 10. **Automatyczne kategorie**: Funkcja `create_default_categories_for_user()` tworzy predefiniowany zestaw kategorii dla każdego nowego użytkownika. Lista kategorii jest zdefiniowana "na sztywno" w ciele funkcji, co ułatwia zarządzanie i aktualizację.
 
 11. **Unikalne nazwy**: Nazwy kont i kategorii muszą być unikalne w ramach jednego użytkownika (UNIQUE constraint na `(user_id, name)`). To zapobiega pomyłkom i poprawia UX.
+
+12. **Tabela ai_insights jako cache**: Tabela `ai_insights` przechowuje odpowiedzi z AI API w formacie JSONB. To jedyna tabela w schemacie używająca JSONB, co jest uzasadnione, ponieważ:
+    - Dane są cache'em zewnętrznego API, nie danymi wprowadzanymi przez użytkownika
+    - Struktura odpowiedzi AI może ewoluować bez potrzeby migracji
+    - Jeden użytkownik = jedna aktywna analiza (upsert pattern z UNIQUE constraint)
+    - Frontend otrzymuje dane w dokładnie takiej strukturze, jakiej potrzebuje
+    - Brak potrzeby skomplikowanych JOIN'ów przy odczycie
 
 ### Normalizacja
 

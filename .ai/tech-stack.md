@@ -7,10 +7,15 @@
 - **TypeScript 5**: Język programowania używany w całym projekcie w celu zapewnienia jakości i czytelności kodu.
 - **Tailwind CSS 4**: Framework CSS do szybkiego i spójnego stylowania aplikacji.
 - **shadcn/ui**: Biblioteka gotowych komponentów UI, przyspieszająca budowę interfejsu użytkownika.
+- **Recharts**: Biblioteka do wizualizacji danych i wykresów.
 
 ## Backend
 
 - **Supabase**: Platforma Backend-as-a-Service (BaaS) zarządzająca bazą danych, autentykacją użytkowników i API projektu.
+
+## AI
+
+- **OpenRouter + GPT-4o-mini**: Integracja z modelami AI do generowania rekomendacji oszczędnościowych.
 
 ## Testowanie
 

@@ -11,6 +11,7 @@ The API is structured around the following core resources:
 - **Budgets**: Represents monthly user budgets. Corresponds to the `budgets` table.
 - **Transactions**: Represents all financial operations (income, expense, transfer). Corresponds to the `transactions` table.
 - **Dashboard**: A virtual resource for aggregated data views, leveraging the `account_balances` and `budget_progress` database views.
+- **AI Insights**: A virtual resource for AI-powered savings recommendations and financial insights, leveraging OpenRouter/OpenAI integration.
 - **Auth**: A virtual resource for handling user authentication via Supabase.
 
 ## 2. Endpoints
@@ -313,6 +314,76 @@ Resource Path: `/api/dashboard`
     ```
   - **Error Codes**: `400 Bad Request` (invalid month/year).
 
+### 2.7. AI Insights
+
+Resource Path: `/api/insights`
+
+---
+
+- **`GET /api/insights/latest`**
+  - **Description**: Retrieves the latest cached AI insights for the authenticated user. Returns financial analysis with savings recommendations based on historical transaction data.
+  - **Response Payload (200 OK)**:
+    ```json
+    {
+      "id": "uuid",
+      "data": {
+        "analysis_period": {
+          "start_date": "2025-11-01",
+          "end_date": "2026-01-31",
+          "months_analyzed": 3
+        },
+        "total_spending": 37500.0,
+        "average_monthly_spending": 12500.0,
+        "total_potential_savings": 850.0,
+        "general_recommendation": "Based on your spending patterns...",
+        "insights": [
+          {
+            "id": "ins_1",
+            "category": "Groceries",
+            "category_id": "uuid",
+            "current_spending": 3500.0,
+            "suggested_target": 3100.0,
+            "potential_savings": 400.0,
+            "priority": "high",
+            "reasoning": "You're spending 3500 PLN monthly on groceries...",
+            "actionable_tips": [
+              "Plan weekly meals to reduce impulse purchases",
+              "Compare prices across different stores"
+            ]
+          }
+        ],
+        "confidence_score": 85
+      },
+      "generated_at": "2026-02-01T10:00:00Z",
+      "months_analyzed": 3
+    }
+    ```
+  - **Error Codes**: `404 Not Found` (no insights available yet).
+
+- **`POST /api/insights/analyze`**
+  - **Description**: Generates a new AI analysis or returns cached result if fresh (< 24 hours) and not forcing refresh. Analyzes user's transaction history and generates personalized savings recommendations using AI.
+  - **Request Payload**:
+    ```json
+    {
+      "months": 3,
+      "force_refresh": false
+    }
+    ```
+    - `months`: Number of months to analyze (1, 2, or 3)
+    - `force_refresh`: Optional boolean to bypass cache and generate new analysis
+  - **Response Payload (200 OK)**: Same structure as `GET /api/insights/latest`.
+  - **Error Codes**: 
+    - `400 Bad Request` (validation error or insufficient data - requires at least 28 days of transaction history)
+    - `503 Service Unavailable` (AI service temporarily unavailable)
+    - `500 Internal Server Error` (other errors)
+
+**Notes on AI Insights**:
+- Requires at least 1 month (28 days) of expense transactions to generate insights
+- Analysis is cached for 24 hours to optimize API costs and response time
+- Uses OpenRouter/OpenAI API for generating recommendations
+- Aggregates transaction data by category and considers user's budgets
+- Returns 3-5 actionable savings recommendations with priority levels
+
 ## 3. Authentication and Authorization
 
 - **Authentication**: The API uses JSON Web Tokens (JWT) provided by Supabase Auth. The client is responsible for obtaining the JWT upon login/signup and including it in the `Authorization: Bearer <token>` header for all subsequent requests to protected endpoints.
@@ -342,6 +413,10 @@ Input validation will be performed at the API level before data is passed to the
     - `expense`: `from_account_id` and `category_id` are required.
     - `income`: `to_account_id` and `category_id` are required.
     - `transfer`: `from_account_id` and `to_account_id` are required and must be different.
+- **AI Insights**:
+  - `months` must be 1, 2, or 3.
+  - `force_refresh` must be a boolean (optional).
+  - User must have at least 28 days of transaction history for analysis.
 
 ### 4.2. Business Logic Implementation
 
@@ -349,3 +424,10 @@ Input validation will be performed at the API level before data is passed to the
 - **Budget Progress**: The `budget_progress` view will be queried by the `/api/dashboard` endpoint to efficiently retrieve budget utilization data.
 - **Category Deletion**: The API will enforce the `ON DELETE RESTRICT` constraint by checking if a category is associated with any transactions before allowing deletion. If it is, a `409 Conflict` error will be returned.
 - **Account Deletion**: The API will leverage the `ON DELETE CASCADE` behavior defined in the database. Deleting an account via the API will automatically trigger the deletion of all its associated transactions.
+- **AI Insights Generation**:
+  - The API aggregates transaction data (expenses by category) over the specified period (1-3 months).
+  - Aggregated data includes total spending, monthly averages, and budget information.
+  - Data is sent to OpenRouter/OpenAI API with a structured prompt requesting savings recommendations.
+  - AI response is validated and stored in the `ai_insights` table with JSONB format.
+  - Results are cached for 24 hours to minimize API calls and costs.
+  - Cache freshness is checked before generating new insights (unless `force_refresh` is true).
