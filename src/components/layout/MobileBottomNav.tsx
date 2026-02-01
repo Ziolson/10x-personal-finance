@@ -1,12 +1,11 @@
 import React from "react";
 import { Home, TrendingUp, DollarSign, BarChart3, Sparkles, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { openAddTransactionModal } from "@/lib/stores/layoutStore";
 
 interface MobileBottomNavProps {
   /** Current page path for active link highlighting */
   currentPath: string;
-  /** Callback when "Add Transaction" FAB button is clicked */
-  onAddTransaction: () => void;
   /** Optional CSS class for wrapper */
   className?: string;
 }
@@ -31,12 +30,16 @@ const navigationItems: NavItem[] = [
  * Bottom navigation bar displayed on mobile devices (md:hidden).
  * Sticky positioning at bottom with icon-based navigation items and FAB button.
  */
-export const MobileBottomNav = React.memo(function MobileBottomNav({ currentPath, onAddTransaction, className }: MobileBottomNavProps) {
+export const MobileBottomNav = React.memo(function MobileBottomNav({ currentPath, className }: MobileBottomNavProps) {
   const isActive = (href: string) => {
     if (href === "/") {
       return currentPath === "/";
     }
     return currentPath.startsWith(href);
+  };
+
+  const handleAddTransaction = () => {
+    openAddTransactionModal();
   };
 
   return (
@@ -69,7 +72,7 @@ export const MobileBottomNav = React.memo(function MobileBottomNav({ currentPath
 
       {/* FAB - Add Transaction Button */}
       <button
-        onClick={onAddTransaction}
+        onClick={handleAddTransaction}
         className="ml-2 flex items-center justify-center rounded-full bg-primary p-3 text-white shadow-lg transition-transform active:scale-95"
         aria-label="Add new transaction"
         title="Add transaction"
