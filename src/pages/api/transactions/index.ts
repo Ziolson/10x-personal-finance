@@ -10,6 +10,7 @@ import type { APIRoute } from "astro";
 
 import { GetTransactionsQuerySchema, CreateTransactionSchema } from "../../../lib/validators/transaction.validators";
 import { getTransactions, createTransaction } from "../../../lib/services/transaction.service";
+import { handleApiError } from "../../../lib/server-utils";
 import type { ApiErrorResponse, ValidationErrorResponse, GetTransactionsResponse } from "../../../types";
 
 export const prerender = false;
@@ -175,42 +176,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
         );
       }
 
-      // Log the error for debugging
-      // eslint-disable-next-line no-console
-      console.error("Error creating transaction:", errorMessage);
-
-      // Return generic error
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to create transaction",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "Failed to create transaction");
     }
   } catch (error) {
-    // Catch-all for unexpected errors
-    // eslint-disable-next-line no-console
-    console.error("Unexpected error in POST /api/transactions:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error);
   }
 };
 
@@ -323,42 +292,9 @@ export const GET: APIRoute = async ({ request, locals }) => {
         headers: { "Content-Type": "application/json" },
       });
     } catch (serviceError) {
-      const errorMessage = serviceError instanceof Error ? serviceError.message : "Unknown error";
-
-      // Log error for debugging (production: use structured logging)
-      // eslint-disable-next-line no-console
-      console.error("Error fetching transactions:", errorMessage);
-
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to fetch transactions",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "Failed to fetch transactions");
     }
   } catch (error) {
-    // Catch unexpected errors at endpoint level
-    // eslint-disable-next-line no-console
-    console.error("Unexpected error in GET /api/transactions:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error);
   }
 };
