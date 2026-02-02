@@ -3,7 +3,7 @@
 [![Project Status: In Development](https://img.shields.io/badge/status-in%20development-yellowgreen)](https://github.com/mziolek-dev/10x-personal-finance)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-A web application for conscious personal finance management, focusing on manual tracking of expenses, income, transfers, and a simple budgeting mechanism. This tool helps centralize your financial information for better planning and saving.
+A web application for conscious personal finance management, focusing on manual tracking of expenses, income, transfers, and a simple budgeting mechanism. The application uses artificial intelligence to analyze spending patterns and generate personalized savings recommendations. This tool helps centralize your financial information for better planning and saving.
 
 ---
 
@@ -37,6 +37,7 @@ The project is built with a modern, robust, and scalable tech stack:
 | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Frontend** | ![Astro](https://img.shields.io/badge/Astro-5-FF5D01?logo=astro) ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react) ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript) ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?logo=tailwind-css) ![Shadcn/UI](https://img.shields.io/badge/shadcn/ui-latest-black?logo=v) |
 | **Backend**  | ![Supabase](https://img.shields.io/badge/Supabase-latest-3ECF8E?logo=supabase)                                                                                                                                                                                                                                                                                                    |
+| **AI**       | ![OpenRouter](https://img.shields.io/badge/OpenRouter-GPT--4o--mini-5A67D8)                                                                                                                                                                                                                                                                                                       |
 | **Testing**  | ![Vitest](https://img.shields.io/badge/Vitest-latest-729B1B?logo=vitest) ![Playwright](https://img.shields.io/badge/Playwright-latest-45BA4B?logo=playwright) ![RTL](https://img.shields.io/badge/Testing%20Library-latest-E33332?logo=testing-library)                                                                                                                           |
 | **CI/CD**    | ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-latest-2088FF?logo=github-actions) ![Cloudflare Pages](https://img.shields.io/badge/Cloudflare_Pages-latest-F38020?logo=cloudflare)                                                                                                                                                                                 |
 
@@ -73,19 +74,47 @@ Follow these instructions to set up and run the project on your local machine.
     cp .env.example .env
     ```
 
-    You will need to add your Supabase Project URL and Anon Key to this file. You can find these in your Supabase project dashboard under `Settings` > `API`.
+    You will need to configure the following environment variables:
+
+    **Supabase Configuration:**
+    - `SUPABASE_URL` - Your Supabase project URL (found in Supabase dashboard under `Settings` > `API`)
+    - `SUPABASE_ANON_KEY` - Your Supabase anonymous key (found in Supabase dashboard under `Settings` > `API`)
+
+    **OpenRouter Configuration (for AI Insights):**
+    - `OPENROUTER_API_KEY` - Your OpenRouter API key (sign up at https://openrouter.ai/)
+    - `OPENROUTER_BASE_URL` - OpenRouter API base URL (default: `https://openrouter.ai/api/v1`)
+    - `AI_MODEL` - AI model identifier (default: `openai/gpt-4o-mini`)
+    - `AI_MAX_TOKENS` - Maximum tokens for AI responses (default: `2000`)
+    - `AI_TEMPERATURE` - AI temperature setting (default: `0.7`)
+    
+    **Application Configuration:**
+    - `APP_URL` - Your application URL (default: `http://localhost:3000`)
+    - `APP_NAME` - Application name (default: `10xPersonal Finance`)
+
+    Example `.env` file:
 
     ```env
-    # .env
-    SUPABASE_URL="YOUR_SUPABASE_PROJECT_URL"
-    SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_KEY"
+    # Supabase Configuration
+    SUPABASE_URL="https://your-project-id.supabase.co"
+    SUPABASE_ANON_KEY="your-anon-key"
+
+    # OpenRouter Configuration
+    OPENROUTER_API_KEY="sk-or-v1-your-api-key-here"
+    OPENROUTER_BASE_URL="https://openrouter.ai/api/v1"
+    AI_MODEL="openai/gpt-4o-mini"
+    AI_MAX_TOKENS="2000"
+    AI_TEMPERATURE="0.7"
+    
+    # Application Configuration
+    APP_URL="http://localhost:3000"
+    APP_NAME="10xPersonal Finance"
     ```
 
 5.  **Run the development server:**
     ```bash
     npm run dev
     ```
-    The application will be available at `http://localhost:4321`.
+    The application will be available at `http://localhost:3000`.
 
 ## Available Scripts
 
@@ -188,10 +217,15 @@ npm run test:e2e:ui
 
 ### In Scope (MVP)
 
+- User authentication and profile management.
 - Management of accounts (add, edit, delete).
 - Management of expense/income categories.
 - Adding transactions (expense, income, transfer).
 - Creation and management of monthly budgets.
+- AI-powered spending analysis and savings recommendations.
+- Dashboard with financial insights and budget tracking.
+- Transaction history with filtering capabilities.
+- Light/Dark theme support.
 
 ## Project Status
 
