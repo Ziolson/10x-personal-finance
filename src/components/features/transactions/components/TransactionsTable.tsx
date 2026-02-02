@@ -95,7 +95,7 @@ export default function TransactionsTable({ transactions, accounts, categories, 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0" data-testid="action-menu-trigger">
-                      <span className="sr-only">Open menu</span>
+                      <span className="sr-only">Otwórz menu akcji</span>
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
