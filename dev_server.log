@@ -1,0 +1,26 @@
+
+> 10x-astro-starter@0.0.1 dev
+> astro dev
+
+▶ Astro collects anonymous usage data.
+  This information helps us improve Astro.
+  Run "astro telemetry disable" to opt-out.
+  https://astro.build/telemetry
+
+22:03:05 [@astrojs/cloudflare] Enabling sessions with Cloudflare KV with the "SESSION" KV binding.
+22:03:05 [@astrojs/cloudflare] If you see the error "Invalid binding `SESSION`" in your build output, you need to add the binding to your wrangler config file.
+22:03:05 [WARN] [adapter] Cloudflare does not support sharp at runtime. However, you can configure `imageService: "compile"` to optimize images with sharp on prerendered pages during build time.
+22:03:06 [types] Generated 1ms
+22:03:06 [content] Syncing content
+22:03:06 [content] Synced content
+
+ astro  v5.17.1 ready in 2400 ms
+
+┃ Local    http://localhost:3000/
+┃ Network  use --host to expose
+
+22:03:06 watching for file changes...
+22:04:25 [200] /transactions 439ms
+22:04:51 [200] /transactions 34ms
+22:04:59 [watch] src/middleware/index.ts
+22:04:59 [watch] src/middleware/index.ts
