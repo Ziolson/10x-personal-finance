@@ -10,6 +10,7 @@ import type { APIRoute } from "astro";
 
 import { CreateAccountSchema } from "../../../lib/validators/account.validators";
 import { createAccount, getAccounts } from "../../../lib/services/account.service";
+import { handleApiError } from "../../../lib/server-utils";
 import type { CreateAccountCommand, ApiErrorResponse, ValidationErrorResponse } from "../../../types";
 
 export const prerender = false;
@@ -114,42 +115,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
         );
       }
 
-      // Log the error for debugging
-      // eslint-disable-next-line no-console
-      console.error("Error creating account:", errorMessage);
-
-      // Return generic error
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to create account",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "Failed to create account");
     }
   } catch (error) {
-    // Catch-all for unexpected errors
-    // eslint-disable-next-line no-console
-    console.error("Unexpected error in POST /api/accounts:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error);
   }
 };
 
@@ -215,42 +184,9 @@ export const GET: APIRoute = async ({ locals }) => {
       });
     } catch (serviceError) {
       // Handle service layer errors
-      const errorMessage = serviceError instanceof Error ? serviceError.message : "Unknown error";
-
-      // Log error for debugging (production: use structured logging)
-      // eslint-disable-next-line no-console
-      console.error("Error fetching accounts:", errorMessage);
-
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to fetch accounts",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "Failed to fetch accounts");
     }
   } catch (error) {
-    // Catch unexpected errors at endpoint level
-    // eslint-disable-next-line no-console
-    console.error("Unexpected error in GET /api/accounts:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error);
   }
 };

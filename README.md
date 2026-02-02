@@ -86,7 +86,7 @@ Follow these instructions to set up and run the project on your local machine.
     - `AI_MODEL` - AI model identifier (default: `openai/gpt-4o-mini`)
     - `AI_MAX_TOKENS` - Maximum tokens for AI responses (default: `2000`)
     - `AI_TEMPERATURE` - AI temperature setting (default: `0.7`)
-    
+
     **Application Configuration:**
     - `APP_URL` - Your application URL (default: `http://localhost:3000`)
     - `APP_NAME` - Application name (default: `10xPersonal Finance`)
@@ -104,7 +104,7 @@ Follow these instructions to set up and run the project on your local machine.
     AI_MODEL="openai/gpt-4o-mini"
     AI_MAX_TOKENS="2000"
     AI_TEMPERATURE="0.7"
-    
+
     # Application Configuration
     APP_URL="http://localhost:3000"
     APP_NAME="10xPersonal Finance"
