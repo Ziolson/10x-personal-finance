@@ -97,12 +97,14 @@ export async function createAccount(command: CreateAccountCommand, userId: strin
  * // ]
  */
 export async function getAccounts(userId: string, supabase: SupabaseClient): Promise<AccountDTO[]> {
-  // Step 1: Fetch user's accounts from the accounts table
-  const { data: accounts, error: accountsError } = await supabase
-    .from("accounts")
-    .select("id, name, initial_balance, currency, created_at, updated_at")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
+  // Step 1: Fetch user's accounts from the accounts table and balances from view in parallel
+  const [accountsResult, balancesResult] = await Promise.all([
+    supabase.from("accounts").select("id, name, initial_balance, currency, created_at, updated_at").eq("user_id", userId).order("created_at", { ascending: false }),
+    supabase.from("account_balances").select("account_id, current_balance").eq("user_id", userId),
+  ]);
+
+  const { data: accounts, error: accountsError } = accountsResult;
+  const { data: balances, error: balancesError } = balancesResult;
 
   if (accountsError) {
     throw new Error(`Database error while fetching accounts: ${accountsError.message}`);
@@ -111,9 +113,6 @@ export async function getAccounts(userId: string, supabase: SupabaseClient): Pro
   if (!accounts || accounts.length === 0) {
     return [];
   }
-
-  // Step 2: Fetch current balances from the account_balances view
-  const { data: balances, error: balancesError } = await supabase.from("account_balances").select("account_id, current_balance").eq("user_id", userId);
 
   if (balancesError) {
     // If balance view is unavailable, use initial_balance as fallback
