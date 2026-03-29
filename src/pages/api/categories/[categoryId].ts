@@ -12,6 +12,7 @@ import type { APIRoute } from "astro";
 import { UpdateCategorySchema, CategoryIdParamSchema } from "../../../lib/validators/categories.validators";
 import { getCategoryById, updateCategory, deleteCategory } from "../../../lib/services/category.service";
 import type { UpdateCategoryCommand, ApiErrorResponse, ValidationErrorResponse } from "../../../types";
+import { handleApiError } from "../../../lib/server-utils";
 
 export const prerender = false;
 
@@ -111,40 +112,10 @@ export const GET: APIRoute = async ({ params, locals }) => {
         headers: { "Content-Type": "application/json" },
       });
     } catch (serviceError) {
-      const errorMessage = serviceError instanceof Error ? serviceError.message : "Unknown error";
-      // eslint-disable-next-line no-console
-      console.error("Error fetching category:", errorMessage);
-
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to fetch category",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "GET /api/categories/[categoryId]");
     }
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error("Unexpected error in GET /api/categories/[categoryId]:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error, "GET /api/categories/[categoryId]");
   }
 };
 
@@ -318,39 +289,10 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
         );
       }
 
-      // eslint-disable-next-line no-console
-      console.error("Error updating category:", errorMessage);
-
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to update category",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "PUT /api/categories/[categoryId]");
     }
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error("Unexpected error in PUT /api/categories/[categoryId]:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error, "PUT /api/categories/[categoryId]");
   }
 };
 
@@ -461,38 +403,9 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
         );
       }
 
-      // eslint-disable-next-line no-console
-      console.error("Error deleting category:", errorMessage);
-
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to delete category",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "DELETE /api/categories/[categoryId]");
     }
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error("Unexpected error in DELETE /api/categories/[categoryId]:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error, "DELETE /api/categories/[categoryId]");
   }
 };

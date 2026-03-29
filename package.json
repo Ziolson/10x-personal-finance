@@ -93,5 +93,9 @@
     "*.{json,css,md}": [
       "prettier --write"
     ]
+  },
+  "overrides": {
+    "wrangler": "^4.61.1",
+    "undici": "^7.20.0"
   }
 }

@@ -9,7 +9,7 @@ import type { APIRoute } from "astro";
 import { z } from "zod";
 import { generateInsights } from "../../../lib/services/insights.service";
 import type { GenerateAIInsightsCommand, GenerateInsightsResponse, ApiErrorResponse, ValidationErrorResponse } from "../../../types";
-import logger from "../../../lib/logger";
+import { handleApiError } from "../../../lib/server-utils";
 
 export const prerender = false;
 
@@ -168,37 +168,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
       }
 
       // Generic service error
-      logger.error("Error generating insights:", errorMessage);
-
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to generate insights",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "POST /api/insights/analyze");
     }
   } catch (error) {
     // Catch-all for unexpected errors
-    logger.error("Unexpected error in POST /api/insights/analyze:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error, "POST /api/insights/analyze");
   }
 };

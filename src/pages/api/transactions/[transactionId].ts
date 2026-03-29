@@ -11,6 +11,7 @@ import type { APIRoute } from "astro";
 import { UpdateTransactionSchema } from "../../../lib/validators/transaction.validators";
 import { updateTransaction, deleteTransaction } from "../../../lib/services/transaction.service";
 import type { ApiErrorResponse, ValidationErrorResponse } from "../../../types";
+import { handleApiError } from "../../../lib/server-utils";
 
 export const prerender = false;
 
@@ -178,42 +179,12 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
         );
       }
 
-      // Log the error for debugging
-      // eslint-disable-next-line no-console
-      console.error("Error updating transaction:", errorMessage);
-
       // Return generic error
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to update transaction",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "PUT /api/transactions/[transactionId]");
     }
   } catch (error) {
     // Catch-all for unexpected errors
-    // eslint-disable-next-line no-console
-    console.error("Unexpected error in PUT /api/transactions/[transactionId]:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error, "PUT /api/transactions/[transactionId]");
   }
 };
 
@@ -287,43 +258,11 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
         headers: { "Content-Type": "application/json" },
       });
     } catch (serviceError) {
-      const errorMessage = serviceError instanceof Error ? serviceError.message : "Unknown error";
-
-      // Log the error for debugging
-      // eslint-disable-next-line no-console
-      console.error("Error deleting transaction:", errorMessage);
-
       // Return generic error
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to delete transaction",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "DELETE /api/transactions/[transactionId]");
     }
   } catch (error) {
     // Catch-all for unexpected errors
-    // eslint-disable-next-line no-console
-    console.error("Unexpected error in DELETE /api/transactions/[transactionId]:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error, "DELETE /api/transactions/[transactionId]");
   }
 };

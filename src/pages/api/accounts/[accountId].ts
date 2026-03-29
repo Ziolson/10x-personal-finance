@@ -12,6 +12,7 @@ import type { APIRoute } from "astro";
 import { UpdateAccountSchema } from "../../../lib/validators/account.validators";
 import { getAccountById, updateAccount, deleteAccount } from "../../../lib/services/account.service";
 import type { UpdateAccountCommand, ApiErrorResponse, ValidationErrorResponse } from "../../../types";
+import { handleApiError } from "../../../lib/server-utils";
 
 export const prerender = false;
 
@@ -123,40 +124,10 @@ export const GET: APIRoute = async ({ params, locals }) => {
         headers: { "Content-Type": "application/json" },
       });
     } catch (serviceError) {
-      const errorMessage = serviceError instanceof Error ? serviceError.message : "Unknown error";
-      // eslint-disable-next-line no-console
-      console.error("Error fetching account:", errorMessage);
-
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to fetch account",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "GET /api/accounts/[accountId]");
     }
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error("Unexpected error in GET /api/accounts/[accountId]:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error, "GET /api/accounts/[accountId]");
   }
 };
 
@@ -328,39 +299,10 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
         );
       }
 
-      // eslint-disable-next-line no-console
-      console.error("Error updating account:", errorMessage);
-
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to update account",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "PUT /api/accounts/[accountId]");
     }
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error("Unexpected error in PUT /api/accounts/[accountId]:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error, "PUT /api/accounts/[accountId]");
   }
 };
 
@@ -454,39 +396,9 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
         headers: { "Content-Type": "application/json" },
       });
     } catch (serviceError) {
-      const errorMessage = serviceError instanceof Error ? serviceError.message : "Unknown error";
-      // eslint-disable-next-line no-console
-      console.error("Error deleting account:", errorMessage);
-
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to delete account",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "DELETE /api/accounts/[accountId]");
     }
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error("Unexpected error in DELETE /api/accounts/[accountId]:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error, "DELETE /api/accounts/[accountId]");
   }
 };

@@ -11,7 +11,7 @@ import type { APIRoute } from "astro";
 import { BudgetIdParamSchema, UpdateBudgetSchema } from "../../../lib/validators/budgets.validators";
 import { updateBudget, deleteBudget } from "../../../lib/services/budget.service";
 import type { UpdateBudgetCommand, ApiErrorResponse, ValidationErrorResponse } from "../../../types";
-import logger from "../../../lib/logger";
+import { handleApiError } from "../../../lib/server-utils";
 
 export const prerender = false;
 
@@ -160,36 +160,10 @@ export const PUT: APIRoute = async ({ request, params, locals }) => {
         );
       }
 
-      logger.error("Error updating budget:", errorMessage);
-
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to update budget",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "PUT /api/budgets/[id]");
     }
   } catch (error) {
-    logger.error("Unexpected error in PUT /api/budgets/[id]:", error);
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error, "PUT /api/budgets/[id]");
   }
 };
 
@@ -271,36 +245,9 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
         );
       }
 
-      logger.error("Error deleting budget:", errorMessage);
-
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: "Failed to delete budget",
-            code: "INTERNAL_SERVER_ERROR",
-            details: errorMessage,
-          },
-        } satisfies ApiErrorResponse),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      return handleApiError(serviceError, "DELETE /api/budgets/[id]");
     }
   } catch (error) {
-    logger.error("Unexpected error in DELETE /api/budgets/[id]:", error);
-
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: "An unexpected error occurred",
-          code: "INTERNAL_SERVER_ERROR",
-        },
-      } satisfies ApiErrorResponse),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    return handleApiError(error, "DELETE /api/budgets/[id]");
   }
 };
