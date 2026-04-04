@@ -21,8 +21,6 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
     // Step 1: Get user from locals (set by middleware)
-    // TODO: When authentication is implemented, middleware will extract user from session
-    // For now, middleware sets a mock user for testing
     const user = locals.user;
 
     if (!user?.id) {
